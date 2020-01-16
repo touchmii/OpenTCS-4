@@ -1,5 +1,6 @@
-package com.jkj.frame;
+package com.zjw.frame;
 
+import com.zjw.frame.MainFrame;
 import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
 
 import javax.swing.*;

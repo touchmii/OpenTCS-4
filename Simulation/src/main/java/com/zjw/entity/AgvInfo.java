@@ -1,4 +1,4 @@
-package com.jkj.entity;
+package com.zjw.entity;
 
 public class AgvInfo {
 

@@ -1,7 +1,7 @@
-package com.jkj.frame;
+package com.zjw.frame;
 
-import com.jkj.entity.AgvInfo;
-import com.jkj.utils.ByteUtils;
+import com.zjw.entity.AgvInfo;
+import com.zjw.utils.ByteUtils;
 
 import javax.swing.*;
 import java.awt.*;

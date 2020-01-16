@@ -1,4 +1,4 @@
-package com.jkj.utils;
+package com.zjw.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

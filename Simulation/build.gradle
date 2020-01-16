@@ -6,7 +6,7 @@ group 'org.opentcs'
 version '4.17.0-SNAPSHOT'
 //用于输出可执行文件
 apply plugin: 'application'
-mainClassName = "com.jkj.frame.Main"
+mainClassName = "com.zjw.frame.Main"
 //防止编译出现 "错误: 编码 GBK 的不可映射字符"
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
