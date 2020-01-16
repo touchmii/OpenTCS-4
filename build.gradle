@@ -1,0 +1,109 @@
+buildscript {
+  repositories {
+    jcenter()
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    // License plugin
+    classpath 'gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.13.1'
+    // Versions plugin
+    classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
+    // Stats plugin
+    classpath 'org.kordamp.gradle:stats-gradle-plugin:0.2.0'
+  }
+}
+
+apply plugin: 'base' // To add "clean" task to the root project.
+apply plugin: 'distribution'
+apply plugin: 'com.github.ben-manes.versions'
+
+apply from: "${rootDir}/gradle/versioning.gradle"
+
+group = 'org.opentcs'
+
+subprojects {
+  apply from: rootProject.file('gradle/common.gradle')
+}
+evaluationDependsOnChildren()
+
+distributions {
+  main {
+    contents.from {
+      project(':openTCS-Kernel').ext.collectableDistDir
+    }
+    contents.from {
+      project(':openTCS-KernelControlCenter').ext.collectableDistDir
+    }
+    contents.from {
+      project(':openTCS-PlantOverview').ext.collectableDistDir
+    }
+    contents.from {
+      project(':openTCS-Documentation').ext.collectableDistDir
+    }
+  }
+}
+
+task statsAggregate(type: org.kordamp.gradle.stats.AggregateStatsReportTask) {
+  dependsOn subprojects*.stats
+}
+
+task subDists {
+  dependsOn(':openTCS-Kernel:installDist')
+  dependsOn(':openTCS-KernelControlCenter:installDist')
+  dependsOn(':openTCS-PlantOverview:installDist')
+  dependsOn(':openTCS-Documentation:installDist')
+}
+
+task install {
+  dependsOn subprojects*.install
+}
+
+installDist.dependsOn subDists
+
+distZip {
+  classifier = 'bin'
+  dependsOn subDists
+}
+
+distTar {
+  classifier = 'bin'
+  dependsOn subDists
+  compression = Compression.GZIP
+}
+
+task distSrcZip(type: Zip) {
+  classifier = 'src'
+  from "${rootDir}"
+
+  includes << 'config/**'
+  includes << 'gradle/**'
+  includes << 'openTCS-*/**'
+  includes << 'src/**'
+  includes << '.nb-gradle-properties'
+  includes << '*.gradle'
+  includes << 'gradlew'
+  includes << 'gradlew.bat'
+
+  excludes << '.gitlab'
+  excludes << '.gradle'
+  excludes << '**/build'
+}
+
+artifacts {
+  archives distZip
+  archives distSrcZip
+}
+
+build {
+  dependsOn subprojects*.build
+  dependsOn installDist
+}
+
+task release {
+  dependsOn build
+  dependsOn subprojects*.release
+  dependsOn distZip
+  dependsOn distSrcZip
+}

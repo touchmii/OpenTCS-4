@@ -1,0 +1,56 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+/build/
+/.gradle/
+
+### VS Code ###
+.vscode/
+/.gradle/
+/.gradle/4.10.3/
+/.gradle/buildOutputCleanup/
+/.gradle/vcs-1/
+/Simulation/build/
+/openTCS-Strategies-Default/build/
+/openTCS-PlantOverview-Themes-Default/build/
+/openTCS-PlantOverview-Panel-Statistics/build/
+/openTCS-PlantOverview-Panel-ResourceAllocation/build/
+/openTCS-PlantOverview-Panel-LoadGenerator/build/
+/openTCS-PlantOverview-Base/build/
+/openTCS-PlantOverview/build/
+/openTCS-KernelControlCenter/build/
+/openTCS-Kernel-Extension-TCP-Host-Interface/build/
+/openTCS-Kernel-Extension-Statistics/build/
+/openTCS-Kernel-Extension-RMI-Services/build/
+/openTCS-Kernel-Extension-HTTP-Services/build/
+/openTCS-Kernel/build/
+/openTCS-Impl-Configuration-cfg4j/build/
+/openTCS-Example-CommAdapter/build/
+/openTCS-Documentation/build/
+/openTCS-Common/build/
+/openTCS-CommAdapter-Loopback/build/
+/openTCS-API-Injection/build/
+/openTCS-API-Base/build/

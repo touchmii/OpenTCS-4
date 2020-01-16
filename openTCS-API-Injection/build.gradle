@@ -1,0 +1,11 @@
+apply from: "${rootDir}/gradle/license-headers.gradle"
+
+dependencies {
+  compile project(':openTCS-API-Base')
+  compile group: 'com.google.inject', name: 'guice', version: '4.2.2'
+  compile group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '4.2.2'
+}
+
+task release {
+  dependsOn build
+}

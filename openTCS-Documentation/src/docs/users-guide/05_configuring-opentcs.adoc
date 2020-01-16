@@ -1,0 +1,162 @@
+== Configuring openTCS
+
+=== Application language
+
+By default, all openTCS applications with user interfaces display texts in English language.
+The applications are prepared for internationalization, though, and can be configured to display texts in a different language, provided there is a translation for it.
+The openTCS distribution comes with the default (English) language and a German translation.
+Additional translations can be integrated -- how this is done is described in the Developer's Guide.
+
+For setting the language, each application has a configuration entry that needs to be set to a _language tag_ for the language to use.
+(See <<Kernel Control Center application configuration entries>> and <<Plant Overview application configuration entries>>.)
+Examples for language tags are:
+
+* "en" for English
+* "de" for German
+* "no" for Norwegian
+* "zh" for Chinese
+
+By default, the configuration entries are set to "en", resulting in English texts.
+Since a German translation is included, you can switch e.g. the Plant Overview to German by setting its `locale` configuration entry to "de".
+(Note that the application needs to be restarted for this.)
+
+Configuring an application to use a language for which there is no translation will result in the default (English) language to be used.
+
+=== Kernel configuration
+
+The kernel application reads its configuration data from the following files:
+
+. `config/opentcs-kernel-defaults-baseline.properties`,
+. `config/opentcs-kernel-defaults-custom.properties` and
+. `config/opentcs-kernel.properties`.
+
+The files are read in this order, and configuration values set in one file can be overridden in any subsequent one.
+For users, it is recommended to leave the first two files untouched and set overriding values and project-specific configuration data in `opentcs-kernel.properties` only.
+
+==== Kernel application configuration entries
+
+The kernel application itself can be configured using the following configuration entries:
+
+include::{configdoc}/KernelApplicationConfigurationEntries.adoc[]
+
+==== Control center configuration entries
+
+The kernel's control center GUI can be configured using the following configuration entries:
+
+include::{configdoc}/ControlCenterConfigurationEntries.adoc[]
+
+==== Order pool configuration entries
+
+The kernel's transport order pool can be configured using the following configuration entries:
+
+include::{configdoc}/OrderPoolConfigurationEntries.adoc[]
+
+==== Default dispatcher configuration entries
+
+The default dispatcher can be configured using the following configuration entries:
+
+include::{configdoc}/DefaultDispatcherConfigurationEntries.adoc[]
+
+==== Default router configuration entries
+
+The default router can be configured using the following configuration entries:
+
+include::{configdoc}/DefaultRouterConfigurationEntries.adoc[]
+
+The shortest path algorithm can be configured using the following configuration entries:
+
+include::{configdoc}/ShortestPathConfigurationEntries.adoc[]
+
+==== Admin web API configuration entries
+
+The kernel's admin web API can be configured using the following configuration entries:
+
+include::{configdoc}/AdminWebApiConfigurationEntries.adoc[]
+
+==== Service web API configuration entries
+
+The kernel's service web API can be configured using the following configuration entries:
+
+include::{configdoc}/ServiceWebApiConfigurationEntries.adoc[]
+
+==== RMI kernel interface configuration entries
+
+The kernel's RMI interface can be configured using the following configuration entries:
+
+include::{configdoc}/RmiKernelInterfaceConfigurationEntries.adoc[]
+
+==== XML host interface configuration entries
+
+The kernel's XML-based host interface can be configured using the following configuration entries:
+
+include::{configdoc}/XMLHostInterfaceConfigurationEntries.adoc[]
+
+==== SSL server-side encryption configuration entries
+
+The kernel's SSL encryption can be configured using the following configuration entries:
+
+include::{configdoc}/KernelSslConfigurationEntries.adoc[]
+
+==== Statistics collector configuration entries
+
+The kernel's statistics collector can be configured using the following configuration entries:
+
+include::{configdoc}/StatisticsCollectorConfigurationEntries.adoc[]
+
+==== Virtual vehicle configuration entries
+
+The virtual vehicle (loopback communication adapter) can be configured using the following configuration entries:
+
+include::{configdoc}/VirtualVehicleConfigurationEntries.adoc[]
+
+=== Kernel Control Center configuration
+
+The kernel control center application reads its configuration data from the following files:
+
+. `config/opentcs-kernelcontrolcenter-defaults-baseline.properties`,
+. `config/opentcs-kernelcontrolcenter-defaults-custom.properties` and
+. `config/opentcs-kernelcontrolcenter.properties`.
+
+The files are read in this order, and configuration values set in one file can be overridden in any subsequent one.
+For users, it is recommended to leave the first two files untouched and set overriding values and project-specific configuration data in `opentcs-kernelcontrolcenter.properties` only.
+
+==== Kernel Control Center application configuration entries
+
+The kernel control center application itself can be configured using the following configuration entries:
+
+include::{configdoc}/KernelControlCenterApplicationConfigurationEntries.adoc[]
+
+==== SSL KCC-side application configuration entries
+
+The kernel control center application's SSL connections can be configured using the following configuration entries:
+
+include::{configdoc}/KccSslConfigurationEntries.adoc[]
+
+=== Plant Overview configuration
+
+The plant overview application reads its configuration data from the following files:
+
+. `config/opentcs-plantoverview-defaults-baseline.properties`,
+. `config/opentcs-plantoverview-defaults-custom.properties`,
+. `config/opentcs-plantoverview.properties`.
+
+The files are read in this order, and configuration values set in one file can be overridden in any subsequent one.
+For users, it is recommended to leave the first two files untouched and set overriding values and project-specific configuration data in `opentcs-plantoverview.properties` only.
+
+==== Plant Overview application configuration entries
+
+The plant overview application itself can be configured using the following configuration entries:
+
+include::{configdoc}/PlantOverviewApplicationConfigurationEntries.adoc[]
+
+==== SSL PO-side application configuration entries
+
+The plant overview application's SSL connections can be configured using the following configuration entries:
+
+include::{configdoc}/PoSslConfigurationEntries.adoc[]
+
+==== Plant Overview element naming scheme configuration entries
+
+The plant overview application's element naming schemes can be configured using the following configuration entries:
+
+include::{configdoc}/PO_ElementNamingSchemeConfigurationEntries.adoc[]

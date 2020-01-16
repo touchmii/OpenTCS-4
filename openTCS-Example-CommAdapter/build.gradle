@@ -1,0 +1,16 @@
+apply from: "${rootDir}/gradle/guice-project.gradle"
+
+dependencies {
+    compile project(':openTCS-API-Injection')
+    compile project(':openTCS-Common')
+
+    compile group: 'org.opentcs.contrib', name: 'opentcs-contrib-tcp-netty', version: '0.13.0'
+    compileOnly group: 'org.opentcs.contrib', name: 'opentcs-contrib-tcp-netty', version: '0.13.0', classifier: 'sources'
+
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+    compileOnly group: 'commons-codec', name: 'commons-codec', version: '1.10', classifier: 'sources'
+}
+
+task release {
+    dependsOn build
+}

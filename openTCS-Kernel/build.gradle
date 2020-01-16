@@ -1,0 +1,52 @@
+apply from: "${rootDir}/gradle/guice-application.gradle"
+apply from: "${rootDir}/gradle/license-headers.gradle"
+
+if (!hasProperty('mainClass')) {
+    ext.mainClass = 'org.opentcs.kernel.RunKernel'
+}
+mainClassName = ext.mainClass
+
+ext.collectableDistDir = new File(buildDir, 'install')
+
+dependencies {
+    compile project(':openTCS-API-Injection')
+    compile project(':openTCS-Common')
+    compile project(':openTCS-CommAdapter-Loopback')
+    compile project(':openTCS-Strategies-Default')
+    compile project(':openTCS-Impl-Configuration-cfg4j')
+    compile project(':openTCS-Kernel-Extension-HTTP-Services')
+    compile project(':openTCS-Kernel-Extension-RMI-Services')
+    compile project(':openTCS-Kernel-Extension-Statistics')
+    compile project(':openTCS-Kernel-Extension-TCP-Host-Interface')
+    compile project(':openTCS-Example-CommAdapter')
+
+    compile group: 'de.huxhorn.sulky', name: 'de.huxhorn.sulky.ulid', version: '8.2.0'
+    compileOnly group: 'de.huxhorn.sulky', name: 'de.huxhorn.sulky.ulid', version: '8.2.0', classifier: 'sources'
+
+    runtime group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.21'
+}
+
+distributions {
+    main {
+        contents {
+            from "${sourceSets.main.resources.srcDirs[0]}/org/opentcs/kernel/distribution"
+        }
+    }
+}
+
+// For now, we're using hand-crafted start scripts, so disable the application
+// plugin's start script generation.
+startScripts.enabled = false
+
+task release {
+    dependsOn build
+    dependsOn installDist
+}
+
+run {
+    systemProperties(['java.util.logging.config.file': './config/logging.config', \
+                     'java.security.policy': 'file:./config/java.policy', \
+                     'opentcs.base': '.', \
+                     'opentcs.home': '.'])
+    jvmArgs('-XX:-OmitStackTraceInFastThrow')
+}

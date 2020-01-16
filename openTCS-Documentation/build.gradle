@@ -1,0 +1,709 @@
+plugins {
+  id 'org.hidetake.swagger.generator' version '2.16.0'
+  // To use AsciiDoctor for documentation
+  id 'org.asciidoctor.convert' version '1.5.3'
+}
+
+evaluationDependsOn(':openTCS-API-Base')
+evaluationDependsOn(':openTCS-API-Injection')
+evaluationDependsOn(':openTCS-Common')
+evaluationDependsOn(':openTCS-Kernel')
+evaluationDependsOn(':openTCS-KernelControlCenter')
+evaluationDependsOn(':openTCS-PlantOverview')
+evaluationDependsOn(':openTCS-PlantOverview-Panel-LoadGenerator')
+
+apply plugin: 'distribution'
+apply from: "${rootDir}/gradle/license-headers.gradle"
+
+def baseApiDir = file("$buildDir/api-base")
+def injectionApiDir = file("$buildDir/api-injection")
+def webApiDir = file("$buildDir/swagger-ui-webapi")
+def schemasDir = file("$buildDir/schemagen")
+def samplesDir = file("$buildDir/samples")
+def configDocDir = file("$buildDir/configdoc")
+def userManualDir = file("$buildDir/users-guide")
+def devManualDir = file("$buildDir/developers-guide")
+def devManualImagesDir = file("$devManualDir/images")
+def indexDir = file("$buildDir/index")
+def releaseNotesDir = file("$buildDir/release-notes")
+def faqDir = file("$buildDir/faq")
+
+ext.collectableDistDir = file("$buildDir/install")
+
+configurations {
+  schemagen
+  configdocgen
+}
+
+swaggerSources {
+  webapi {
+    inputFile = file("src/docs/web-api/service-web-api-v1.yaml")
+  }
+}
+
+dependencies {
+  compile project(':openTCS-Kernel')
+  
+  schemagen project(':openTCS-Kernel')
+  schemagen project(':openTCS-PlantOverview')
+  schemagen jar.outputs.files
+  
+  configdocgen project(':openTCS-Kernel')
+  configdocgen project(':openTCS-KernelControlCenter')
+  configdocgen project(':openTCS-PlantOverview')
+  configdocgen jar.outputs.files
+  
+  swaggerUI group: 'org.webjars', name: 'swagger-ui', version: '3.20.5'
+  
+  asciidoctor group: 'org.asciidoctor', name: 'asciidoctorj-diagram', version: '1.5.0'
+  asciidoctor group: 'org.asciidoctor', name: 'asciidoctorj-pdf', version: '1.5.0-alpha.11'
+}
+
+distributions {
+  main {
+    contents.from(baseApiDir) {
+      into('developer/api-base')
+    }
+    contents.from(injectionApiDir) {
+      into('developer/api-injection')
+    }
+    contents.from(webApiDir) {
+      into('developer/web-api')
+    }
+    contents.from(schemasDir) {
+      into('developer/xml-schemas')
+    }
+    contents.from(devManualDir) {
+      into('developer/developers-guide')
+    }
+    contents.from(userManualDir) {
+      into('user')
+    }
+    contents.from(indexDir)
+    contents.from(releaseNotesDir)
+    contents.from(faqDir)
+  }
+}
+
+task renderDocs {
+  dependsOn 'apiBase'
+  dependsOn 'apiInjection'
+  dependsOn 'schemagenXml'
+  dependsOn 'asciidoctor'
+  dependsOn 'generateSwaggerUI'
+}
+
+installDist.dependsOn renderDocs
+
+distTar {
+  dependsOn renderDocs
+  baseName = baseName.toLowerCase()
+}
+
+distZip {
+  dependsOn renderDocs
+  baseName = baseName.toLowerCase()
+}
+
+task release {
+  dependsOn build
+  dependsOn installDist
+}
+
+task apiBase(type: Javadoc, description: 'Creates Javadoc for base API.') {
+  title = "openTCS ${project.version} Base API documentation"
+  destinationDir = baseApiDir
+
+  source = project(':openTCS-API-Base').sourceSets.main.allJava
+  classpath = project(':openTCS-API-Base').sourceSets.main.compileClasspath
+  options {
+    header = "openTCS ${project.version}"
+    footer = "openTCS ${project.version}"
+    overview = "${project(':openTCS-API-Base').projectDir}/src/main/java/overview.html"
+    group("Basic data structures", "org.opentcs.data*")
+    group("Interfaces and supporting classes for accessing the kernel", "org.opentcs.access*")
+    group("Kernel strategies, plant overview panels and other components", "org.opentcs.components*")
+    group("Communication adapter framework", "org.opentcs.drivers*")
+    group("Configuration-related interfaces and annotation", "org.opentcs.configuration*")
+    group("Utility classes", "org.opentcs.util*")
+  }
+}
+
+task apiInjection(type: Javadoc, description: 'Creates Javadoc for injection API.') {
+  title = "openTCS ${project.version} Injection API documentation"
+  destinationDir = injectionApiDir
+
+  source = project(':openTCS-API-Injection').sourceSets.main.allJava
+  classpath = project(':openTCS-API-Injection').sourceSets.main.compileClasspath
+  options {
+    header = "openTCS ${project.version}"
+    footer = "openTCS ${project.version}"
+    overview = "${project(':openTCS-API-Injection').projectDir}/src/main/java/overview.html"
+    group("Classes supporting customization of openTCS applications", "org.opentcs.customizations*")
+  }
+}
+
+asciidoctor {
+  dependsOn 'asciidoctorUsersGuide'
+  dependsOn 'asciidoctorDevelopersGuide'
+  dependsOn 'asciidoctorIndex'
+  dependsOn 'asciidoctorReleaseNotes'
+  dependsOn 'asciidoctorFaq'
+  enabled = false
+}
+
+task asciidoctorIndex(type: org.asciidoctor.gradle.AsciidoctorTask) {
+  // Document type: article (default), book, inline, manpage)
+  options doctype: 'article'
+
+  // Where to look for AsciiDoc files. Default: src/docs/asciidoc
+  sourceDir = file("src/docs/index")
+  
+  // Where to put the rendered documents. Default: $buildDir/asciidoc.
+  outputDir = indexDir
+  
+  // Whether to put backends' outputs into separate subdirectories  
+  separateOutputDirs = false
+	
+  sources {
+    include 'index.adoc'
+  }
+  
+  // Set the backends the processor should use: html5 (default), docbook, manpage, pdf, deckjs
+	backends = ['html5']
+	
+  attributes 'source-highlighter': 'coderay',
+             'coderay-linenums-mode': 'table',
+  // Whether to use icons for admonitions. Possible values: 'font' to use
+  // FontAwesome glyphs or anything else to use graphics files.
+  // Note: FontAwesome requires internet connectivity for viewing the resulting
+  // HTML output...
+  //  icons: '1',
+  icons: 'font',
+  // Where to find the icons. Default: ./images/icons.
+  // iconsdir: './images/icons',
+  // The type of the icons.
+  // icontype: 'png',
+  // Allow attributes in links (target="_blank" etc.) to be used.
+  linkattrs: true,
+  // Document encoding.
+  encoding: 'utf-8',
+  // Experimental features (rendering keyboard shortcuts, menu items, etc.)
+  experimental: true
+}
+
+task asciidoctorReleaseNotes(type: org.asciidoctor.gradle.AsciidoctorTask) {
+  // Document type: article (default), book, inline, manpage)
+  options doctype: 'book'
+
+  // Where to look for AsciiDoc files. Default: src/docs/asciidoc
+  sourceDir = file("src/docs/release-notes")
+  
+  // Where to put the rendered documents. Default: $buildDir/asciidoc.
+  outputDir = releaseNotesDir
+  
+  // Whether to put backends' outputs into separate subdirectories  
+  separateOutputDirs = false
+	
+  sources {
+    include 'release-notes.adoc'
+  }
+  
+  // Set the backends the processor should use: html5 (default), docbook, manpage, pdf, deckjs
+	backends = ['html5']
+	
+  attributes 'source-highlighter': 'coderay',
+             'coderay-linenums-mode': 'table',
+  //           'imagesdir': 'images',
+  // Include a table of contents (on the left side, when rendering to HTML)
+  toc: 'left',
+  toclevels: '3',
+  // Turn on section numbering.
+  sectnums: '1',
+  // Whether to use icons for admonitions. Possible values: 'font' to use
+  // FontAwesome glyphs or anything else to use graphics files.
+  // Note: FontAwesome requires internet connectivity for viewing the resulting
+  // HTML output...
+  //  icons: '1',
+  icons: 'font',
+  // Where to find the icons. Default: ./images/icons.
+  // iconsdir: './images/icons',
+  // The type of the icons.
+  // icontype: 'png',
+  // Allow attributes in links (target="_blank" etc.) to be used.
+  linkattrs: true,
+  // Document encoding.
+  encoding: 'utf-8',
+  // Render page numbers in the PDF
+  pagenums: '1',
+  // Experimental features (rendering keyboard shortcuts, menu items, etc.)
+  experimental: true
+}
+
+task asciidoctorUsersGuide(type: org.asciidoctor.gradle.AsciidoctorTask) {
+  dependsOn 'configdocgen'
+  
+  // Document type: article (default), book, inline, manpage)
+  options doctype: 'book'
+
+  // Where to look for AsciiDoc files. Default: src/docs/asciidoc
+  sourceDir = file("src/docs/users-guide")
+  
+  // Where to put the rendered documents. Default: $buildDir/asciidoc.
+  outputDir = userManualDir
+  
+  // Whether to put backends' outputs into separate subdirectories  
+  separateOutputDirs = false
+	
+  sources {
+    include 'opentcs-users-guide.adoc'
+  }
+  
+  // Set the backends the processor should use: html5 (default), docbook, manpage, pdf, deckjs
+	backends = ['html5', 'pdf']
+
+  attributes 'source-highlighter': 'coderay',
+             'coderay-linenums-mode': 'table',
+             'imagesdir': 'images',
+  // The directory where the theme file is located
+             'pdf-stylesdir': 'themes',
+  // The name of the YAML theme file to load. If the name ends with ".yml", it's
+  // assumed to be the complete name of the file. Otherwise, "-theme.yml" is appended
+  // to the name to make the file name.
+             'pdf-style': 'custom',
+             'configdoc': configDocDir,
+  // Include a table of contents (on the left side, when rendering to HTML)
+  toc: 'left',
+  toclevels: '3',
+  // Turn on section numbering.
+  sectnums: '1',
+  // Depth of section numbering
+  sectnumlevels: '6',
+  // Whether to use icons for admonitions. Possible values: 'font' to use
+  // FontAwesome glyphs or anything else to use graphics files.
+  // Note: FontAwesome requires internet connectivity for viewing the resulting
+  // HTML output...
+  //  icons: '1',
+  icons: 'font',
+  // Where to find the icons. Default: ./images/icons.
+  // iconsdir: './images/icons',
+  // The type of the icons.
+  // icontype: 'png',
+  // Allow attributes in links (target="_blank" etc.) to be used.
+  linkattrs: true,
+  // Document encoding.
+  encoding: 'utf-8',
+  // Render page numbers in the PDF
+  pagenums: '1',
+  // Experimental features (rendering keyboard shortcuts, menu items, etc.)
+  experimental: true
+
+  resources {
+    from(sourceDir) {
+      include '**/*.jpg'
+      include '**/*.png'
+      include '**/*.svg'
+      exclude 'samples'
+      exclude 'themes'
+    }
+  }
+}
+
+task asciidoctorDevelopersGuide(type: org.asciidoctor.gradle.AsciidoctorTask) {
+  dependsOn 'samplesgen'
+  
+  // Document type: article (default), book, inline, manpage)
+  options doctype: 'book'
+
+  // Where to look for AsciiDoc files. Default: src/docs/asciidoc
+  sourceDir = file("src/docs/developers-guide")
+  
+  // Where to put the rendered documents. Default: $buildDir/asciidoc.
+  outputDir = devManualDir
+  
+  // Whether to put backends' outputs into separate subdirectories  
+  separateOutputDirs = false
+	
+  sources {
+    include 'opentcs-developers-guide.adoc'
+  }
+  
+  // Set the backends the processor should use: html5 (default), docbook, manpage, pdf, deckjs
+	backends = ['html5', 'pdf']
+	
+  requires 'asciidoctor-diagram'
+  
+  attributes 'source-highlighter': 'coderay',
+             'coderay-linenums-mode': 'table',
+             'base-javaSrc': project(':openTCS-API-Base').javaSrcDir,
+             'base-testSrc': project(':openTCS-API-Base').testSrcDir,
+             'loopback-javaSrc': project(':openTCS-CommAdapter-Loopback').javaSrcDir,
+             'loopback-guiceSrc': project(':openTCS-CommAdapter-Loopback').guiceSrcDir,
+             'loopback-testSrc': project(':openTCS-CommAdapter-Loopback').testSrcDir,
+             'kernel-javaSrc': project(':openTCS-Kernel').javaSrcDir,
+             'kernel-guiceSrc': project(':openTCS-Kernel').guiceSrcDir,
+             'kernel-testSrc': project(':openTCS-Kernel').testSrcDir,
+             'controlCenter-javaSrc': project(':openTCS-KernelControlCenter').javaSrcDir,
+             'controlCenter-guiceSrc': project(':openTCS-KernelControlCenter').guiceSrcDir,
+             'controlCenter-testSrc': project(':openTCS-KernelControlCenter').testSrcDir,
+             'loadGeneratorPanel-javaSrc': project(':openTCS-PlantOverview-Panel-LoadGenerator').javaSrcDir,
+             'loadGeneratorPanel-guiceSrc': project(':openTCS-PlantOverview-Panel-LoadGenerator').guiceSrcDir,
+             'loadGeneratorPanel-testSrc': project(':openTCS-PlantOverview-Panel-LoadGenerator').testSrcDir,
+             'plantoverview-javaSrc': project(':openTCS-PlantOverview').javaSrcDir,
+             'plantoverview-guiceSrc': project(':openTCS-PlantOverview').guiceSrcDir,
+             'plantoverview-testSrc': project(':openTCS-PlantOverview').testSrcDir,
+             'imagesoutdir': devManualImagesDir, // Set the images directory for the output of asciidoctor-diagram
+             'samples': samplesDir,
+  // 'imagesdir': 'images',
+  // Include a table of contents (on the left side, when rendering to HTML)
+  toc: 'left',
+  toclevels: '3',
+  // Turn on section numbering.
+  sectnums: '1',
+  // Whether to use icons for admonitions. Possible values: 'font' to use
+  // FontAwesome glyphs or anything else to use graphics files.
+  // Note: FontAwesome requires internet connectivity for viewing the resulting
+  // HTML output...
+  //  icons: '1',
+  icons: 'font',
+  // Where to find the icons. Default: ./images/icons.
+  // iconsdir: './images/icons',
+  // The type of the icons.
+  // icontype: 'png',
+  // Allow attributes in links (target="_blank" etc.) to be used.
+  linkattrs: true,
+  // Document encoding.
+  encoding: 'utf-8',
+  // Render page numbers in the PDF
+  pagenums: '1',
+  // Experimental features (rendering keyboard shortcuts, menu items, etc.)
+  experimental: true
+  
+  resources {
+    from(sourceDir) {
+      include '**/*.png'
+      exclude 'samples'
+    }
+  }
+  
+  doLast{
+    delete "$devManualDir/.asciidoctor"
+  }
+}
+
+task asciidoctorFaq(type: org.asciidoctor.gradle.AsciidoctorTask) {
+  // Document type: article (default), book, inline, manpage)
+  options doctype: 'article'
+
+  // Where to look for AsciiDoc files. Default: src/docs/asciidoc
+  sourceDir = file("src/docs/faq")
+  
+  // Where to put the rendered documents. Default: $buildDir/asciidoc.
+  outputDir = faqDir
+  
+  // Whether to put backends' outputs into separate subdirectories  
+  separateOutputDirs = false
+	
+  sources {
+    include 'faq.adoc'
+  }
+  
+  // Set the backends the processor should use: html5 (default), docbook, manpage, pdf, deckjs
+	backends = ['html5']
+	
+  attributes 'source-highlighter': 'coderay',
+             'coderay-linenums-mode': 'table',
+  //           'imagesdir': 'images',
+  // Include a table of contents (on the left side, when rendering to HTML)
+  toc: 'left',
+  toclevels: '3',
+  // Turn on section numbering.
+  sectnums: '1',
+  // Whether to use icons for admonitions. Possible values: 'font' to use
+  // FontAwesome glyphs or anything else to use graphics files.
+  // Note: FontAwesome requires internet connectivity for viewing the resulting
+  // HTML output...
+  //  icons: '1',
+  icons: 'font',
+  // Where to find the icons. Default: ./images/icons.
+  // iconsdir: './images/icons',
+  // The type of the icons.
+  // icontype: 'png',
+  // Allow attributes in links (target="_blank" etc.) to be used.
+  linkattrs: true,
+  // Document encoding.
+  encoding: 'utf-8',
+  // Render page numbers in the PDF
+  pagenums: '1',
+  // Experimental features (rendering keyboard shortcuts, menu items, etc.)
+  experimental: true
+}
+
+task schemagenXml {
+  dependsOn 'jar'
+  dependsOn ':openTCS-Kernel:jar'
+  dependsOn ':openTCS-PlantOverview:jar'
+
+  File schemagenDir = schemasDir
+
+  project(':openTCS-Kernel').sourceSets*.allSource*.srcDirs*.each { File srcDir ->
+    if (srcDir.isDirectory()) {
+      inputs.dir srcDir
+    }
+  }
+  project(':openTCS-PlantOverview').sourceSets*.allSource*.srcDirs*.each { File srcDir ->
+    if (srcDir.isDirectory()) {
+      inputs.dir srcDir
+    }
+  }
+  outputs.dir schemagenDir
+
+  doLast {
+    mkdir(schemagenDir)
+    
+    javaexec {
+      classpath configurations.schemagen
+      main = "org.opentcs.documentation.JAXBSchemaGenerator"
+      args = [ "${schemagenDir}/opentcs-host-order.xsd",
+             "org.opentcs.kernel.extensions.xmlhost.orders.binding.TCSOrderSet",
+             "org.opentcs.kernel.extensions.xmlhost.orders.binding.Transport",
+             "org.opentcs.kernel.extensions.xmlhost.orders.binding.TransportScript" ]
+    }
+    javaexec {
+      classpath configurations.schemagen
+      main = "org.opentcs.documentation.JAXBSchemaGenerator"
+      args = [ "${schemagenDir}/opentcs-host-orderscript.xsd",
+             "org.opentcs.kernel.extensions.xmlhost.orders.binding.TCSScriptFile",
+             "org.opentcs.kernel.extensions.xmlhost.orders.binding.Transport",
+             "org.opentcs.kernel.extensions.xmlhost.orders.binding.TransportScript" ]
+    }
+    javaexec {
+      classpath configurations.schemagen
+      main = "org.opentcs.documentation.JAXBSchemaGenerator"
+      args = [ "${schemagenDir}/opentcs-host-response.xsd",
+             "org.opentcs.kernel.extensions.xmlhost.orders.binding.TCSResponseSet",
+             "org.opentcs.kernel.extensions.xmlhost.orders.binding.TransportResponse",
+             "org.opentcs.kernel.extensions.xmlhost.orders.binding.ScriptResponse" ]
+    }
+    javaexec {
+      classpath configurations.schemagen
+      main = "org.opentcs.documentation.JAXBSchemaGenerator"
+      args = [ "${schemagenDir}/opentcs-host-statuschannel.xsd",
+             "org.opentcs.kernel.extensions.xmlhost.status.binding.TCSStatusMessageSet",
+             "org.opentcs.kernel.extensions.xmlhost.status.binding.OrderStatusMessage",
+             "org.opentcs.kernel.extensions.xmlhost.status.binding.VehicleStatusMessage" ]
+    }
+  }
+}
+
+task samplesgen {
+  dependsOn 'jar'
+  doLast {
+    mkdir(samplesDir)
+    //Args contains a tupel of (task-name, outputFile)
+    javaexec {
+      classpath configurations.runtime, jar.outputs.files
+      main = "org.opentcs.documentation.SamplesGenerator"
+      args "TELEGRAM_TO_TWO_ORDERS", "${samplesDir}/xml-telegram-to-two-orders.xml"
+    }
+    
+    javaexec {
+      classpath configurations.runtime, jar.outputs.files
+      main = 'org.opentcs.documentation.SamplesGenerator'
+      args "TELEGRAM_TO_STATUS", "${samplesDir}/xml-telegram-to-status.xml"
+    }
+    
+    javaexec {
+      classpath configurations.runtime, jar.outputs.files
+      main = 'org.opentcs.documentation.SamplesGenerator'
+      args "TELEGRAM_TO_RECEIPT_ORDERS", "${samplesDir}/xml-telegram-to-receipt-orders.xml"
+    }
+    
+    javaexec {
+      classpath configurations.runtime, jar.outputs.files
+      main = 'org.opentcs.documentation.SamplesGenerator'
+      args "TELEGRAM_TO_RECEIPT_BATCH", "${samplesDir}/xml-telegram-to-receipt-batch.xml"
+    }
+    
+    javaexec {
+      classpath configurations.runtime, jar.outputs.files
+      main = 'org.opentcs.documentation.SamplesGenerator'
+      args "TELEGRAM_TO_BATCH", "${samplesDir}/xml-telegram-to-batch.xml"
+    }
+    
+    javaexec {
+      classpath configurations.runtime, jar.outputs.files
+      main = 'org.opentcs.documentation.SamplesGenerator'
+      args "TELEGRAM_VEHICLE_STATUS", "${samplesDir}/xml-telegram-vehicle-status.xml"
+    }
+    
+    javaexec {
+      classpath configurations.runtime, jar.outputs.files
+      main = 'org.opentcs.documentation.HttpSamples'
+      args "STATUS", "${samplesDir}/sample-status.json"
+    }
+    javaexec {
+      classpath configurations.runtime, jar.outputs.files
+      main = 'org.opentcs.documentation.HttpSamples'
+      args "STATUS_TRANSPORT_ORDERS", "${samplesDir}/sample-transport-orders.json"
+    }
+    javaexec {
+      classpath configurations.runtime, jar.outputs.files
+      main = 'org.opentcs.documentation.HttpSamples'
+      args "STATUS_SINGLE_TRANSPORT_ORDER", "${samplesDir}/sample-single-transport-order.json"
+    }
+    javaexec {
+      classpath configurations.runtime, jar.outputs.files
+      main = 'org.opentcs.documentation.HttpSamples'
+      args "STATUS_VEHICLES", "${samplesDir}/sample-vehicles.json"
+    }
+    javaexec {
+      classpath configurations.runtime, jar.outputs.files
+      main = 'org.opentcs.documentation.HttpSamples'
+      args "STATUS_SINGLE_VEHICLE", "${samplesDir}/sample-single-vehicle.json"
+    }
+    
+    javaexec {
+      classpath configurations.runtime, jar.outputs.files
+      main = 'org.opentcs.documentation.HttpSamples'
+      args "CREATE_ORDER", "${samplesDir}/sample-create-order.json"
+    }
+  }
+}
+
+task configdocgen {
+  dependsOn 'jar'
+  dependsOn ':openTCS-Kernel:jar'
+  dependsOn ':openTCS-KernelControlCenter:jar'
+  dependsOn ':openTCS-PlantOverview:jar'
+  
+  doLast {
+    mkdir(configDocDir)
+    
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/KernelApplicationConfigurationEntries.adoc",
+              "org.opentcs.kernel.KernelApplicationConfiguration"]
+    }
+    
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/ControlCenterConfigurationEntries.adoc",
+              "org.opentcs.kernel.extensions.controlcenter.ControlCenterConfiguration"]
+    }
+    
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/OrderPoolConfigurationEntries.adoc",
+              "org.opentcs.kernel.OrderPoolConfiguration"]
+    }
+
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/DefaultDispatcherConfigurationEntries.adoc",
+              "org.opentcs.strategies.basic.dispatching.DefaultDispatcherConfiguration"]
+    }
+    
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/DefaultRouterConfigurationEntries.adoc",
+              "org.opentcs.strategies.basic.routing.DefaultRouterConfiguration"]
+    }
+    
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/ShortestPathConfigurationEntries.adoc",
+              "org.opentcs.strategies.basic.routing.jgrapht.ShortestPathConfiguration"]
+    }
+    
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/AdminWebApiConfigurationEntries.adoc",
+              "org.opentcs.kernel.extensions.adminwebapi.AdminWebApiConfiguration"]
+    }
+
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/ServiceWebApiConfigurationEntries.adoc",
+              "org.opentcs.kernel.extensions.servicewebapi.ServiceWebApiConfiguration"]
+    }
+
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/RmiKernelInterfaceConfigurationEntries.adoc",
+              "org.opentcs.kernel.extensions.rmi.RmiKernelInterfaceConfiguration"]
+    }
+
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/XMLHostInterfaceConfigurationEntries.adoc",
+              "org.opentcs.kernel.extensions.xmlhost.XMLHostInterfaceConfiguration"]
+    }
+    
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/KernelSslConfigurationEntries.adoc",
+              "org.opentcs.kernel.SslConfiguration"]
+    }
+
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/StatisticsCollectorConfigurationEntries.adoc",
+              "org.opentcs.kernel.extensions.statistics.StatisticsCollectorConfiguration"]
+    }
+    
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/VirtualVehicleConfigurationEntries.adoc",
+              "org.opentcs.virtualvehicle.VirtualVehicleConfiguration"]
+    }
+    
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/KernelControlCenterApplicationConfigurationEntries.adoc",
+              "org.opentcs.kernelcontrolcenter.util.KernelControlCenterConfiguration"]
+    }
+    
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/KccSslConfigurationEntries.adoc",
+              "org.opentcs.kernelcontrolcenter.exchange.SslConfiguration"]
+    }
+    
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/PlantOverviewApplicationConfigurationEntries.adoc",
+              "org.opentcs.guing.util.PlantOverviewApplicationConfiguration"]
+    }
+    
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/PoSslConfigurationEntries.adoc",
+              "org.opentcs.guing.exchange.SslConfiguration"]
+    }
+    
+    javaexec {
+      classpath configurations.configdocgen
+      main = "org.opentcs.documentation.ConfigDocGenerator"
+      args = ["${configDocDir}/PO_ElementNamingSchemeConfigurationEntries.adoc",
+              "org.opentcs.guing.util.ElementNamingSchemeConfiguration"]
+    }
+  }
+}
