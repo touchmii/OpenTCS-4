@@ -59,8 +59,7 @@ import org.opentcs.strategies.basic.dispatching.selection.vehicles.IsReparkable;
  *
  * @author Stefan Walter (Fraunhofer IML)
  */
-public class DefaultDispatcherModule
-        extends KernelInjectionModule {
+public class DefaultDispatcherModule extends KernelInjectionModule {
 
     @Override
     protected void configure() {
