@@ -46,9 +46,7 @@ public class AssignmentCandidate {
    * @param driveOrders The drive orders containing the computed route the vehicle would take. May
    * not be empty.
    */
-  public AssignmentCandidate(Vehicle vehicle,
-                             TransportOrder transportOrder,
-                             List<DriveOrder> driveOrders) {
+  public AssignmentCandidate(Vehicle vehicle,                            TransportOrder transportOrder,                             List<DriveOrder> driveOrders) {
     this.vehicle = requireNonNull(vehicle, "vehicle");
     this.transportOrder = requireNonNull(transportOrder, "transportOrder");
     this.driveOrders = requireNonNull(driveOrders, "driveOrders");

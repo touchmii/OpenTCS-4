@@ -1,6 +1,6 @@
 /**
  * Copyright (c) The openTCS Authors.
- *
+ * <p>
  * This program is free software and subject to the MIT license. (For details,
  * see the licensing information (LICENSE.txt) you should have received with
  * this copy of the software.)
@@ -9,6 +9,7 @@ package org.opentcs.strategies.basic.dispatching.selection;
 
 import java.util.Collection;
 import java.util.function.Function;
+
 import org.opentcs.data.order.TransportOrder;
 
 /**
@@ -18,6 +19,5 @@ import org.opentcs.data.order.TransportOrder;
  *
  * @author Martin Grzenia (Fraunhofer IML)
  */
-public interface TransportOrderSelectionFilter
-    extends Function<TransportOrder, Collection<String>> {
+public interface TransportOrderSelectionFilter extends Function<TransportOrder, Collection<String>> {
 }
