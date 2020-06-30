@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<transportOrders>
+    <transportOrder deadline="PLUS_ONE_HOUR" intendedVehicle="Vehicle-01">
+        <driveOrder locationName="Goods in north 01" vehicleOperation="Load cargo"/>
+        <driveOrder locationName="Goods out 01" vehicleOperation="Unload cargo"/>
+        <driveOrder locationName="Goods in north 01" vehicleOperation="Load cargo"/>
+        <driveOrder locationName="Goods out 02" vehicleOperation="Unload cargo"/>
+    </transportOrder>
+    <transportOrder deadline="PLUS_ONE_HOUR" intendedVehicle="Vehicle-02">
+        <driveOrder locationName="Goods in north 01" vehicleOperation="Load cargo"/>
+        <driveOrder locationName="Goods out 02" vehicleOperation="Unload cargo"/>
+    </transportOrder>
+    <transportOrder deadline="PLUS_ONE_HOUR" intendedVehicle="Vehicle-03">
+        <driveOrder locationName="Goods in north 02" vehicleOperation="Load cargo"/>
+        <driveOrder locationName="Goods out 02" vehicleOperation="Unload cargo"/>
+        <driveOrder locationName="Goods in south 01" vehicleOperation="Load cargo"/>
+        <driveOrder locationName="Goods out 01" vehicleOperation="Unload cargo"/>
+    </transportOrder>
+    <transportOrder deadline="PLUS_ONE_HOUR" intendedVehicle="Vehicle-04">
+        <driveOrder locationName="Goods in north 02" vehicleOperation="Load cargo"/>
+        <driveOrder locationName="Storage 02" vehicleOperation="Unload cargo"/>
+    </transportOrder>
+</transportOrders>

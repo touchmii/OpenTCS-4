@@ -51,6 +51,7 @@ public abstract class BasicVehicleCommAdapter implements VehicleCommAdapter, Pro
     private static final Logger LOG = LoggerFactory.getLogger(BasicVehicleCommAdapter.class);
     /**
      * An observable model of the vehicle's and its comm adapter's attributes.
+     * VhehicleProcessModel是驱动跟内核通信的桥梁，
      */
     private final VehicleProcessModel vehicleModel;
     /**
@@ -440,11 +441,15 @@ public abstract class BasicVehicleCommAdapter implements VehicleCommAdapter, Pro
                     if (curCmd != null) {
                         try {
                             sendCommand(curCmd);
+                            //发送驱动订单，驱动需实现sendCommand抽象函数，接收curCmd
                             getSentQueue().add(curCmd);
+                            //添加驱动订单到已经发送订单队列
                             getProcessModel().commandSent(curCmd);
+                            //通知内核已经发送驱动订单到车辆
                         } catch (IllegalArgumentException exc) {
                             LOG.warn("{}: Failed sending command {}", getName(), curCmd, exc);
                             getProcessModel().commandFailed(curCmd);
+                            //通知内核驱动订单发送失败
                         }
                     }
                 }

@@ -14,6 +14,8 @@ dependencies {
   compile project(':openTCS-CommAdapter-Loopback')
   compile project(':openTCS-Impl-Configuration-cfg4j')
   compile project(':openTCS-Example-CommAdapter')
+  compile project(':openTCS-Example-CommAdapter-Modbus')
+//  compile project(':openTCS-LaurusTCS-CommAdapter-Vehicle')
   runtime group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.21'
 }
 

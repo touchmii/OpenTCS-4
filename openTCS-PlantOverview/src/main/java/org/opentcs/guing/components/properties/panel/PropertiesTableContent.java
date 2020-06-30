@@ -211,7 +211,7 @@ public class PropertiesTableContent
     return "";
   }
 
-  @Override  // AbstractAttributesContent
+  @Override  //
   public void reset() {
     if (fModel != null) {
       fModel.removeAttributesChangeListener(this);
