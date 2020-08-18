@@ -4,6 +4,8 @@ apply from: "${rootDir}/gradle/license-headers.gradle"
 dependencies {
   compile project(':openTCS-API-Injection')
   compile project(':openTCS-Common')
+//  compile group: 'org.opentcs', name: 'opentcs-kernel', version: "4.17.0"
+//  runtime project(':openTCS-Kernel')
 }
 
 task release {

@@ -1,8 +1,10 @@
 package com.zjw.vehicle;
 
+//package com.lvsrobot.vehicletcp;
+
 public class AgvTelegram {
     private SocketUtils socket;
-
+    AgvInfo agvInfo = new AgvInfo();
     public AgvTelegram(String ip, int port) {
         socket = new SocketUtils(ip, port);
     }
@@ -18,27 +20,28 @@ public class AgvTelegram {
     }
 
     public AgvInfo getAgvInfo() {
-        byte[] sendBytes = new byte[8];
-        sendBytes[0] = 'a';
-        sendBytes[1] = 0;
-        sendBytes[2] = 0;
-        sendBytes[3] = 0;
-        sendBytes[4] = 0;
-        sendBytes[5] = 0;
-        sendBytes[6] = 0;
-        sendBytes[7] = 0;
+        byte[] sendBytes = {0, 1, 2, 1, (byte)253};
+//        sendBytes[0] = 'a';
+//        sendBytes[1] = 0;
+//        sendBytes[2] = 0;
+//        sendBytes[3] = 0;
+//        sendBytes[4] = 0;
+//        sendBytes[5] = 0;
+//        sendBytes[6] = 0;
+//        sendBytes[7] = 0;
         byte[] retBytes = socket.send(sendBytes);
         if (retBytes == null)
             return null;
-        if (retBytes.length != 8) {
+        if (retBytes.length < 18) {
             return null;
         }
-        AgvInfo agvInfo = new AgvInfo();
-        agvInfo.setPosition(byteToUnsignedInt(retBytes[1]) << 8 | byteToUnsignedInt(retBytes[2]));
-        agvInfo.setSpeed(byteToUnsignedInt(retBytes[3]));
-        agvInfo.setElectric(byteToUnsignedInt(retBytes[4]));
-        agvInfo.setException(byteToUnsignedInt(retBytes[5]));
-        agvInfo.setStatus(byteToUnsignedInt(retBytes[6]));
+//        AgvInfo agvInfo = new AgvInfo();
+        agvInfo.setPosition(byteToUnsignedInt(retBytes[6]) << 8 | byteToUnsignedInt(retBytes[7]));
+        agvInfo.setSpeed(byteToUnsignedInt(retBytes[8]));
+        agvInfo.setAngle(byteToUnsignedInt(retBytes[9]));
+        agvInfo.setElectric(byteToUnsignedInt(retBytes[11]));
+//        agvInfo.setException(byteToUnsignedInt(retBytes[5]));
+        agvInfo.setStatus(byteToUnsignedInt(retBytes[12]));
         return agvInfo;
     }
 

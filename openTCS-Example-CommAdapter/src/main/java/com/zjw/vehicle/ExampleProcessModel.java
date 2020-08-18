@@ -323,6 +323,10 @@ public class ExampleProcessModel extends VehicleProcessModel implements Velocity
         this.port = port;
     }
 
+//    public double getAngle() { return orientationAngle;}
+
+//    public void setAngle(int angle) { orientationAngle = (double)angle; }
+
     /**
      * Notification arguments to indicate some change.
      */

@@ -22,11 +22,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
+import org.opentcs.access.LocalKernel;
 import org.opentcs.common.LoopbackAdapterConstants;
 import org.opentcs.customizations.kernel.KernelExecutor;
 import org.opentcs.data.ObjectPropConstants;
 import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.model.Vehicle.Orientation;
+import org.opentcs.data.order.DriveOrder;
+import org.opentcs.data.order.Route;
 import org.opentcs.data.order.Route.Step;
 import org.opentcs.drivers.vehicle.BasicVehicleCommAdapter;
 import org.opentcs.drivers.vehicle.LoadHandlingDevice;
@@ -36,6 +39,8 @@ import org.opentcs.drivers.vehicle.VehicleCommAdapter;
 import org.opentcs.drivers.vehicle.VehicleProcessModel;
 import org.opentcs.drivers.vehicle.management.VehicleProcessModelTO;
 import org.opentcs.drivers.vehicle.messages.SetSpeedMultiplier;
+//import org.opentcs.kernel.vehicles.DefaultVehicleController;
+//import org.opentcs.kernel.vehicles.DefaultVehicleControllerPool;
 import org.opentcs.util.CyclicTask;
 import org.opentcs.util.ExplainedBoolean;
 import org.opentcs.virtualvehicle.VelocityController.WayEntry;
@@ -104,6 +109,48 @@ public class LoopbackCommunicationAdapter extends BasicVehicleCommAdapter implem
      * Whether the loopback adapter is initialized or not.
      */
     private boolean initialized;
+
+    private DriveOrder currentDriveOrder = null;
+
+    private Route route = null;
+
+    private LocalKernel kernel;
+
+    private ConfigRoute configRoute = new ConfigRoute();
+
+//    @Inject
+//    private DefaultVehicleControllerPool defaultVehicleControllerPool;
+    @Override
+    public DriveOrder getcurrentDriveOrder() {
+        return currentDriveOrder;
+    }
+
+    @Override
+    public void setcurrentDriveOrder(DriveOrder currentDriveOrder1) {
+        this.currentDriveOrder = currentDriveOrder1;
+        return;
+    }
+
+    @Override
+    public void setRoute(Route route1) {
+        route = route1;
+        return;
+    }
+
+    @Override
+    public Route getRoute() {
+        return this.route;
+    }
+
+//    @Override
+//    public void setlocalKernel(LocalKernel localkernel) {
+//        this.kernel = localkernel;
+//    }
+//
+//    @Override
+//    public LocalKernel getKernel() {
+//        return this.kernel;
+//    }
 
     /**
      * Creates a new instance.
@@ -325,6 +372,7 @@ public class LoopbackCommunicationAdapter extends BasicVehicleCommAdapter implem
          */
         private int simAdvanceTime;
 
+
         /**
          * Creates a new VehicleSimluationTask.
          */
@@ -334,6 +382,9 @@ public class LoopbackCommunicationAdapter extends BasicVehicleCommAdapter implem
 
         @Override
         protected void runActualTask() {
+            if(currentDriveOrder != null) {
+                configRoute.setRoute(currentDriveOrder);
+            }
             final MovementCommand curCommand;
             synchronized (LoopbackCommunicationAdapter.this) {
                 curCommand = getSentQueue().peek();
@@ -449,6 +500,19 @@ public class LoopbackCommunicationAdapter extends BasicVehicleCommAdapter implem
             }
         }
     }
+
+//    private Route getCurrentRoute() {
+//        DefaultVehicleController vehicleController =
+//                (DefaultVehicleController) defaultVehicleControllerPool.getVehicleController(getName());
+//        DriveOrder currentDriveOrder = vehicleController.getCurrentDriveOrder();
+//        if (currentDriveOrder != null) {
+//            Route route = currentDriveOrder.getRoute();
+//            return route;
+//        } else {
+//            LOG.info("Current DriveOrder is NULL...");
+//            return null;
+//        }
+//    }
 
     /**
      * The vehicle's possible load states.

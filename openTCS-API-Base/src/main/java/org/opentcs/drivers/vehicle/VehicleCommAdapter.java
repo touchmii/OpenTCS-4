@@ -7,13 +7,17 @@
  */
 package org.opentcs.drivers.vehicle;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opentcs.access.Kernel;
+import org.opentcs.access.LocalKernel;
 import org.opentcs.components.Lifecycle;
+import org.opentcs.data.model.Point;
+import org.opentcs.data.order.DriveOrder;
 import org.opentcs.drivers.vehicle.management.VehicleProcessModelTO;
 import org.opentcs.util.ExplainedBoolean;
 import org.opentcs.util.annotations.ScheduledApiChange;
@@ -82,6 +86,28 @@ public interface VehicleCommAdapter
    */
   @Nonnull
   Queue<MovementCommand> getCommandQueue();
+
+  /**
+   * 返回此驱动器的当前订单.
+   *
+   * @return This adapter's current DriveOrder.
+   */
+  DriveOrder getcurrentDriveOrder();
+
+  /**
+   * 设置此驱动器的当前订单
+   *
+   * @param currentDriveOrder 驱动器当前订单
+   */
+  void setcurrentDriveOrder(DriveOrder currentDriveOrder);
+
+  /**
+   * 设置此驱动器的内核模型
+   * @param kernel 当前内核模型
+   */
+  void setKernel(LocalKernel kernel);
+
+  void setPointLists(List<Point> Points);
 
   /**
    * Returns the capacity of this adapter's <em>sent queue</em>.

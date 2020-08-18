@@ -314,6 +314,7 @@ public class AssignFreeOrdersPhase implements Phase {
         // vehicle's ProcState to become IDLE.
         if (candidate.getVehicle().getTransportOrder() == null) {
             LOG.debug("Assigning transport order '{}' to vehicle '{}'...", candidate.getTransportOrder().getName(), candidate.getVehicle().getName());
+            LOG.info("Assigning transport order '{}' to vehicle '{}'...", candidate.getTransportOrder().getName(), candidate.getVehicle().getName());
             doMarkAsAssigned(candidate.getTransportOrder(), candidate.getVehicle());
             transportOrderUtil.assignTransportOrder(candidate.getVehicle(), candidate.getTransportOrder(), candidate.getDriveOrders());
             assignmentState.getAssignedCandidates().add(candidate);

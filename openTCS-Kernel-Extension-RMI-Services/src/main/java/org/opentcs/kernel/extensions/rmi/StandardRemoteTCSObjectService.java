@@ -67,7 +67,7 @@ public abstract class StandardRemoteTCSObjectService
   }
 
   @Override
-  public <T extends TCSObject<T>> T fetchObject(ClientID clientId, Class<T> clazz, String name) {
+  public <T extends TCSObject<T>> T   fetchObject(ClientID clientId, Class<T> clazz, String name) {
     userManager.verifyCredentials(clientId, UserPermission.READ_DATA);
 
     return objectService.fetchObject(clazz, name);

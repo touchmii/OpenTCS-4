@@ -21,7 +21,7 @@ include 'openTCS-PlantOverview-Themes-Default'
 include 'openTCS-Documentation'
 include 'Simulation'
 include 'openTCS-Example-CommAdapter'
+include 'openTCS-Example-CommAdapter-TCP'
 include 'openTCS-Example-CommAdapter-Modbus'
 //include 'openTCS-LaurusTCS-CommAdapter-Vehicle'
 //include 'Simulator-Modbus'
-

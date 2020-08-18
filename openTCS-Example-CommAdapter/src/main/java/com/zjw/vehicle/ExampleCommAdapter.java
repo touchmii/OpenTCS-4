@@ -120,6 +120,9 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
         agv = new AgvTelegram(getProcessModel().getIp(), getProcessModel().getPort());
 
         getProcessModel().getVelocityController().addVelocityListener(getProcessModel());
+
+//        double b = 170.0;
+//        getProcessModel().setVehicleOrientationAngle(b);
         // Create task for vehicle simulation.
         vehicleSimulationTask = new VehicleSimulationTask();
         Thread simThread = new Thread(vehicleSimulationTask, getName() + "-simulationTask");
@@ -269,7 +272,11 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                 } else if (currentStatus == 1) {
                     getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
                 }
-
+//                getProcessModel().setAngle(agvInfo.getAngle());
+//                int a = agvInfo.getAngle();
+//                double b = 170.0;
+//                getProcessModel().setVehicleOrientationAngle(b);
+//                LOG.info("agv angle{}",a);
 
                 final MovementCommand curCommand;
                 synchronized (ExampleCommAdapter.this) {

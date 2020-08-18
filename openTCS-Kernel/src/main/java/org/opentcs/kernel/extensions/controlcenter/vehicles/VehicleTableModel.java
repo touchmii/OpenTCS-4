@@ -210,7 +210,8 @@ final class VehicleTableModel
         return true;
       case POSITION_COLUMN:
         VehicleCommAdapter commAdapter = entries.get(rowIndex).getCommAdapter();
-        return commAdapter instanceof SimVehicleCommAdapter && commAdapter.isEnabled();
+        return commAdapter.isEnabled();
+//        return commAdapter instanceof SimVehicleCommAdapter && commAdapter.isEnabled();
       default:
         return false;
     }

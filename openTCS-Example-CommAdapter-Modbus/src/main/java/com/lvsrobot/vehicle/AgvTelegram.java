@@ -1,15 +1,24 @@
 package com.lvsrobot.vehicle;
 
 import de.re.easymodbus.modbusclient.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AgvTelegram {
     private ModbusClient modbusClient;
+    private static final Logger LOG = LoggerFactory.getLogger(AgvTelegram.class);
 //    private SocketUtils socket;
 
 //    public AgvTelegram(String ip, int port) {
 //        socket = new SocketUtils(ip, port);
 //    }
-    public AgvTelegram(String ip, int port) {modbusClient = new ModbusClient(ip, port); }
+//    AgvInfo agvInfo = new AgvInfo();
+    public AgvTelegram(String ip, int port) {
+        if (modbusClient == null) {
+
+            modbusClient = new ModbusClient(ip, port);
+        }
+    }
 
     /**
      * byte转无符号int
@@ -31,6 +40,7 @@ public class AgvTelegram {
                 this.modbusClient.Connect();
             } catch (Exception e) {
 
+//                disConnecte();
             }
         }
     }
@@ -40,7 +50,7 @@ public class AgvTelegram {
 
                 this.modbusClient.Disconnect();
             } catch (Exception e) {
-
+                LOG.info("Exception :{}", e);
             }
         }
     }
@@ -56,15 +66,19 @@ public class AgvTelegram {
         sendBytes[6] = 0;
         sendBytes[7] = 0;
 //        byte[] retBytes = socket.send(sendBytes);
-        int[] retReadInputRegisters = new int[5];
+        int[] retReadInputRegisters = new int[40];
         try {
 //            modbusClient.Connect();
-            if(!this.isConnected()) {
-                this.Connecte();
-            }
-            retReadInputRegisters = modbusClient.ReadInputRegisters(0,5);
+//            if(!this.isConnected()) {
+            this.Connecte();
+//            }
+            retReadInputRegisters = modbusClient.ReadHoldingRegisters(0,35);
+//            modbusClient.Disconnect();
         }   catch (Exception e) {
-
+            LOG.info("Exception :{}", e);
+//            modbusClient.Disconnect();
+            this.disConnecte();
+            return null;
 
         }
 //        if (retBytes == null)
@@ -73,16 +87,29 @@ public class AgvTelegram {
 //            return null;
 //        }
         AgvInfo agvInfo = new AgvInfo();
-//        agvInfo.setPosition(byteToUnsignedInt(retBytes[1]) << 8 | byteToUnsignedInt(retBytes[2]));
+//        agvInfo.setCurrentPosition({byteToUnsignedInt(retBytes[0]) << 8 | byteToUnsignedInt(retBytes[1]), byteToUnsignedInt(retBytes[2]) << 8 | byteToUnsignedInt(retBytes[3])});
 //        agvInfo.setSpeed(byteToUnsignedInt(retBytes[3]));
 //        agvInfo.setElectric(byteToUnsignedInt(retBytes[4]));
 //        agvInfo.setException(byteToUnsignedInt(retBytes[5]));
 //        agvInfo.setStatus(byteToUnsignedInt(retBytes[6]));
-        agvInfo.setPosition(retReadInputRegisters[0]);
-        agvInfo.setSpeed(retReadInputRegisters[1]);
-        agvInfo.setElectric(retReadInputRegisters[2]);
-        agvInfo.setException(retReadInputRegisters[3]);
-        agvInfo.setStatus(retReadInputRegisters[4]);
+//        agvInfo.setPosition(retReadInputRegisters[0]);
+//        agvInfo.setSpeed(retReadInputRegisters[]);
+//        agvInfo.setElectric(retReadInputRegisters[2]);
+//        agvInfo.setException(retReadInputRegisters[3]);
+        agvInfo.setStatus(retReadInputRegisters[7]);
+        int precisePosition[] = {retReadInputRegisters[0]*10, retReadInputRegisters[1]*10};
+        agvInfo.setPrecisePosition(precisePosition);
+        int currentPosition[] = {retReadInputRegisters[12]*10, retReadInputRegisters[13]*10};
+        agvInfo.setCurrentPosition(currentPosition);
+        int previousPosition[] = {retReadInputRegisters[14]*10, retReadInputRegisters[15]*10};
+        agvInfo.setPreviousPositon(previousPosition);
+        double orientation = (double)retReadInputRegisters[7];
+        agvInfo.setVehicleOrientation(orientation);
+        agvInfo.setBattery(retReadInputRegisters[10]);
+        agvInfo.setLoadStatus(retReadInputRegisters[32]);
+
+//        agvInfo.setCurrent_position_id(retReadInputRegisters[13]);
+//        agvInfo.setBattery(retReadInputRegisters[14]);
 //        agvInfo.
 
         return agvInfo;
@@ -110,11 +137,17 @@ public class AgvTelegram {
 //        }
 //        return true;
 //    }
-    public boolean sendPath(int dest) {
+    public boolean sendPath(int[] path) {
         try {
-
-            modbusClient.WriteSingleRegister(1,dest);
+              this.Connecte();
+//            if(!modbusClient.isConnected()) {
+//                modbusClient.Connect();
+//            }
+//            modbusClient.WriteSingleRegister(100,path);
+            modbusClient.WriteMultipleRegisters(100,path);
         } catch (Exception e) {
+            LOG.info("send path error: {}", e);
+            this.disConnecte();
             return false;
         }
         return true;

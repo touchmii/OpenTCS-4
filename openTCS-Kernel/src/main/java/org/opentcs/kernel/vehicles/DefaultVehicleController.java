@@ -22,6 +22,7 @@ import java.util.Objects;
 import static java.util.Objects.requireNonNull;
 import java.util.Queue;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -221,6 +222,10 @@ public class DefaultVehicleController
     updateVehicleState(commAdapter.getProcessModel().getVehicleState());
     updateCommAdapterState(commAdapter.getProcessModel().getVehicleAdapterState());
 
+    //设置适配器当前内核模型
+//    commAdapter.setKernel(this.localKernel);
+    commAdapter.setPointLists(this.localKernel.getTCSObjects(Point.class).stream().collect(Collectors.toList()));
+
     // Add a first entry into allocatedResources to shift freeing of resources
     // in commandExecuted() by one - we need to free the resources allocated for
     // the command before the one executed there.
@@ -309,6 +314,8 @@ public class DefaultVehicleController
       lastCommandExecuted = null;
       vehicleService.updateVehicleRouteProgressIndex(vehicle.getReference(),
                                                      Vehicle.ROUTE_INDEX_DEFAULT);
+      //设置驱动器当前订单
+      commAdapter.setcurrentDriveOrder(newOrder);
       createFutureCommands(newOrder, orderProperties);
 
       if (canSendNextCommand()) {
@@ -362,6 +369,10 @@ public class DefaultVehicleController
         allocateForNextCommand();
       }
     }
+  }
+
+  public DriveOrder getCurrentDriveOrder() {
+    return currentDriveOrder;
   }
 
   private boolean driveOrdersContinual(DriveOrder oldOrder, DriveOrder newOrder) {
