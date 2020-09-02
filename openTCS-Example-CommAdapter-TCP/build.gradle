@@ -1,0 +1,22 @@
+apply from: "${rootDir}/gradle/guice-project.gradle"
+
+dependencies {
+    compile project(':openTCS-API-Injection')
+    compile project(':openTCS-Common')
+
+    compile group: 'org.opentcs.contrib', name: 'opentcs-contrib-tcp-netty', version: '0.13.0'
+    compileOnly group: 'org.opentcs.contrib', name: 'opentcs-contrib-tcp-netty', version: '0.13.0', classifier: 'sources'
+
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+    compileOnly group: 'commons-codec', name: 'commons-codec', version: '1.10', classifier: 'sources'
+
+//    implementation 'com.littlegreens.netty.client:nettyclientlib:1.0.5'
+//    implementation 'org.nd4j:nd4j:1.0.0-beta7'
+    // https://mvnrepository.com/artifact/org.nd4j/nd4j-api
+    compile group: 'org.nd4j', name: 'nd4j-api', version: '1.0.0-beta7'
+
+}
+
+task release {
+    dependsOn build
+}
