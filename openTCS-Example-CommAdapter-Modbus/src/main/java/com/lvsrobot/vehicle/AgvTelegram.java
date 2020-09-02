@@ -1,8 +1,14 @@
 package com.lvsrobot.vehicle;
 
+import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
+import de.re.easymodbus.exceptions.ConnectionException;
+import de.re.easymodbus.exceptions.ModbusException;
 import de.re.easymodbus.modbusclient.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.UnknownHostException;
 
 public class AgvTelegram {
     private ModbusClient modbusClient;
@@ -38,8 +44,8 @@ public class AgvTelegram {
             try {
 
                 this.modbusClient.Connect();
-            } catch (Exception e) {
-
+            } catch (IOException e) {
+                LOG.info("ModbusIOException: {}", e.toString());
 //                disConnecte();
             }
         }
@@ -49,8 +55,8 @@ public class AgvTelegram {
             try {
 
                 this.modbusClient.Disconnect();
-            } catch (Exception e) {
-                LOG.info("Exception :{}", e);
+            } catch (IOException e) {
+                LOG.info("IO Exception :{}", e.toString());
             }
         }
     }
@@ -74,13 +80,20 @@ public class AgvTelegram {
 //            }
             retReadInputRegisters = modbusClient.ReadHoldingRegisters(0,35);
 //            modbusClient.Disconnect();
-        }   catch (Exception e) {
-            LOG.info("Exception :{}", e);
+        }   catch (ConnectionException e) {
+//            LOG.info("ConnectionException Message :{}", e.getMessage());
+            LOG.info("ConnectionException String:{}", e.getMessage());
+//            LOG.info("ConnectionException Cause:{}", e.getCause());
 //            modbusClient.Disconnect();
             this.disConnecte();
             return null;
 
+        }  catch (ModbusException e) {
+            LOG.info("ModbusExcepiton: {}", e.getMessage());
+        }   catch (Exception e) {
+            LOG.info("UnknownHostExcetion: {}", e.getMessage());
         }
+
 //        if (retBytes == null)
 //            return null;
 //        if (retBytes.length != 8) {
@@ -144,12 +157,51 @@ public class AgvTelegram {
 //                modbusClient.Connect();
 //            }
 //            modbusClient.WriteSingleRegister(100,path);
-            modbusClient.WriteMultipleRegisters(100,path);
-        } catch (Exception e) {
-            LOG.info("send path error: {}", e);
+            modbusClient.WriteMultipleRegisters(100, path);
+        } catch (ConnectionException e) {
+            LOG.info("send path error: {}", e.getMessage());
             this.disConnecte();
             return false;
+        } catch (Exception e) {
+            LOG.info("Exception: {}", e.getMessage());
         }
         return true;
+    }
+
+    public boolean abortPath() {
+        try {
+            this.Connecte();
+            modbusClient.WriteSingleRegister(56, 1);
+        } catch ( ConnectionException e ) {
+            LOG.info("abort path error: {}", e.toString());
+            this.disConnecte();
+            return false;
+        } catch (Exception e) {
+            LOG.info("Exception: {}", e.toString());
+        }
+        return true;
+    }
+
+    public boolean sendData(int address, int reg, String error_msg) {
+        try {
+            this.Connecte();
+            modbusClient.WriteSingleRegister(address, reg);
+        } catch (ConnectionException e) {
+            LOG.info("connection error: {}, send msg: {}", e.toString(), error_msg);
+            this.disConnecte();
+            return false;
+        } catch (Exception e) {
+            LOG.info("Exception: {}", e.toString());
+        }
+        return true;
+
+    }
+
+    public boolean pauseVehicle() {
+        return sendData(55, 1, "pauseVehicle");
+    }
+
+    public boolean resumeVehicle() {
+        return sendData(55,1, "resumeVehicle");
     }
 }

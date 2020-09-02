@@ -291,12 +291,13 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
         getProcessModel().setVehicleState(Vehicle.State.IDLE);
 //        Triple precisePosition = new Triple((long)currentPosition[0], (long)currentPosition[1], 0);
         List<Point> PointList = getPointLists().stream().filter(point -> Math.abs(point.getPosition().getX() - precisePosition.getX()) < 500).filter(point -> Math.abs(point.getPosition().getY() - precisePosition.getY()) < 500).collect(Collectors.toList());
-        LOG.info("PointList: {}", PointList);
+
         switch( PointList.size() ) {
             case 0:
                 return null;
             case 1:
                 currentPoint = PointList.get(0);
+                LOG.info("PointList: {}", PointList);
                 return PointList.get(0).getName();
             default:
                 currentPoint = PointList.get(0);
@@ -315,6 +316,11 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
         int path[] = {0, 0, 3, 0, (int)agvInfo.getPrecisePosition().getX()/10, (int)agvInfo.getPrecisePosition().getY()/10, 365, 0, (int)currentPoint.getPosition().getX()/10, (int)agvInfo.getPrecisePosition().getY()/10, 365, 0, (int)currentPoint.getPosition().getX()/10, (int)currentPoint.getPosition().getY()/10, 365};
         return path;
     }
+   @Override
+   public void abortDriveOrder() {
+        LOG.info("abort path");
+        agv.abortPath();
+   }
 
     private class VehicleSimulationTask extends CyclicTask {
         private int simAdvanceTime;
@@ -356,6 +362,10 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                 getProcessModel().setVehiclePrecisePosition(agvInfo.getPrecisePosition());
                 getProcessModel().setVehicleOrientationAngle(agvInfo.getVehicleOrientation());
                 getProcessModel().setVehicleEnergyLevel(agvInfo.getBattery());
+                getProcessModel().setMaxFwdVelocity(agvInfo.getSpeed());
+                getProcessModel().setMaxRevVelocity(agvInfo.getSpeed());
+                getProcessModel().setVehicleMaxVelocity(agvInfo.getSpeed());
+//                LOG.info("get vehicle max speed {}", getProcessModel().getVehicleMaxVelocity());
 //                LOG.info("vehicle battery : {}", agvInfo.getBattery());
 
 //                getProcessModel().setVehiclePosition(currentPoint);
@@ -366,6 +376,14 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                     getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
                 }
 
+                if (sendDriveOrder != null  && getSentQueue().size() == 0) {
+                    LOG.info("abort path :{}", currentDriveOrder.getRoute());
+                    agv.abortPath();
+                    sendDriveOrder = null;
+                    curCommand = null;
+                    currentCommand = null;
+                    sendDriveOrder = null;
+                }
                 if(currentCommand == null && curCommand == null && getSentQueue().size() > 0) {
 
                     synchronized (ExampleCommAdapter.this) {
@@ -455,6 +473,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                 Thread.sleep(200);
             } catch (Exception ex) {
                 LOG.error(ex.getMessage());
+//                LOG.error(ex.printStackTrace());
             }
         }
 

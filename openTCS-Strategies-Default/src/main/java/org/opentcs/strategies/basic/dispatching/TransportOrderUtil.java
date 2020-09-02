@@ -348,6 +348,8 @@ public class TransportOrderUtil implements Lifecycle {
 
         // Mark the order as withdrawn so we can react appropriately when the
         // vehicle reports the remaining movements as finished
+        //将订单标记为已撤回，以便
+        // 当车辆报告剩余运动完成时我们可以做出适当的反应
         if (!order.getState().isFinalState() && !order.hasState(TransportOrder.State.WITHDRAWN)) {
             updateTransportOrderState(order.getReference(), TransportOrder.State.WITHDRAWN);
         }

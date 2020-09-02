@@ -211,8 +211,8 @@ public class SingleVehicleView
 
   private void updateVehicleState() {
     Vehicle.State state = (Vehicle.State) fVehicleModel.getPropertyState().getValue();
-
-    vehicleStateValueLabel.setText(state.toString());
+    vehicleStateValueLabel.setText(BUNDLE.getString(String.format("singleVehicleView.status_%s", state.toString().toLowerCase())));
+//    vehicleStateValueLabel.setText(state.toString());
 
     switch (state) {
       case ERROR:

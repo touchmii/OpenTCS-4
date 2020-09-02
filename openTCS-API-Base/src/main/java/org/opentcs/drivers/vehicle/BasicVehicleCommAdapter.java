@@ -133,6 +133,11 @@ public abstract class BasicVehicleCommAdapter implements VehicleCommAdapter, Pro
         return;
     }
 
+    public void abortDriveOrder() {
+        this.currentDriveOrder = null;
+        return;
+    }
+
 
     public void setRoute(Route route1) {
         route = route1;

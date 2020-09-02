@@ -17,6 +17,8 @@ dependencies {
     implementation 'com.github.zengfr:easymodbus4j-extension:0.0.5'
     implementation 'org.apache.plc4x:plc4j-driver-modbus:0.7.0'
     implementation 'com.intelligt.modbus:jlibmodbus:1.2.9.7'
+    implementation 'uk.co.caprica:vlcj:4.5.2'
+    implementation 'com.github.dathlin:HslCommunication:2.0.0'
 }
 
 task release {

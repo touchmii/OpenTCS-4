@@ -241,6 +241,7 @@ public class DefaultVehicleController
       return;
     }
 
+    //去除适配器监听器
     commAdapter.getProcessModel().removePropertyChangeListener(this);
     // Reset the vehicle's position.
     updatePosition(null, null);
@@ -256,6 +257,7 @@ public class DefaultVehicleController
     initialized = false;
   }
 
+  //属性变更回调函数，使用getProcessModel发送车辆消息监听到车辆属性变更是调用
   @Override
   public void propertyChange(PropertyChangeEvent evt) {
     if (evt.getSource() != commAdapter.getProcessModel()) {
@@ -349,6 +351,7 @@ public class DefaultVehicleController
 
       // Update the current drive order and future commands
       currentDriveOrder = newOrder;
+      commAdapter.setcurrentDriveOrder(newOrder);
       // There is a new drive order, so discard all the future/scheduled commands of the old one.
       discardFutureCommands();
 
@@ -434,6 +437,9 @@ public class DefaultVehicleController
   public void clearDriveOrder() {
     synchronized (commAdapter) {
       currentDriveOrder = null;
+      //更新当前驱动订单为空
+      commAdapter.setcurrentDriveOrder(null);
+      commAdapter.abortDriveOrder();
 
       // Clear pending resource allocations. If they still arrive, we will
       // refuse them in allocationSuccessful().
@@ -452,6 +458,9 @@ public class DefaultVehicleController
         LOG.debug("{}: No drive order to be aborted", vehicle.getName());
         return;
       }
+      //更新当前驱动订单为空
+      commAdapter.setcurrentDriveOrder(null);
+      commAdapter.abortDriveOrder();
       futureCommands.clear();
     }
   }
@@ -592,6 +601,7 @@ public class DefaultVehicleController
   }
 
   @SuppressWarnings({"unchecked", "deprecation"})
+  //处理驱动器消息类型，调用不同的处理函数，如指令发送成功或位置变更
   private void handleProcessModelEvent(PropertyChangeEvent evt) {
     eventBus.onEvent(new ProcessModelEvent(evt.getPropertyName(),
                                            commAdapter.createTransferableProcessModel()));
@@ -689,6 +699,8 @@ public class DefaultVehicleController
     // might expect. The vehicle is physically there, even if it shouldn't be.
     // The same is true for null values - if the vehicle says it's not on any
     // known position, it has to be treated as a fact.
+    //将车辆放在给定位置，而不管内核可能期望什么。车辆实际上在那儿，即使不应该在那儿。
+    // 对于空值也是如此-如果车辆说它不在任何已知位置，则必须将其视为事实。
     Point point;
     if (position == null) {
       point = null;
@@ -698,6 +710,9 @@ public class DefaultVehicleController
       // If the new position is not in the model, ignore it. (Some vehicles/drivers send 
       // intermediate positions that cannot be order destinations and thus do not exist in
       // the model.
+      //如果新位置不在模型中，请忽略它。 （某些车辆/驾驶员发送
+      // 中间位置，它们不能作为订购目的地，因此
+      // 不存在于模型中。
       if (point == null) {
         LOG.warn("{}: At unknown position {}", vehicle.getName(), position);
         return;

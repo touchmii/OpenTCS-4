@@ -248,10 +248,11 @@ final class VehicleTableModel
   private String getVehicleState(VehicleEntry entry) {
     VehicleCommAdapter commAdapter = entry.getCommAdapter();
     if (commAdapter == null) {
-      return Vehicle.State.UNKNOWN.name();
+//      return Vehicle.State.UNKNOWN.name();
+      return BUNDLE.getString("Status_UNKNOWN");
     }
     else {
-      return commAdapter.getProcessModel().getVehicleState().name();
+      return BUNDLE.getString(String.format("Status_%s", commAdapter.getProcessModel().getVehicleState().name()));
     }
   }
 

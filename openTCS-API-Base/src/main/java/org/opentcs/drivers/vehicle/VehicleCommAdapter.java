@@ -100,6 +100,7 @@ public interface VehicleCommAdapter
    * @param currentDriveOrder 驱动器当前订单
    */
   void setcurrentDriveOrder(DriveOrder currentDriveOrder);
+  void abortDriveOrder();
 
   /**
    * 设置此驱动器的内核模型
