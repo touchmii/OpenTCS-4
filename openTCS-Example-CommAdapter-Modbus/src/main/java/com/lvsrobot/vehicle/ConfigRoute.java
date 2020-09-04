@@ -35,6 +35,7 @@ public class ConfigRoute {
                 break;
             case "LOAD":
                 path[1] = 1;
+//                path[path.length-5] = path[path.length-1];
                 break;
             case "UNLOAD":
                 path[1] = 2;
@@ -60,6 +61,18 @@ public class ConfigRoute {
             if (path[1] != 0 && i == (steps.size()-1)) {
                 path[i * 4 + 10] = (int)point.getDestinationPoint().getVehicleOrientationAngle();
             }
+        }
+
+        switch (path[1]) {
+            case 1:
+                path[path.length-5] = path[path.length-1];
+                break;
+            case 2:
+                path[path.length-5] = path[path.length-1];
+                break;
+            case 3:
+                path[path.length-5] = path[path.length-1];
+                break;
         }
 
         return path;

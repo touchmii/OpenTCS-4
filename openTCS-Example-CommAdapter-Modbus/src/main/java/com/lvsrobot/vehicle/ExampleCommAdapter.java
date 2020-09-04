@@ -413,9 +413,11 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                     }
                     Point p;
                     if (getSentQueue().size() != 0) {
-                        p = approachPosition(sendDriveOrder, agvInfo.getPrecisePosition(), 300, 300);
+//                        p = approachPosition(sendDriveOrder, agvInfo.getPrecisePosition(), 300, 300);
+                        p = approachPosition(sendDriveOrder, agvInfo.getCurrentPosition(), 300, 300);
                     } else {
-                        p = approachPosition(sendDriveOrder, agvInfo.getPrecisePosition(), 300, 100);
+//                        p = approachPosition(sendDriveOrder, agvInfo.getPrecisePosition(), 300, 100);
+                        p = approachPosition(sendDriveOrder, agvInfo.getCurrentPosition(), 300, 100);
                     }
                     if (p != null && p != pathStartPosition && p != currentPoint) {
                         currentPoint = p;

@@ -85,17 +85,9 @@ public class AgvTelegramNew {
     }
 
     public AgvInfo getAgvInfo() {
-        byte[] sendBytes = new byte[8];
-        sendBytes[0] = 'a';
-        sendBytes[1] = 0;
-        sendBytes[2] = 0;
-        sendBytes[3] = 0;
-        sendBytes[4] = 0;
-        sendBytes[5] = 0;
-        sendBytes[6] = 0;
-        sendBytes[7] = 0;
+
 //        byte[] retBytes = socket.send(sendBytes);
-        int[] retReadInputRegisters = new int[40];
+        int[] retReadInputRegisters = new int[60];
         try {
 //            modbusClient.Connect();
 //            if(!this.isConnected()) {
@@ -133,11 +125,11 @@ public class AgvTelegramNew {
 //        agvInfo.setElectric(retReadInputRegisters[2]);
 //        agvInfo.setException(retReadInputRegisters[3]);
         agvInfo.setStatus(retReadInputRegisters[7]);
-        int precisePosition[] = {10*(int)(short)retReadInputRegisters[0], 10*(int)(short)retReadInputRegisters[1]};
+        int[] precisePosition = {10*(int)(short)retReadInputRegisters[0], 10*(int)(short)retReadInputRegisters[1]};
         agvInfo.setPrecisePosition(precisePosition);
-        int currentPosition[] = {10*(int)(short)retReadInputRegisters[12], 10*(int)(short)retReadInputRegisters[13]};
+        int[] currentPosition = {10*(int)(short)retReadInputRegisters[12], 10*(int)(short)retReadInputRegisters[13]};
         agvInfo.setCurrentPosition(currentPosition);
-        int previousPosition[] = {10*(int)(short)retReadInputRegisters[14], 10*(int)(short)retReadInputRegisters[15]};
+        int[] previousPosition = {10*(int)(short)retReadInputRegisters[14], 10*(int)(short)retReadInputRegisters[15]};
         agvInfo.setPreviousPositon(previousPosition);
         double orientation = (double)retReadInputRegisters[7];
         agvInfo.setVehicleOrientation(orientation);
