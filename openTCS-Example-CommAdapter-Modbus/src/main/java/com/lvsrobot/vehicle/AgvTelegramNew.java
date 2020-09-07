@@ -131,7 +131,7 @@ public class AgvTelegramNew {
         agvInfo.setCurrentPosition(currentPosition);
         int[] previousPosition = {10*(int)(short)retReadInputRegisters[14], 10*(int)(short)retReadInputRegisters[15]};
         agvInfo.setPreviousPositon(previousPosition);
-        double orientation = (double)retReadInputRegisters[7];
+        double orientation = (double)retReadInputRegisters[2];
         agvInfo.setVehicleOrientation(orientation);
         agvInfo.setBattery(retReadInputRegisters[10]);
         agvInfo.setLoadStatus(retReadInputRegisters[32]);

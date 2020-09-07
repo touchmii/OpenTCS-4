@@ -93,7 +93,7 @@
         <property name="dir" value="horizon"/>
     </path>
     <vehicle name="Vehicle-01" length="1000" energyLevelCritical="30" energyLevelGood="90" energyLevelFullyRecharged="30" energyLevelSufficientlyRecharged="90" maxVelocity="1000" maxReverseVelocity="1000" type="">
-        <property name="ip" value="192.168.0.10"/>
+        <property name="ip" value="10.1.3.16"/>
         <property name="port" value="502"/>
         <property name="tcs:preferredAdapterClass" value="com.lvsrobot.vehicle.ExampleCommAdapterFactory"/>
     </vehicle>

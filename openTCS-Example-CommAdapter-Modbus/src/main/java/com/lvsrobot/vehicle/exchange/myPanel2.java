@@ -15,6 +15,8 @@ import org.opentcs.drivers.vehicle.management.VehicleCommAdapterPanel;
 import org.opentcs.drivers.vehicle.management.VehicleProcessModelTO;
 import com.lvsrobot.vehicle.ExampleProcessModelTO;
 import org.opentcs.util.CallWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.swing.*;
@@ -27,6 +29,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class myPanel2 extends VehicleCommAdapterPanel {
 //    private final DefaultListModel<OrderRequest> lastOrderListModel = new DefaultListModel<>();
+    private static final Logger LOG = LoggerFactory.getLogger(myPanel2.class);
     private final VehicleService vehicleService;
     private final CallWrapper callWrapper;
     private ExampleProcessModelTO processModel;
@@ -40,6 +43,29 @@ public class myPanel2 extends VehicleCommAdapterPanel {
         this.callWrapper = requireNonNull(callWrapper, "callWrapper");
         initComponents();
     }
+
+    @Override
+    public void processModelChange(String attributeChanged, VehicleProcessModelTO newProcessModel) {
+        if(!(newProcessModel instanceof ExampleProcessModelTO)) {
+            return;
+        }
+
+        processModel = (ExampleProcessModelTO) newProcessModel;
+        updateExampleVehicleModelData(attributeChanged, processModel);
+        updateVehiceProcessModelData(attributeChanged, processModel);
+    }
+
+    private void updateExampleVehicleModelData(String attributeChanged,
+                                               ExampleProcessModelTO processModel) {
+
+    }
+
+    private void updateVehiceProcessModelData(String attributeChanged,
+                                              VehicleProcessModelTO processModel) {
+
+    }
+
+
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -61,52 +87,65 @@ public class myPanel2 extends VehicleCommAdapterPanel {
         panel2 = new JPanel();
         label1 = new JLabel();
         panel3 = new JPanel();
+        panel4 = new JPanel();
+        button12 = new JButton();
+        button13 = new JButton();
+        button14 = new JButton();
+        button15 = new JButton();
+        button16 = new JButton();
+        panel5 = new JPanel();
+        scrollPane2 = new JScrollPane();
+        list1 = new JList();
+        panel6 = new JPanel();
+        textField1 = new JTextField();
+        label4 = new JLabel();
+        button17 = new JButton();
 
         //======== this ========
         setBorder(null);
 
         //======== panel1 ========
         {
-            panel1.setBorder(new TitledBorder("control"));
+            panel1.setBorder(new TitledBorder("\u624b\u52a8\u63a7\u5236"));
 
             //---- button8 ----
-            button8.setText("UP");
+            button8.setText("\u4e3e\u5347");
 
             //---- button9 ----
-            button9.setText("DOWN");
+            button9.setText("\u4e0b\u964d");
 
             //---- button1 ----
-            button1.setText("\u2b07\ufe0f");
+            button1.setText("\u540e\u9000");
 
             //---- button3 ----
-            button3.setText("\u2b05\ufe0f");
+            button3.setText("\u5de6\u79fb");
 
             //---- button7 ----
-            button7.setText("STOP");
+            button7.setText("\u505c\u6b62");
 
             //---- button4 ----
-            button4.setText("\u27a1\ufe0f");
+            button4.setText("\u53f3\u79fb");
 
             //---- button6 ----
-            button6.setText("\u21a9\ufe0f");
+            button6.setText("\u53cd\u8f6c");
 
             //---- button2 ----
-            button2.setText("\u2b06\ufe0f");
+            button2.setText("\u524d\u8fdb");
 
             //---- button5 ----
-            button5.setText("\u21aa\ufe0f");
+            button5.setText("\u6b63\u8f6c");
 
             //---- label2 ----
-            label2.setText("Speed :");
+            label2.setText("\u901f\u5ea6");
 
             //---- label3 ----
-            label3.setText("Manual Control");
+            label3.setText("\u901f\u5ea6:");
 
             //---- button10 ----
-            button10.setText("OUT");
+            button10.setText("\u4f38\u51fa");
 
             //---- button11 ----
-            button11.setText("IN");
+            button11.setText("\u6536\u56de");
 
             GroupLayout panel1Layout = new GroupLayout(panel1);
             panel1.setLayout(panel1Layout);
@@ -151,7 +190,7 @@ public class myPanel2 extends VehicleCommAdapterPanel {
                                     .addContainerGap()))
                             .addGroup(GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
                                 .addComponent(label3)
-                                .addGap(59, 59, 59))))
+                                .addGap(91, 91, 91))))
             );
             panel1Layout.setVerticalGroup(
                 panel1Layout.createParallelGroup()
@@ -182,7 +221,7 @@ public class myPanel2 extends VehicleCommAdapterPanel {
                         .addGroup(panel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                             .addComponent(button11)
                             .addComponent(button10))
-                        .addContainerGap(61, Short.MAX_VALUE))
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             );
         }
 
@@ -200,11 +239,11 @@ public class myPanel2 extends VehicleCommAdapterPanel {
                 panel3.setLayout(panel3Layout);
                 panel3Layout.setHorizontalGroup(
                     panel3Layout.createParallelGroup()
-                        .addGap(0, 341, Short.MAX_VALUE)
+                        .addGap(0, 353, Short.MAX_VALUE)
                 );
                 panel3Layout.setVerticalGroup(
                     panel3Layout.createParallelGroup()
-                        .addGap(0, 139, Short.MAX_VALUE)
+                        .addGap(0, 103, Short.MAX_VALUE)
                 );
             }
 
@@ -216,10 +255,7 @@ public class myPanel2 extends VehicleCommAdapterPanel {
                         .addGap(14, 14, 14)
                         .addComponent(label1, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(287, Short.MAX_VALUE))
-                    .addGroup(panel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(panel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
+                    .addComponent(panel3, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             );
             panel2Layout.setVerticalGroup(
                 panel2Layout.createParallelGroup()
@@ -228,7 +264,118 @@ public class myPanel2 extends VehicleCommAdapterPanel {
                         .addComponent(label1, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(panel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(28, Short.MAX_VALUE))
+                        .addContainerGap(14, Short.MAX_VALUE))
+            );
+        }
+
+        //======== panel4 ========
+        {
+            panel4.setBorder(new TitledBorder("\u81ea\u52a8\u63a7\u5236"));
+
+            //---- button12 ----
+            button12.setText("\u6682\u505c\u8def\u5f84");
+
+            //---- button13 ----
+            button13.setText("\u7ee7\u7eed\u8def\u5f84");
+
+            //---- button14 ----
+            button14.setText("\u6e05\u9664\u62a5\u8b66");
+
+            //---- button15 ----
+            button15.setText("\u53c9\u8d27");
+
+            //---- button16 ----
+            button16.setText("\u5378\u8d27");
+
+            GroupLayout panel4Layout = new GroupLayout(panel4);
+            panel4.setLayout(panel4Layout);
+            panel4Layout.setHorizontalGroup(
+                panel4Layout.createParallelGroup()
+                    .addGroup(panel4Layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addGroup(panel4Layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                            .addComponent(button14, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(button13, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(button12, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(button15, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(button16, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            );
+            panel4Layout.setVerticalGroup(
+                panel4Layout.createParallelGroup()
+                    .addGroup(panel4Layout.createSequentialGroup()
+                        .addGap(49, 49, 49)
+                        .addComponent(button12)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(button13)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(button14)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(button15)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(button16)
+                        .addContainerGap(84, Short.MAX_VALUE))
+            );
+        }
+
+        //======== panel5 ========
+        {
+            panel5.setBorder(new TitledBorder("\u901a\u4fe1\u65e5\u5fd7"));
+
+            //======== scrollPane2 ========
+            {
+                scrollPane2.setViewportView(list1);
+            }
+
+            GroupLayout panel5Layout = new GroupLayout(panel5);
+            panel5.setLayout(panel5Layout);
+            panel5Layout.setHorizontalGroup(
+                panel5Layout.createParallelGroup()
+                    .addGroup(panel5Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(scrollPane2, GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE)
+                        .addGap(21, 21, 21))
+            );
+            panel5Layout.setVerticalGroup(
+                panel5Layout.createParallelGroup()
+                    .addGroup(panel5Layout.createSequentialGroup()
+                        .addComponent(scrollPane2, GroupLayout.PREFERRED_SIZE, 101, GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 24, Short.MAX_VALUE))
+            );
+        }
+
+        //======== panel6 ========
+        {
+            panel6.setBorder(new TitledBorder("\u624b\u52a8\u53d1\u9001\u6307\u4ee4"));
+
+            //---- label4 ----
+            label4.setText("\u6307\u4ee4:");
+
+            //---- button17 ----
+            button17.setText("\u53d1\u9001");
+
+            GroupLayout panel6Layout = new GroupLayout(panel6);
+            panel6.setLayout(panel6Layout);
+            panel6Layout.setHorizontalGroup(
+                panel6Layout.createParallelGroup()
+                    .addGroup(panel6Layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addComponent(label4)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(textField1, GroupLayout.PREFERRED_SIZE, 155, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(button17)
+                        .addGap(29, 29, 29))
+            );
+            panel6Layout.setVerticalGroup(
+                panel6Layout.createParallelGroup()
+                    .addGroup(panel6Layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addGroup(panel6Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(textField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(label4)
+                            .addComponent(button17))
+                        .addContainerGap(85, Short.MAX_VALUE))
             );
         }
 
@@ -238,29 +385,40 @@ public class myPanel2 extends VehicleCommAdapterPanel {
             layout.createParallelGroup()
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(panel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup()
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(panel5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(panel6, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(panel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(panel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(panel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
                     .addGap(27, 27, 27))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup()
-                .addGroup(layout.createSequentialGroup()
+                .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGap(18, 18, 18))
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(58, 58, 58)
-                    .addComponent(panel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(96, Short.MAX_VALUE))
+                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                        .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(0, 0, Short.MAX_VALUE)
+                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                .addComponent(panel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(panel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                    .addGap(172, 172, 172)))))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(layout.createParallelGroup()
+                        .addComponent(panel5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(panel6, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap())
         );
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
         getAccessibleContext().setAccessibleName("myPanel2");
-    }
-
-    @Override
-    public void processModelChange(String attributeChange, VehicleProcessModelTO newProcessModel) {
-
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
@@ -282,5 +440,18 @@ public class myPanel2 extends VehicleCommAdapterPanel {
     private JPanel panel2;
     private JLabel label1;
     private JPanel panel3;
+    private JPanel panel4;
+    private JButton button12;
+    private JButton button13;
+    private JButton button14;
+    private JButton button15;
+    private JButton button16;
+    private JPanel panel5;
+    private JScrollPane scrollPane2;
+    private JList list1;
+    private JPanel panel6;
+    private JTextField textField1;
+    private JLabel label4;
+    private JButton button17;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

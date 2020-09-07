@@ -19,6 +19,7 @@ import org.opentcs.data.model.Point;
 import org.opentcs.data.model.Triple;
 import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.model.Vehicle.Orientation;
+import org.opentcs.data.notification.UserNotification;
 import org.opentcs.data.order.DriveOrder;
 import org.opentcs.data.order.Route;
 import org.opentcs.data.order.Route.Step;
@@ -32,6 +33,7 @@ import org.opentcs.util.ExplainedBoolean;
 //import org.opentcs.virtualvehicle.ConfigRoute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.MessageFormatter;
 
 /**
  * An example implementation for a communication adapter.
@@ -153,7 +155,9 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
         simThread.start();
         super.enable();
 //        getProcessModel().setVehiclePosition("4");
-        getProcessModel().setVehiclePosition(getInitialPosition());
+        String init_point = getInitialPosition();
+        getProcessModel().setVehiclePosition(init_point);
+        getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("adapter init finish, vehicle current point: {}", init_point).getMessage(), UserNotification.Level.INFORMATIONAL));
     }
 
     @Override
@@ -378,6 +382,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 
                 if (sendDriveOrder != null  && getSentQueue().size() == 0) {
                     LOG.info("abort path :{}", currentDriveOrder.getRoute());
+                    getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("abort path to vehicle: {}", currentDriveOrder.getRoute()).getMessage(), UserNotification.Level.INFORMATIONAL));
                     agv.abortPath();
                     sendDriveOrder = null;
                     curCommand = null;
@@ -401,11 +406,15 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 //                    final Route.Step curStep = curCommand.getStep();
                     if (sendDriveOrder != getcurrentDriveOrder()) {
                         configRoute.setRoute(getcurrentDriveOrder());
-                        if (agv.sendPath(configRoute.getPath(agvInfo.getPrecisePosition())) != true) {
+                        int[] path = configRoute.getPath(agvInfo.getPrecisePosition());
+                        if (agv.sendPath(path) != true) {
                             return;
                         }
                         sendDriveOrder = getcurrentDriveOrder();
-                        LOG.info("send path to vehicle : {}", configRoute.getPath(agvInfo.getPrecisePosition()));
+                        LOG.info("send path to vehicle : {}", path);
+//                        MessageFormatter.format(format, arg).getMessage()
+//                        UserNotification notif = new UserNotification(MessageFormatter.format("send path to vehicle: {}", path).getMessage(), UserNotification.Level.INFORMATIONAL);
+                        getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("send path to vehicle: {}", path).getMessage(), UserNotification.Level.INFORMATIONAL));
                         pathStartPosition = sendDriveOrder.getRoute().getSteps().get(0).getSourcePoint();
                         getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
 
@@ -426,6 +435,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                         if (getSentQueue().size() == 0) {
                             if (Math.abs(current_precise.getX() - previous_precise.getX()) < 50 && Math.abs(current_precise.getY() - previous_precise.getY()) < 50 && Math.abs(current_angle - previous_angle) < 2) {
                                 getProcessModel().commandExecuted(currentCommand);
+                                getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("reach to end point: {}", p).getMessage(), UserNotification.Level.INFORMATIONAL));
 
                                 currentCommand = null;
                                 curCommand = null;
@@ -435,6 +445,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                         } else {
 
                             getProcessModel().commandExecuted(currentCommand);
+                            getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("reach to point: {}", p).getMessage(), UserNotification.Level.INFORMATIONAL));
 
                             currentCommand = null;
                             curCommand = null;
