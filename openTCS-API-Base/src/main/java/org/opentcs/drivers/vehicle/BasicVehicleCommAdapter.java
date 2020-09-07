@@ -497,15 +497,15 @@ public abstract class BasicVehicleCommAdapter implements VehicleCommAdapter, Pro
                     if (curCmd != null) {
                         try {
                             sendCommand(curCmd);
-                            //发送驱动订单，驱动需实现sendCommand抽象函数，接收curCmd
+                            //send driver order，adapter implement sendCommand，receive curCmd
                             getSentQueue().add(curCmd);
-                            //添加驱动订单到已经发送订单队列
+                            //add driving order to the queue of sent orders
                             getProcessModel().commandSent(curCmd);
-                            //通知内核已经发送驱动订单到车辆
+                            //Notify the kernel that the drive order has been sent to the vehicle
                         } catch (IllegalArgumentException exc) {
                             LOG.warn("{}: Failed sending command {}", getName(), curCmd, exc);
                             getProcessModel().commandFailed(curCmd);
-                            //通知内核驱动订单发送失败
+                            //Notify the kernel driver that the order failed to be sent
                         }
                     }
                 }

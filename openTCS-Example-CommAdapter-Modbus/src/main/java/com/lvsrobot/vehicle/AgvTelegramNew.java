@@ -195,4 +195,28 @@ public class AgvTelegramNew {
         }
         return true;
     }
+
+    public boolean pausePath() {
+        try{
+            this.Connecte();
+            m.writeSingleRegister(1, 55, 1);
+        } catch (Exception e) {
+            LOG.error("pause failt: {}", e.toString());
+            this.disConnecte();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean resumePath() {
+        try{
+            this.Connecte();
+            m.writeSingleRegister(1, 55, 0);
+        } catch (Exception e) {
+            LOG.error("resume failt: {}", e.toString());
+            this.disConnecte();
+            return false;
+        }
+        return true;
+    }
 }

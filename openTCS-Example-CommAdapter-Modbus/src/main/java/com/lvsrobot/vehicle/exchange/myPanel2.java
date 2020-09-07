@@ -11,6 +11,11 @@ import com.lvsrobot.vehicle.ExampleProcessModel;
 //import de.fraunhofer.iml.opentcs.example.commadapter.vehicle.telegrams.OrderRequest;
 import org.opentcs.components.kernel.services.VehicleService;
 import org.opentcs.customizations.ServiceCallWrapper;
+import org.opentcs.data.TCSObjectReference;
+import org.opentcs.data.model.Vehicle;
+import org.opentcs.drivers.vehicle.AdapterCommand;
+import org.opentcs.drivers.vehicle.VehicleCommAdapterEvent;
+import org.opentcs.drivers.vehicle.commands.PublishEventCommand;
 import org.opentcs.drivers.vehicle.management.VehicleCommAdapterPanel;
 import org.opentcs.drivers.vehicle.management.VehicleProcessModelTO;
 import com.lvsrobot.vehicle.ExampleProcessModelTO;
@@ -64,12 +69,55 @@ public class myPanel2 extends VehicleCommAdapterPanel {
                                               VehicleProcessModelTO processModel) {
 
     }
+    /**
+     * Get Vehicle Reference
+     *
+     * @param void
+     * @return VehicleReference
+     * 获取车辆的引用
+     *
+     **/
+    private TCSObjectReference<Vehicle> getVehicleReference() throws Exception {
+        return callWrapper.call(() -> vehicleService.fetchObject(Vehicle.class, processModel.getVehicleName())).getReference();
+    }
 
+    /**
+     * Send Command to Adapter
+     * AdapterComomand 适配器命令
+     * @param command
+     */
+    private void sendCommAdapterCommand(AdapterCommand command) {
+        try {
+            TCSObjectReference<Vehicle> vehicleRef = getVehicleReference();
+            callWrapper.call(() -> vehicleService.sendCommAdapterCommand(vehicleRef, command));
+        } catch (Exception ex) {
+            LOG.warn("Error sending comm adapter command '{}'", command, ex);
+        }
+    }
 
+    /**
+     * pausePathButton
+     * send pause path command
+     * @param java.awt.event.Action evt
+     */
+    private void pausePathButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        VehicleCommAdapterEvent event = new VehicleCommAdapterEvent(processModel.getVehicleName(), "pausePath");
+        LOG.info("pausePathButton pressed, action appendix : '{}'", event.getAppendix());
+        sendCommAdapterCommand(new PublishEventCommand(event));
+    }/**
+     * resumePathButton
+     * send resume path command
+     * @param java.awt.event.Action evt
+     */
+    private void resumePathButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        VehicleCommAdapterEvent event = new VehicleCommAdapterEvent(processModel.getVehicleName(), "resumePath");
+        LOG.info("resumePathButton pressed, action appendix : '{}'", event.getAppendix());
+        sendCommAdapterCommand(new PublishEventCommand(event));
+    }
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        panel1 = new JPanel();
+        ManualControl = new JPanel();
         button8 = new JButton();
         button9 = new JButton();
         button1 = new JButton();
@@ -87,12 +135,12 @@ public class myPanel2 extends VehicleCommAdapterPanel {
         panel2 = new JPanel();
         label1 = new JLabel();
         panel3 = new JPanel();
-        panel4 = new JPanel();
-        button12 = new JButton();
-        button13 = new JButton();
-        button14 = new JButton();
-        button15 = new JButton();
-        button16 = new JButton();
+        AutoControl = new JPanel();
+        pausePathButton = new JButton();
+        resumePathButton = new JButton();
+        resetAlamButton = new JButton();
+        forkLoadButton = new JButton();
+        forkUnloadButton = new JButton();
         panel5 = new JPanel();
         scrollPane2 = new JScrollPane();
         list1 = new JList();
@@ -104,9 +152,9 @@ public class myPanel2 extends VehicleCommAdapterPanel {
         //======== this ========
         setBorder(null);
 
-        //======== panel1 ========
+        //======== ManualControl ========
         {
-            panel1.setBorder(new TitledBorder("\u624b\u52a8\u63a7\u5236"));
+            ManualControl.setBorder(new TitledBorder("\u624b\u52a8\u63a7\u5236"));
 
             //---- button8 ----
             button8.setText("\u4e3e\u5347");
@@ -147,78 +195,79 @@ public class myPanel2 extends VehicleCommAdapterPanel {
             //---- button11 ----
             button11.setText("\u6536\u56de");
 
-            GroupLayout panel1Layout = new GroupLayout(panel1);
-            panel1.setLayout(panel1Layout);
-            panel1Layout.setHorizontalGroup(
-                panel1Layout.createParallelGroup()
-                    .addGroup(panel1Layout.createSequentialGroup()
+            GroupLayout ManualControlLayout = new GroupLayout(ManualControl);
+            ManualControl.setLayout(ManualControlLayout);
+            ManualControlLayout.setHorizontalGroup(
+                ManualControlLayout.createParallelGroup()
+                    .addGroup(ManualControlLayout.createSequentialGroup()
                         .addContainerGap(30, Short.MAX_VALUE)
-                        .addGroup(panel1Layout.createParallelGroup()
-                            .addGroup(GroupLayout.Alignment.TRAILING, panel1Layout.createParallelGroup()
-                                .addGroup(panel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                        .addGroup(ManualControlLayout.createParallelGroup()
+                            .addGroup(GroupLayout.Alignment.TRAILING, ManualControlLayout.createParallelGroup()
+                                .addGroup(ManualControlLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(GroupLayout.Alignment.TRAILING, ManualControlLayout.createSequentialGroup()
                                         .addComponent(label2)
                                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(slider1, GroupLayout.PREFERRED_SIZE, 133, GroupLayout.PREFERRED_SIZE)
                                         .addGap(14, 14, 14))
-                                    .addGroup(GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                                    .addGroup(GroupLayout.Alignment.TRAILING, ManualControlLayout.createSequentialGroup()
                                         .addComponent(button5, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(button2, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(button6, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
                                         .addGap(25, 25, 25)))
-                                .addGroup(panel1Layout.createSequentialGroup()
-                                    .addGroup(panel1Layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                        .addGroup(panel1Layout.createSequentialGroup()
+                                .addGroup(ManualControlLayout.createSequentialGroup()
+                                    .addGroup(ManualControlLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                        .addGroup(ManualControlLayout.createSequentialGroup()
                                             .addComponent(button8)
                                             .addGap(24, 24, 24)
                                             .addComponent(button9))
-                                        .addGroup(panel1Layout.createSequentialGroup()
+                                        .addGroup(ManualControlLayout.createSequentialGroup()
                                             .addComponent(button3, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addGroup(panel1Layout.createParallelGroup()
-                                                .addGroup(panel1Layout.createSequentialGroup()
+                                            .addGroup(ManualControlLayout.createParallelGroup()
+                                                .addComponent(button1, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
+                                                .addGroup(ManualControlLayout.createSequentialGroup()
                                                     .addComponent(button7, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
-                                                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                                    .addComponent(button4, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE))
-                                                .addComponent(button1, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)))
-                                        .addGroup(panel1Layout.createSequentialGroup()
+                                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(button4, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)))
+                                            .addGap(6, 6, 6))
+                                        .addGroup(ManualControlLayout.createSequentialGroup()
                                             .addComponent(button10)
                                             .addGap(24, 24, 24)
                                             .addComponent(button11)))
                                     .addContainerGap()))
-                            .addGroup(GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                            .addGroup(GroupLayout.Alignment.TRAILING, ManualControlLayout.createSequentialGroup()
                                 .addComponent(label3)
                                 .addGap(91, 91, 91))))
             );
-            panel1Layout.setVerticalGroup(
-                panel1Layout.createParallelGroup()
-                    .addGroup(panel1Layout.createSequentialGroup()
+            ManualControlLayout.setVerticalGroup(
+                ManualControlLayout.createParallelGroup()
+                    .addGroup(ManualControlLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(label3)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addGroup(ManualControlLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                             .addComponent(slider1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addComponent(label2))
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addGroup(ManualControlLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                             .addComponent(button6)
                             .addComponent(button5)
                             .addComponent(button2))
                         .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(panel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addGroup(ManualControlLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                             .addComponent(button3)
                             .addComponent(button7)
                             .addComponent(button4))
                         .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(button1)
                         .addGap(12, 12, 12)
-                        .addGroup(panel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addGroup(ManualControlLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                             .addComponent(button9)
                             .addComponent(button8))
                         .addGap(12, 12, 12)
-                        .addGroup(panel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addGroup(ManualControlLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                             .addComponent(button11)
                             .addComponent(button10))
                         .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -268,52 +317,62 @@ public class myPanel2 extends VehicleCommAdapterPanel {
             );
         }
 
-        //======== panel4 ========
+        //======== AutoControl ========
         {
-            panel4.setBorder(new TitledBorder("\u81ea\u52a8\u63a7\u5236"));
+            AutoControl.setBorder(new TitledBorder("\u81ea\u52a8\u63a7\u5236"));
 
-            //---- button12 ----
-            button12.setText("\u6682\u505c\u8def\u5f84");
+            //---- pausePathButton ----
+            pausePathButton.setText("\u6682\u505c\u8def\u5f84");
+            pausePathButton.addActionListener(new java.awt.event.ActionListener(){
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    pausePathButtonActionPerformed(evt);
+                }
+            });
 
-            //---- button13 ----
-            button13.setText("\u7ee7\u7eed\u8def\u5f84");
+            //---- resumePathButton ----
+            resumePathButton.setText("\u7ee7\u7eed\u8def\u5f84");
+            resumePathButton.addActionListener(new java.awt.event.ActionListener(){
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    resumePathButtonActionPerformed(evt);
+                }
+            });
 
-            //---- button14 ----
-            button14.setText("\u6e05\u9664\u62a5\u8b66");
+            //---- resetAlamButton ----
+            resetAlamButton.setText("\u6e05\u9664\u62a5\u8b66");
 
-            //---- button15 ----
-            button15.setText("\u53c9\u8d27");
+            //---- forkLoadButton ----
+            forkLoadButton.setText("\u53c9\u8d27");
 
-            //---- button16 ----
-            button16.setText("\u5378\u8d27");
+            //---- forkUnloadButton ----
+            forkUnloadButton.setText("\u5378\u8d27");
 
-            GroupLayout panel4Layout = new GroupLayout(panel4);
-            panel4.setLayout(panel4Layout);
-            panel4Layout.setHorizontalGroup(
-                panel4Layout.createParallelGroup()
-                    .addGroup(panel4Layout.createSequentialGroup()
+            GroupLayout AutoControlLayout = new GroupLayout(AutoControl);
+            AutoControl.setLayout(AutoControlLayout);
+            AutoControlLayout.setHorizontalGroup(
+                AutoControlLayout.createParallelGroup()
+                    .addGroup(AutoControlLayout.createSequentialGroup()
                         .addGap(32, 32, 32)
-                        .addGroup(panel4Layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                            .addComponent(button14, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(button13, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(button12, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(button15, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(button16, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(AutoControlLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                            .addComponent(resetAlamButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(resumePathButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(pausePathButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(forkLoadButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(forkUnloadButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             );
-            panel4Layout.setVerticalGroup(
-                panel4Layout.createParallelGroup()
-                    .addGroup(panel4Layout.createSequentialGroup()
+            AutoControlLayout.setVerticalGroup(
+                AutoControlLayout.createParallelGroup()
+                    .addGroup(AutoControlLayout.createSequentialGroup()
                         .addGap(49, 49, 49)
-                        .addComponent(button12)
+                        .addComponent(pausePathButton)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(button13)
+                        .addComponent(resumePathButton)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(button14)
+                        .addComponent(resetAlamButton)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(button15)
+                        .addComponent(forkLoadButton)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(button16)
+                        .addComponent(forkUnloadButton)
                         .addContainerGap(84, Short.MAX_VALUE))
             );
         }
@@ -393,9 +452,9 @@ public class myPanel2 extends VehicleCommAdapterPanel {
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(panel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(panel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(AutoControl, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(panel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(ManualControl, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
                     .addGap(27, 27, 27))
         );
         layout.setVerticalGroup(
@@ -403,11 +462,11 @@ public class myPanel2 extends VehicleCommAdapterPanel {
                 .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                        .addComponent(panel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(ManualControl, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
                             .addGap(0, 0, Short.MAX_VALUE)
                             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                .addComponent(panel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(AutoControl, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                 .addGroup(layout.createSequentialGroup()
                                     .addComponent(panel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                     .addGap(172, 172, 172)))))
@@ -422,7 +481,7 @@ public class myPanel2 extends VehicleCommAdapterPanel {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    private JPanel panel1;
+    private JPanel ManualControl;
     private JButton button8;
     private JButton button9;
     private JButton button1;
@@ -440,12 +499,12 @@ public class myPanel2 extends VehicleCommAdapterPanel {
     private JPanel panel2;
     private JLabel label1;
     private JPanel panel3;
-    private JPanel panel4;
-    private JButton button12;
-    private JButton button13;
-    private JButton button14;
-    private JButton button15;
-    private JButton button16;
+    private JPanel AutoControl;
+    private JButton pausePathButton;
+    private JButton resumePathButton;
+    private JButton resetAlamButton;
+    private JButton forkLoadButton;
+    private JButton forkUnloadButton;
     private JPanel panel5;
     private JScrollPane scrollPane2;
     private JList list1;

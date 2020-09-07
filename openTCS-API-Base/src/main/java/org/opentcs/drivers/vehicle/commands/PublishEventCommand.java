@@ -13,6 +13,8 @@ import org.opentcs.drivers.vehicle.AdapterCommand;
 import org.opentcs.drivers.vehicle.VehicleCommAdapter;
 import org.opentcs.drivers.vehicle.VehicleCommAdapterEvent;
 
+import java.io.Serializable;
+
 /**
  * A command to publish {@link VehicleCommAdapterEvent}s.
  *
@@ -37,8 +39,13 @@ public class PublishEventCommand
     this.event = requireNonNull(event, "event");
   }
 
+  public Serializable getEventAppendix() {
+    return this.event.getAppendix();
+  }
+
   @Override
   public void execute(VehicleCommAdapter adapter) {
+//    System.out.println("PublishEvent Action");
     adapter.getProcessModel().publishEvent(event);
   }
 }

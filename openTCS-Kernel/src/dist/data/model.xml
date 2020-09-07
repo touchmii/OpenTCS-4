@@ -112,7 +112,7 @@
         <property name="tcs:defaultLocationTypeSymbol" value="LOAD_TRANSFER_GENERIC"/>
     </locationType>
     <location name="A" xPosition="-5000" yPosition="3000" zPosition="0" type="PACK"/>
-    <location name="B" xPosition="7000" yPosition="-5500" zPosition="0" type="PACK">
+    <location name="B" xPosition="7000" yPosition="-5500" zPosition="0" type="Charge">
         <link point="8"/>
     </location>
     <location name="C" xPosition="-1500" yPosition="-2000" zPosition="0" type="Charge">

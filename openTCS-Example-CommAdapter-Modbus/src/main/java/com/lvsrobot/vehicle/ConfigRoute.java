@@ -40,7 +40,7 @@ public class ConfigRoute {
             case "UNLOAD":
                 path[1] = 2;
                 break;
-            case "CHARGE":
+            case "CHARGING":
                 path[1] = 3;
                 break;
             default:

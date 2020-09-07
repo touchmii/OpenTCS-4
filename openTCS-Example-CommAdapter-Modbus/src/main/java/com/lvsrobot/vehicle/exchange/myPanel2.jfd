@@ -1,19 +1,19 @@
-JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
+JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.8" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {seq l {space :::p, par l {seq {comp panel5:::p::p, space :::p, comp panel6:::::x}, seq {comp panel2:::p::p, space u:::p, comp panel4:::::x, space u:::p, comp panel1:::p::p}}, space :p:27:p}}"
-			"$verticalGroup": "par l {seq t {space :::p, par t {comp panel1:::::x, seq {space :0:0:x, par t {comp panel4::t:p::p, seq {comp panel2:::p::p, space :p:172:p}}}}, space u:::p, par l {comp panel5:::p::p, comp panel6:::p::p}, space :::p}}"
+			"$horizontalGroup": "par l {seq l {space :::p, par l {seq {comp panel5:::p::p, space :::p, comp panel6:::::x}, seq {comp panel2:::p::p, space u:::p, comp AutoControl:::::x, space u:::p, comp ManualControl:::p::p}}, space :p:27:p}}"
+			"$verticalGroup": "par l {seq t {space :::p, par t {comp ManualControl:::::x, seq {space :0:0:x, par t {comp AutoControl::t:p::p, seq {comp panel2:::p::p, space :p:172:p}}}}, space u:::p, par l {comp panel5:::p::p, comp panel6:::p::p}, space :::p}}"
 		} ) {
 			name: "this"
 			"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-				"$horizontalGroup": "par l {seq {space ::30:x, par l {par l:t {par l:::p {seq t {comp label2:::p::p, space :::p, comp slider1:::p:133:p, space :p:14:p}, seq t {comp button5:::p:52:p, space u:::p, comp button2:::p:52:p, space :::x, comp button6:::p:52:p, space :p:25:p}}, seq l {par t {seq {comp button8:::p::p, space :p:24:p, comp button9:::p::p}, seq {comp button3:::p:52:p, space u:::p, par l {seq {comp button7:::p:52:p, space u:::p, comp button4:::p:52:p}, comp button1:::p:52:p}}, seq {comp button10:::p::p, space :p:24:p, comp button11:::p::p}}, space :::p}}, seq t {comp label3:::p::p, space :p:91:p}}}}"
+				"$horizontalGroup": "par l {seq {space ::30:x, par l {par l:t {par l:::p {seq t {comp label2:::p::p, space :::p, comp slider1:::p:133:p, space :p:14:p}, seq t {comp button5:::p:52:p, space u:::p, comp button2:::p:52:p, space :::x, comp button6:::p:52:p, space :p:25:p}}, seq l {par t {seq {comp button8:::p::p, space :p:24:p, comp button9:::p::p}, seq {comp button3:::p:52:p, space u:::p, par l {comp button1::l:p:52:p, seq l {comp button7:::p:52:p, space :::p, comp button4:::p:52:p}}, space :p:6:p}, seq {comp button10:::p::p, space :p:24:p, comp button11:::p::p}}, space :::p}}, seq t {comp label3:::p::p, space :p:91:p}}}}"
 				"$verticalGroup": "par l {seq l {space :::p, comp label3:::p::p, space :::p, par b {comp slider1::b:p::p, comp label2::b:p::p}, space :::p, par b {comp button6::b:p::p, comp button5::b:p::p, comp button2::b:p::p}, space u:::p, par b {comp button3::b:p::p, comp button7::b:p::p, comp button4::b:p::p}, space u:::p, comp button1:::p::p, space :p:12:p, par b {comp button9::b:p::p, comp button8::b:p::p}, space :p:12:p, par b {comp button11::b:p::p, comp button10::b:p::p}, space :::x}}"
 			} ) {
-				name: "panel1"
+				name: "ManualControl"
 				"border": new javax.swing.border.TitledBorder( "手动控制" )
 				add( new FormComponent( "javax.swing.JButton" ) {
 					name: "button8"
@@ -89,29 +89,29 @@ new FormModel {
 				} )
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-				"$horizontalGroup": "par l {seq l {space :p:32:p, par l:::p {comp button14:::::x, comp button13:::::x, comp button12:::::x, comp button15::l:::x, comp button16::l:::x}, space :::x}}"
-				"$verticalGroup": "par l {seq l {space :p:49:p, comp button12:::p::p, space u:::p, comp button13:::p::p, space u:::p, comp button14:::p::p, space u:::p, comp button15:::p::p, space u:::p, comp button16:::p::p, space ::84:x}}"
+				"$horizontalGroup": "par l {seq l {space :p:32:p, par l:::p {comp resetAlamButton:::::x, comp resumePathButton:::::x, comp pausePathButton:::::x, comp forkLoadButton::l:::x, comp forkUnloadButton::l:::x}, space :::x}}"
+				"$verticalGroup": "par l {seq l {space :p:49:p, comp pausePathButton:::p::p, space u:::p, comp resumePathButton:::p::p, space u:::p, comp resetAlamButton:::p::p, space u:::p, comp forkLoadButton:::p::p, space u:::p, comp forkUnloadButton:::p::p, space ::84:x}}"
 			} ) {
-				name: "panel4"
+				name: "AutoControl"
 				"border": new javax.swing.border.TitledBorder( "自动控制" )
 				add( new FormComponent( "javax.swing.JButton" ) {
-					name: "button12"
+					name: "pausePathButton"
 					"text": "暂停路径"
 				} )
 				add( new FormComponent( "javax.swing.JButton" ) {
-					name: "button13"
+					name: "resumePathButton"
 					"text": "继续路径"
 				} )
 				add( new FormComponent( "javax.swing.JButton" ) {
-					name: "button14"
+					name: "resetAlamButton"
 					"text": "清除报警"
 				} )
 				add( new FormComponent( "javax.swing.JButton" ) {
-					name: "button15"
+					name: "forkLoadButton"
 					"text": "叉货"
 				} )
 				add( new FormComponent( "javax.swing.JButton" ) {
-					name: "button16"
+					name: "forkUnloadButton"
 					"text": "卸货"
 				} )
 			} )

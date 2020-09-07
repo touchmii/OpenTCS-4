@@ -3,6 +3,7 @@ package com.lvsrobot.vehicle;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.assistedinject.Assisted;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 
+import io.netty.handler.codec.mqtt.MqttMessageBuilders;
 import org.opentcs.customizations.kernel.KernelExecutor;
 import org.opentcs.data.model.Point;
 import org.opentcs.data.model.Triple;
@@ -24,8 +26,10 @@ import org.opentcs.data.order.DriveOrder;
 import org.opentcs.data.order.Route;
 import org.opentcs.data.order.Route.Step;
 import org.opentcs.data.order.TransportOrder;
+import org.opentcs.drivers.vehicle.AdapterCommand;
 import org.opentcs.drivers.vehicle.BasicVehicleCommAdapter;
 import org.opentcs.drivers.vehicle.MovementCommand;
+import org.opentcs.drivers.vehicle.commands.PublishEventCommand;
 import org.opentcs.drivers.vehicle.management.VehicleProcessModelTO;
 import org.opentcs.drivers.vehicle.messages.SetSpeedMultiplier;
 import org.opentcs.util.CyclicTask;
@@ -104,6 +108,8 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
     private MovementCommand currentCommand;
 
     private MovementCommand previousCommand;
+
+//    private
 
 //    private  sendDriverOrder;
 
@@ -203,6 +209,26 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
             int multiplier = lsMessage.getMultiplier();
             getProcessModel().setVehiclePaused(multiplier == 0);
         }
+    }
+
+    @Override
+    public void execute(AdapterCommand command) {
+        PublishEventCommand publishCommand = (PublishEventCommand) command;
+        switch (publishCommand.getEventAppendix().toString()) {
+            case "pausePath":
+                agv.pausePath();
+                break;
+            case "resumePath":
+                agv.resumePath();
+                break;
+            case "abortPath":
+                agv.abortPath();
+                break;
+            default:
+                break;
+        }
+
+        LOG.info("controlcenter action: '{}'", publishCommand.getEventAppendix());
     }
 
     @Override
