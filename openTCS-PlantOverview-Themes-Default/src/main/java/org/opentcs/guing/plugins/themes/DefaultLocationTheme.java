@@ -30,7 +30,7 @@ public class DefaultLocationTheme
    * The path containing the images.
    */
   private static final String path
-      = "/org/opentcs/guing/plugins/themes/symbols/location/";
+      = "/com/lvsrobot/guing/plugins/themes/symbols/location/";
   /**
    * The available symbols.
    */

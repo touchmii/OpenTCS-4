@@ -16,6 +16,7 @@ import java.net.InetAddress;
 import java.rmi.ConnectIOException;
 
 import de.re.easymodbus.exceptions.ModbusException;
+import org.opentcs.data.model.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,12 @@ public class AgvTelegramNew {
 //        socket = new SocketUtils(ip, port);
 //    }
 //    AgvInfo agvInfo = new AgvInfo();
+
+    /**
+     * 新建车辆通信连接
+     * @param String ip
+     * @param int port
+     */
     public AgvTelegramNew(String ip, int port) {
         try {
             TcpParameters tcpParameters = new TcpParameters();
@@ -84,7 +91,12 @@ public class AgvTelegramNew {
         }
     }
 
-    public AgvInfo getAgvInfo() {
+    /**
+     * 获取车辆信息
+     * @return AgvInfo
+     * 所有车辆信息
+     */
+    public synchronized AgvInfo getAgvInfo() {
 
 //        byte[] retBytes = socket.send(sendBytes);
         int[] retReadInputRegisters = new int[60];
@@ -136,6 +148,7 @@ public class AgvTelegramNew {
         agvInfo.setBattery(retReadInputRegisters[10]);
         agvInfo.setLoadStatus(retReadInputRegisters[32]);
         agvInfo.setSpeed(retReadInputRegisters[52]);
+        agvInfo.setVehicleAvoidance(retReadInputRegisters[22]);
 //        LOG.info("rec 51 {}",retReadInputRegisters[51]);
 //        LOG.info("rec 52 {}",retReadInputRegisters[52]);
 //        LOG.info("rec 53 {}",retReadInputRegisters[53]);
@@ -147,7 +160,7 @@ public class AgvTelegramNew {
         return agvInfo;
     }
 
-    public boolean sendWork(String finalOperation) {
+    public synchronized boolean sendWork(String finalOperation) {
         return true;
     }
 
@@ -169,7 +182,14 @@ public class AgvTelegramNew {
 //        }
 //        return true;
 //    }
-    public boolean sendPath(int[] path) {
+
+    /**
+     * 发送驱动订单
+     * @param int[] path
+     * @return boolean
+     * 是否成功
+     */
+    public synchronized boolean sendPath(int[] path) {
         try {
               this.Connecte();
 //            if(!modbusClient.isConnected()) {
@@ -184,7 +204,12 @@ public class AgvTelegramNew {
         }
         return true;
     }
-    public boolean abortPath() {
+
+    /**
+     * 终止驱动订单
+     * @return
+     */
+    public synchronized boolean abortPath() {
         try{
             this.Connecte();
             m.writeSingleRegister(1, 56, 1);
@@ -196,7 +221,11 @@ public class AgvTelegramNew {
         return true;
     }
 
-    public boolean pausePath() {
+    /**
+     * 暂停驱动订单
+     * @return
+     */
+    public synchronized boolean pausePath() {
         try{
             this.Connecte();
             m.writeSingleRegister(1, 55, 1);
@@ -208,7 +237,11 @@ public class AgvTelegramNew {
         return true;
     }
 
-    public boolean resumePath() {
+    /**
+     * 取消暂停驱动订单
+     * @return
+     */
+    public synchronized boolean resumePath() {
         try{
             this.Connecte();
             m.writeSingleRegister(1, 55, 0);
@@ -219,4 +252,23 @@ public class AgvTelegramNew {
         }
         return true;
     }
+
+    /**
+     * 载货动作
+     * @return boolean
+     * 是否成功
+     */
+    public synchronized boolean forkAction(Triple current_coord, int forkAction, int pointName) {
+        int[] send_path = {1, forkAction, 1, pointName, (int)current_coord.getX()/10, (int)current_coord.getY()/10, 365};
+        try{
+            this.Connecte();
+            m.writeMultipleRegisters(1, 100, send_path);
+        } catch (Exception e) {
+            LOG.error("forkAction failt: {}", e.toString());
+            this.disConnecte();
+            return false;
+        }
+        return true;
+    }
+
 }

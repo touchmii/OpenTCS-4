@@ -36,7 +36,39 @@ public class AgvInfo {
     private int electric;
     private int exception;
     private int status;
+    private int avoidance;
 
+
+    /**
+     * 设置车辆叉臂状态
+     * @param int fork_status
+     * 0: UnLoad 1: load
+     */
+    public void setVehicleForkStatus(int fork_status) {
+        this.forkStatus = fork_status;
+    }
+
+    /**
+     * 获取车辆叉臂状态
+     * @return int for_status
+     * 0: Unload 1: Load
+     */
+    public int getVehicleForkStatus() { return this.forkStatus;}
+    /**
+     * 设置车辆避障状态
+     * @param int avoidance_status
+     */
+    public void setVehicleAvoidance(int avoidance_status) { this.avoidance = avoidance_status;}
+
+    /**
+     * 获取车辆避障状态
+     * @return int avoidance_tatus
+     */
+    public int getVehicleAvoidance() { return this.avoidance;}
+    /**
+     * 设置车辆角度，单位度
+     * @param double orientation
+     */
     public void setVehicleOrientation(double orientation) { this.vehicle_orientation = orientation; }
     public double getVehicleOrientation() { return this.vehicle_orientation > 270.0 ? this.vehicle_orientation-270 : this.vehicle_orientation+90; }
     public int getPosition() {

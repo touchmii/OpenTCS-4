@@ -224,6 +224,20 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
             case "abortPath":
                 agv.abortPath();
                 break;
+            case "forkLoad":
+                String point_name = this.getInitialPosition();
+                if (point_name != null) {
+                    agv.forkAction(getProcessModel().getVehiclePrecisePosition(), 1, Integer.parseInt(new String(point_name)));
+                }
+                getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("forkLoad in point: {}", getProcessModel().getVehiclePosition()).getMessage(), UserNotification.Level.INFORMATIONAL));
+                break;
+            case "forkUnload":
+                String point_name2 = this.getInitialPosition();
+                if (point_name2 != null) {
+                    agv.forkAction(getProcessModel().getVehiclePrecisePosition(), 2, Integer.parseInt(new String(point_name2)));
+                }
+                getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("forkUnload int point: {}", getProcessModel().getVehiclePosition()).getMessage(), UserNotification.Level.INFORMATIONAL));
+                break;
             default:
                 break;
         }
@@ -318,6 +332,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
         int a = 0;
         while (agvInfo == null && a < 5) { agvInfo = agv.getAgvInfo(); a ++;}
         Triple precisePosition = agvInfo.getPrecisePosition();
+        getProcessModel().setVehiclePrecisePosition(precisePosition);
         getProcessModel().setVehicleState(Vehicle.State.IDLE);
 //        Triple precisePosition = new Triple((long)currentPosition[0], (long)currentPosition[1], 0);
         List<Point> PointList = getPointLists().stream().filter(point -> Math.abs(point.getPosition().getX() - precisePosition.getX()) < 500).filter(point -> Math.abs(point.getPosition().getY() - precisePosition.getY()) < 500).collect(Collectors.toList());
@@ -327,10 +342,12 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                 return null;
             case 1:
                 currentPoint = PointList.get(0);
+                getProcessModel().setVehiclePosition(currentPoint.getName());
                 LOG.info("PointList: {}", PointList);
-                return PointList.get(0).getName();
+                return currentPoint.getName();
             default:
                 currentPoint = PointList.get(0);
+                getProcessModel().setVehiclePosition(currentPoint.getName());
                 return PointList.get(0).getName();
         }
     }

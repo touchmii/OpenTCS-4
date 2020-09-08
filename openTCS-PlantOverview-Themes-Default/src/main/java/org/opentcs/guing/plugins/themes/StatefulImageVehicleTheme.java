@@ -32,7 +32,7 @@ public class StatefulImageVehicleTheme
   /**
    * The path containing the images.
    */
-  private static final String PATH = "/org/opentcs/guing/plugins/themes/symbols/vehicle/";
+  private static final String PATH = "/com/lvsrobot/guing/plugins/themes/symbols/vehicle/";
   /**
    * The font to be used for labels.
    */
@@ -106,8 +106,9 @@ public class StatefulImageVehicleTheme
 
     stateMapLoaded.put(Vehicle.State.CHARGING, loadImage(PATH + "loaded_charging.png"));
     stateMapLoaded.put(Vehicle.State.ERROR, loadImage(PATH + "loaded_error.png"));
-    stateMapLoaded.put(Vehicle.State.EXECUTING, loadImage(PATH + "loaded_normal.png"));
-    stateMapLoaded.put(Vehicle.State.IDLE, loadImage(PATH + "loaded_normal.png"));
+    stateMapLoaded.put(Vehicle.State.EXECUTING, loadImage(PATH + "executing.gif"));
+//    stateMapLoaded.put(Vehicle.State.IDLE, loadImage(PATH + "loaded_normal.png"));
+    stateMapLoaded.put(Vehicle.State.IDLE, loadImage(PATH + "executing.gif"));
     stateMapLoaded.put(Vehicle.State.UNAVAILABLE, loadImage(PATH + "loaded_normal.png"));
     stateMapLoaded.put(Vehicle.State.UNKNOWN, loadImage(PATH + "loaded_normal.png"));
   }

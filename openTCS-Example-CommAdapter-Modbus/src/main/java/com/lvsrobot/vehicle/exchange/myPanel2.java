@@ -104,13 +104,34 @@ public class myPanel2 extends VehicleCommAdapterPanel {
         VehicleCommAdapterEvent event = new VehicleCommAdapterEvent(processModel.getVehicleName(), "pausePath");
         LOG.info("pausePathButton pressed, action appendix : '{}'", event.getAppendix());
         sendCommAdapterCommand(new PublishEventCommand(event));
-    }/**
+    }
+    /**
      * resumePathButton
      * send resume path command
      * @param java.awt.event.Action evt
      */
     private void resumePathButtonActionPerformed(java.awt.event.ActionEvent evt) {
         VehicleCommAdapterEvent event = new VehicleCommAdapterEvent(processModel.getVehicleName(), "resumePath");
+        LOG.info("resumePathButton pressed, action appendix : '{}'", event.getAppendix());
+        sendCommAdapterCommand(new PublishEventCommand(event));
+    }
+    /**
+     * forkLoadButton
+     * send forkLoad command
+     * @param java.awt.event.Action evt
+     */
+    private void forkLoadButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        VehicleCommAdapterEvent event = new VehicleCommAdapterEvent(processModel.getVehicleName(), "forkLoad");
+        LOG.info("resumePathButton pressed, action appendix : '{}'", event.getAppendix());
+        sendCommAdapterCommand(new PublishEventCommand(event));
+    }
+    /**
+     * forkUnloadButton
+     * send forkUnload command
+     * @param java.awt.event.Action evt
+     */
+    private void forkUnloadButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        VehicleCommAdapterEvent event = new VehicleCommAdapterEvent(processModel.getVehicleName(), "forkUnload");
         LOG.info("resumePathButton pressed, action appendix : '{}'", event.getAppendix());
         sendCommAdapterCommand(new PublishEventCommand(event));
     }
@@ -342,9 +363,19 @@ public class myPanel2 extends VehicleCommAdapterPanel {
 
             //---- forkLoadButton ----
             forkLoadButton.setText("\u53c9\u8d27");
+            forkLoadButton.addActionListener(new java.awt.event.ActionListener(){
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    forkLoadButtonActionPerformed(evt);
+                }
+            });
 
             //---- forkUnloadButton ----
             forkUnloadButton.setText("\u5378\u8d27");
+            forkUnloadButton.addActionListener(new java.awt.event.ActionListener(){
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    forkUnloadButtonActionPerformed(evt);
+                }
+            });
 
             GroupLayout AutoControlLayout = new GroupLayout(AutoControl);
             AutoControl.setLayout(AutoControlLayout);
