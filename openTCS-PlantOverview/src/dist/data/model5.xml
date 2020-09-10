@@ -33,16 +33,16 @@
     <point name="3" xPosition="-2000" yPosition="900" zPosition="0" vehicleOrientationAngle="NaN" type="HALT_POSITION">
         <outgoingPath name="3 --- 26"/>
     </point>
-    <point name="33" xPosition="-1900" yPosition="-6800" zPosition="0" vehicleOrientationAngle="NaN" type="HALT_POSITION">
+    <point name="33" xPosition="1900" yPosition="6800" zPosition="0" vehicleOrientationAngle="270.0" type="HALT_POSITION">
         <outgoingPath name="33 --- 37"/>
     </point>
     <point name="34" xPosition="-2740" yPosition="-8280" zPosition="0" vehicleOrientationAngle="0.0" type="HALT_POSITION">
         <outgoingPath name="34 --- 35"/>
     </point>
-    <point name="35" xPosition="-520" yPosition="-8280" zPosition="0" vehicleOrientationAngle="NaN" type="HALT_POSITION">
+    <point name="35" xPosition="-620" yPosition="-8280" zPosition="0" vehicleOrientationAngle="NaN" type="HALT_POSITION">
         <outgoingPath name="35 --- 36"/>
     </point>
-    <point name="36" xPosition="-520" yPosition="1840" zPosition="0" vehicleOrientationAngle="NaN" type="HALT_POSITION">
+    <point name="36" xPosition="-620" yPosition="1840" zPosition="0" vehicleOrientationAngle="NaN" type="HALT_POSITION">
         <outgoingPath name="36 --- 37"/>
     </point>
     <point name="37" xPosition="1900" yPosition="1840" zPosition="0" vehicleOrientationAngle="NaN" type="HALT_POSITION"/>
@@ -518,5 +518,5 @@
             <property name="ROUTE_COLOR" value="#0000FF"/>
         </modelLayoutElement>
     </visualLayout>
-    <property name="tcs:modelFileLastModified" value="2020-09-10T07:02:02.623Z"/>
+    <property name="tcs:modelFileLastModified" value="2020-09-10T08:49:46.436Z"/>
 </model>
