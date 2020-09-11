@@ -147,8 +147,10 @@ public class AgvTelegramNew {
         agvInfo.setVehicleOrientation(orientation);
         agvInfo.setBattery(retReadInputRegisters[10]);
         agvInfo.setLoadStatus(retReadInputRegisters[32]);
+        agvInfo.setCharge_status(retReadInputRegisters[33]);
         agvInfo.setSpeed(retReadInputRegisters[52]);
-        agvInfo.setVehicleAvoidance(retReadInputRegisters[22]);
+        //是否触发避障，0未触发 1触发 地址18
+        agvInfo.setVehicleAvoidance(retReadInputRegisters[18]);
 //        LOG.info("rec 51 {}",retReadInputRegisters[51]);
 //        LOG.info("rec 52 {}",retReadInputRegisters[52]);
 //        LOG.info("rec 53 {}",retReadInputRegisters[53]);
@@ -215,6 +217,21 @@ public class AgvTelegramNew {
             m.writeSingleRegister(1, 56, 1);
         } catch (Exception e) {
             LOG.error("abort failt: {}", e.toString());
+            this.disConnecte();
+            return false;
+        }
+        return true;
+    }
+    /**
+     * 清除报警
+     * @return
+     */
+    public synchronized boolean resetAlarm() {
+        try{
+            this.Connecte();
+            m.writeSingleRegister(1, 57, 0);
+        } catch (Exception e) {
+            LOG.error("resetAlarm failt: {}", e.toString());
             this.disConnecte();
             return false;
         }

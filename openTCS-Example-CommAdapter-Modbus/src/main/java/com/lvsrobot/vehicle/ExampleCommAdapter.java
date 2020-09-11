@@ -217,12 +217,19 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
         switch (publishCommand.getEventAppendix().toString()) {
             case "pausePath":
                 agv.pausePath();
+                getProcessModel().publishUserNotification(new UserNotification("send pause path command to vehicle", UserNotification.Level.INFORMATIONAL));
                 break;
             case "resumePath":
                 agv.resumePath();
+                getProcessModel().publishUserNotification(new UserNotification("send resume path command to vehicle", UserNotification.Level.INFORMATIONAL));
                 break;
             case "abortPath":
                 agv.abortPath();
+                getProcessModel().publishUserNotification(new UserNotification("send abort path command to vehicle", UserNotification.Level.INFORMATIONAL));
+                break;
+            case "resetAlarm":
+                agv.resetAlarm();
+                getProcessModel().publishUserNotification(new UserNotification("send reset alarm command to vehicle", UserNotification.Level.INFORMATIONAL));
                 break;
             case "forkLoad":
                 String point_name = this.getInitialPosition();
@@ -409,6 +416,11 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                 getProcessModel().setVehiclePrecisePosition(agvInfo.getPrecisePosition());
                 getProcessModel().setVehicleOrientationAngle(agvInfo.getVehicleOrientation());
                 getProcessModel().setVehicleEnergyLevel(agvInfo.getBattery());
+                if(agvInfo.getLoadStatus() == 1) {
+                    loadState = LoadState.FULL;
+                } else {
+                    loadState = LoadState.EMPTY;
+                }
                 getProcessModel().setMaxFwdVelocity(agvInfo.getSpeed());
                 getProcessModel().setMaxRevVelocity(agvInfo.getSpeed());
                 getProcessModel().setVehicleMaxVelocity(agvInfo.getSpeed());

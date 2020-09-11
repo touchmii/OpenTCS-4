@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.8" encoding: "UTF-8"
+JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
@@ -89,8 +89,8 @@ new FormModel {
 				} )
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-				"$horizontalGroup": "par l {seq l {space :p:32:p, par l:::p {comp resetAlamButton:::::x, comp resumePathButton:::::x, comp pausePathButton:::::x, comp forkLoadButton::l:::x, comp forkUnloadButton::l:::x}, space :::x}}"
-				"$verticalGroup": "par l {seq l {space :p:49:p, comp pausePathButton:::p::p, space u:::p, comp resumePathButton:::p::p, space u:::p, comp resetAlamButton:::p::p, space u:::p, comp forkLoadButton:::p::p, space u:::p, comp forkUnloadButton:::p::p, space ::84:x}}"
+				"$horizontalGroup": "par l {seq l {space :p:32:p, par l {seq {space :6:6:p, comp abortPathButton:::p::p}, par l:::p {comp resetAlarmButton:::::x, comp resumePathButton:::::x, comp pausePathButton:::::x, comp forkLoadButton::l:::x, comp forkUnloadButton::l:::x}}, space :::x}}"
+				"$verticalGroup": "par l {seq l {space :p:49:p, comp pausePathButton:::p::p, space u:::p, comp resumePathButton:::p::p, space u:::p, comp resetAlarmButton:::p::p, space u:::p, comp forkLoadButton:::p::p, space u:::p, comp forkUnloadButton:::p::p, space u:::p, comp abortPathButton:::p::p, space ::42:x}}"
 			} ) {
 				name: "AutoControl"
 				"border": new javax.swing.border.TitledBorder( "自动控制" )
@@ -103,7 +103,7 @@ new FormModel {
 					"text": "继续路径"
 				} )
 				add( new FormComponent( "javax.swing.JButton" ) {
-					name: "resetAlamButton"
+					name: "resetAlarmButton"
 					"text": "清除报警"
 				} )
 				add( new FormComponent( "javax.swing.JButton" ) {
@@ -113,6 +113,10 @@ new FormModel {
 				add( new FormComponent( "javax.swing.JButton" ) {
 					name: "forkUnloadButton"
 					"text": "卸货"
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "abortPathButton"
+					"text": "取消路径"
 				} )
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {

@@ -116,6 +116,26 @@ public class myPanel2 extends VehicleCommAdapterPanel {
         sendCommAdapterCommand(new PublishEventCommand(event));
     }
     /**
+     * abortPathButton
+     * send abort path command
+     * @param java.awt.event.Action evt
+     */
+    private void abortPathButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        VehicleCommAdapterEvent event = new VehicleCommAdapterEvent(processModel.getVehicleName(), "abortPath");
+        LOG.info("abortPathButton pressed, action appendix : '{}'", event.getAppendix());
+        sendCommAdapterCommand(new PublishEventCommand(event));
+    }
+    /**
+     * resetAlarmButton
+     * send reset alarm command
+     * @param java.awt.event.Action evt
+     */
+    private void resetAlarmButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        VehicleCommAdapterEvent event = new VehicleCommAdapterEvent(processModel.getVehicleName(), "resetAlarm");
+        LOG.info("resetAlarmhButton pressed, action appendix : '{}'", event.getAppendix());
+        sendCommAdapterCommand(new PublishEventCommand(event));
+    }
+    /**
      * forkLoadButton
      * send forkLoad command
      * @param java.awt.event.Action evt
@@ -159,9 +179,10 @@ public class myPanel2 extends VehicleCommAdapterPanel {
         AutoControl = new JPanel();
         pausePathButton = new JButton();
         resumePathButton = new JButton();
-        resetAlamButton = new JButton();
+        resetAlarmButton = new JButton();
         forkLoadButton = new JButton();
         forkUnloadButton = new JButton();
+        abortPathButton = new JButton();
         panel5 = new JPanel();
         scrollPane2 = new JScrollPane();
         list1 = new JList();
@@ -358,8 +379,13 @@ public class myPanel2 extends VehicleCommAdapterPanel {
                 }
             });
 
-            //---- resetAlamButton ----
-            resetAlamButton.setText("\u6e05\u9664\u62a5\u8b66");
+            //---- resetAlarmButton ----
+            resetAlarmButton.setText("\u6e05\u9664\u62a5\u8b66");
+            resetAlarmButton.addActionListener(new java.awt.event.ActionListener(){
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    resetAlarmButtonActionPerformed(evt);
+                }
+            });
 
             //---- forkLoadButton ----
             forkLoadButton.setText("\u53c9\u8d27");
@@ -377,18 +403,30 @@ public class myPanel2 extends VehicleCommAdapterPanel {
                 }
             });
 
+            //---- abortPathButton ----
+            abortPathButton.setText("\u53d6\u6d88\u8def\u5f84");
+            abortPathButton.addActionListener(new java.awt.event.ActionListener(){
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    abortPathButtonActionPerformed(evt);
+                }
+            });
+
             GroupLayout AutoControlLayout = new GroupLayout(AutoControl);
             AutoControl.setLayout(AutoControlLayout);
             AutoControlLayout.setHorizontalGroup(
                 AutoControlLayout.createParallelGroup()
                     .addGroup(AutoControlLayout.createSequentialGroup()
                         .addGap(32, 32, 32)
-                        .addGroup(AutoControlLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                            .addComponent(resetAlamButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(resumePathButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(pausePathButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(forkLoadButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(forkUnloadButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(AutoControlLayout.createParallelGroup()
+                            .addGroup(AutoControlLayout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(abortPathButton))
+                            .addGroup(AutoControlLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                .addComponent(resetAlarmButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(resumePathButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(pausePathButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(forkLoadButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(forkUnloadButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             );
             AutoControlLayout.setVerticalGroup(
@@ -399,12 +437,14 @@ public class myPanel2 extends VehicleCommAdapterPanel {
                         .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(resumePathButton)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(resetAlamButton)
+                        .addComponent(resetAlarmButton)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(forkLoadButton)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(forkUnloadButton)
-                        .addContainerGap(84, Short.MAX_VALUE))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(abortPathButton)
+                        .addContainerGap(42, Short.MAX_VALUE))
             );
         }
 
@@ -533,9 +573,10 @@ public class myPanel2 extends VehicleCommAdapterPanel {
     private JPanel AutoControl;
     private JButton pausePathButton;
     private JButton resumePathButton;
-    private JButton resetAlamButton;
+    private JButton resetAlarmButton;
     private JButton forkLoadButton;
     private JButton forkUnloadButton;
+    private JButton abortPathButton;
     private JPanel panel5;
     private JScrollPane scrollPane2;
     private JList list1;

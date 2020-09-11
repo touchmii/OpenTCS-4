@@ -37,6 +37,7 @@ public class AgvInfo {
     private int exception;
     private int status;
     private int avoidance;
+    private int chargeStatus;
 
 
     /**
@@ -137,4 +138,7 @@ public class AgvInfo {
 
     public void setLoadStatus(int load_status) { this.loadStatus = load_status; }
     public int getLoadStatus() { return this.loadStatus; }
+
+    public void setCharge_status(int charge_status1) {this.chargeStatus = charge_status;}
+    public int getChargeStatus() {return this.chargeStatus;}
 }
