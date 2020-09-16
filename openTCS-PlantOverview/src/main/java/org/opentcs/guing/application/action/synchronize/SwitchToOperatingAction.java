@@ -10,14 +10,20 @@ package org.opentcs.guing.application.action.synchronize;
 import com.google.inject.Inject;
 import java.awt.event.ActionEvent;
 import static java.util.Objects.requireNonNull;
-import javax.swing.AbstractAction;
+
+import javax.swing.*;
+
 import static javax.swing.Action.ACCELERATOR_KEY;
 import static javax.swing.Action.MNEMONIC_KEY;
-import javax.swing.KeyStroke;
+
 import org.opentcs.guing.application.OpenTCSView;
 import org.opentcs.guing.application.OperationMode;
 import static org.opentcs.guing.util.I18nPlantOverview.MENU_PATH;
+
+import org.opentcs.guing.application.menus.menubar.PasswordPanel;
 import org.opentcs.guing.util.ResourceBundleUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An action to switch to operating mode.
@@ -33,6 +39,8 @@ public class SwitchToOperatingAction
   public static final String ID = "file.mode.switchToOperating";
 
   private static final ResourceBundleUtil BUNDLE = ResourceBundleUtil.getBundle(MENU_PATH);
+
+  private static final Logger LOG = LoggerFactory.getLogger(SwitchToOperatingAction.class);
 
   /**
    * The view.
@@ -51,6 +59,18 @@ public class SwitchToOperatingAction
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    view.switchPlantOverviewState(OperationMode.OPERATING);
+    LOG.info("Switch to OprationMode");
+    String test = PasswordPanel.showDialog ("\u8BF7\u8F93\u5165\u64CD\u4F5C\u5458\u5BC6\u7801");
+    if(!test.equals("1234")) {
+
+//      setEnabled(false);
+//      super.setSelected(false);
+      JOptionPane.showMessageDialog(null, "\u5BC6\u7801\u8F93\u5165\u9519\u8BEF!");
+      view.switchPlantOverviewState(OperationMode.MODELLING);
+//      String a;
+    } else {
+
+      view.switchPlantOverviewState(OperationMode.OPERATING);
+    }
   }
 }

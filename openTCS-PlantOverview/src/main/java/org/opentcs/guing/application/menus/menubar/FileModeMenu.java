@@ -65,5 +65,6 @@ public class FileModeMenu
 
     modellingModeItem.setSelected(mode == OperationMode.MODELLING);
     operatingModeItem.setSelected(mode == OperationMode.OPERATING);
+//    operatingModeItem.setSelected();
   }
 }

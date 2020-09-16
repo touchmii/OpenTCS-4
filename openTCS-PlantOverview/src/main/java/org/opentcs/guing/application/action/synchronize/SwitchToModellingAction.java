@@ -10,14 +10,18 @@ package org.opentcs.guing.application.action.synchronize;
 import com.google.inject.Inject;
 import java.awt.event.ActionEvent;
 import static java.util.Objects.requireNonNull;
-import javax.swing.AbstractAction;
+
+import javax.swing.*;
+
 import static javax.swing.Action.ACCELERATOR_KEY;
 import static javax.swing.Action.MNEMONIC_KEY;
-import javax.swing.KeyStroke;
+
 import org.opentcs.guing.application.OpenTCSView;
 import org.opentcs.guing.application.OperationMode;
 import static org.opentcs.guing.util.I18nPlantOverview.MENU_PATH;
 import org.opentcs.guing.util.ResourceBundleUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An action to switch to modelling mode.
@@ -33,6 +37,8 @@ public class SwitchToModellingAction
   public static final String ID = "file.mode.switchToModelling";
   
   private static final ResourceBundleUtil BUNDLE = ResourceBundleUtil.getBundle(MENU_PATH);
+
+  private static final Logger LOG = LoggerFactory.getLogger(SwitchToModellingAction.class);
 
   /**
    * The view.
@@ -51,8 +57,13 @@ public class SwitchToModellingAction
 
   @Override
   public void actionPerformed(ActionEvent e) {
+    LOG.info("Switch to ModellingMode你好是aaaModeaaaaa");
+//    System.out.println("Switch to ModellingMode");
+    //JOptionPane.showConfirmDialog(null, "\u8BF7\u8F93\u5165\u5BC6\u7801:", "\u8BF7\u8F93\u5165\u5BC6\u7801XXX", JOptionPane.ERROR_MESSAGE);
+
     view.switchPlantOverviewState(OperationMode.MODELLING);
 
   }
+
 
 }
