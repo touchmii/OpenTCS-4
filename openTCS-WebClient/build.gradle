@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+    id 'war'
+    id 'org.akhikhl.gretty' version '2.0.0'
+}
+def debugArgs = []
+if (gradle.startParameter.initScripts) {
+    def line = file(gradle.startParameter.initScripts[0]).readLines().findAll({x -> x ==~ /.*-agentlib:jdwp=.*/ })[0]
+    if (line) {
+        debugArgs = ((line =~ /.*'(.*)'.*/)[0][1] as String).split(' ')
+    }
+}
+gretty {
+    httpPort = 8090
+    contextPath = "/"
+    servletContainer = 'jetty9'
+    jvmArgs = ['-Dorg.eclipse.jetty.annotations.maxWait=300', *debugArgs]
+}
+
+group 'com.lvsrobot'
+version '4.17.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation 'org.eclipse.rap:org.eclipse.rap.rwt:3.13.0'
+//    implementation 'org.openjax:jetty:9.4.6'
+//    implementation 'org.eclipse.jetty:jetty-server:9.4.6.v20170531'
+//    compile 'org.eclipse.jetty.aggregate:jetty-all:9.4.6.v20170531'
+    implementation 'org.hamcrest:hamcrest-core:1.3'
+    implementation 'org.eclipse.rap:org.eclipse.rap.jface:3.13.0'
+    implementation 'org.eclipse.rap:org.eclipse.rap.filedialog:3.13.0'
+    implementation 'org.eclipse.core:org.eclipse.core.commands:3.6.0'
+    implementation 'org.eclipse.rap:org.eclipse.rap.nebula.widgets.grid:3.13.0'
+    implementation 'org.eclipse.rap:org.eclipse.rap.nebula.jface.gridviewer:3.13.0'
+    implementation 'org.eclipse.platform:org.eclipse.core.runtime:3.18.0'
+    implementation 'org.eclipse.rap:org.eclipse.rap.nebula.widgets.richtext:3.13.0'
+    implementation 'org.eclipse.rap:org.eclipse.rap.jface.databinding:3.13.0'
+}
+
+//apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
+
+task release {
+    dependsOn build
+}
