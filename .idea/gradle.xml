@@ -22,6 +22,7 @@
             <option value="$PROJECT_DIR$/openTCS-Example-CommAdapter" />
             <option value="$PROJECT_DIR$/openTCS-Example-CommAdapter-Modbus" />
             <option value="$PROJECT_DIR$/openTCS-Example-CommAdapter-TCP" />
+            <option value="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP" />
             <option value="$PROJECT_DIR$/openTCS-Impl-Configuration-cfg4j" />
             <option value="$PROJECT_DIR$/openTCS-Kernel" />
             <option value="$PROJECT_DIR$/openTCS-Kernel-Extension-HTTP-Services" />
