@@ -16,6 +16,6 @@ public class ExampleCommAdapterDescription extends VehicleCommAdapterDescription
 
     @Override
     public String getDescription() {
-        return ResourceBundle.getBundle("com/lvsrobot/Bundle").getString("AdapterFactoryDescription");
+        return ResourceBundle.getBundle("com/lvsrobot/vrep/Bundle").getString("AdapterFactoryDescription");
     }
 }
