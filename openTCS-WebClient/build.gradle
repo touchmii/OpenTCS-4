@@ -27,6 +27,7 @@ repositories {
 }
 
 dependencies {
+    implementation project(':openTCS-Common')
     testCompile group: 'junit', name: 'junit', version: '4.12'
     implementation 'org.eclipse.rap:org.eclipse.rap.rwt:3.13.0'
 //    implementation 'org.openjax:jetty:9.4.6'
