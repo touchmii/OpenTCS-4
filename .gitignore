@@ -13,7 +13,7 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-#.idea
+.idea
 *.iws
 *.iml
 *.ipr
@@ -54,3 +54,4 @@ target/
 /openTCS-CommAdapter-Loopback/build/
 /openTCS-API-Injection/build/
 /openTCS-API-Base/build/
+/.idea/
