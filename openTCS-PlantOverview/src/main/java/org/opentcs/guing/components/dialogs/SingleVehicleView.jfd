@@ -1,0 +1,163 @@
+JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.bundlePackage": "i18n.org.opentcs.plantoverview.panels"
+	"i18n.bundleName": "vehicleView"
+	"i18n.autoExternalize": false
+	"i18n.keyPrefix": "SingleVehicleView"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+			"$columnSpecs": "0, 0, 0"
+			"$rowSpecs": "0, 0"
+		} ) {
+			name: "this"
+			"minimumSize": new java.awt.Dimension( 200, 59 )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+				name: "statusPanel"
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+					name: "vehiclePanel"
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "vehicleLabel"
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class java.lang.String ) {
+						"value": "North"
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "Center"
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"hAlign": 0
+				"vAlign": 0
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0"
+				"$rowSpecs": "0, 0"
+			} ) {
+				name: "batteryPanel"
+				"minimumSize": new java.awt.Dimension( 20, 14 )
+				"preferredSize": new java.awt.Dimension( 45, 14 )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "batteryIcon"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"hAlign": 0
+					"vAlign": 0
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "batteryLabel"
+					"text": "battery"
+					"preferredSize": new java.awt.Dimension( 45, 14 )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 1
+					"hAlign": 0
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 5, 0, 0 )
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+				"insets": new java.awt.Insets( 14, 0, 0, 0 )
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0, 0"
+				"$rowSpecs": "0, 0, 0, 0"
+			} ) {
+				name: "propertiesPanel"
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "integratedLabel"
+					"horizontalAlignment": 11
+					"text": new FormMessage( null, "singleVehicleView.label_integrated.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"hAlign": 4
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 3, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "integratedStateLabel"
+					"text": new FormMessage( null, "singleVehicleView.label_integratedState.no.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"hAlign": 2
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 3, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "vehicleStateLabel"
+					"horizontalAlignment": 11
+					"text": new FormMessage( null, "singleVehicleView.label_state.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 1
+					"hAlign": 4
+					"vAlign": 0
+					"insets": new java.awt.Insets( 3, 3, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "vehicleStateValueLabel"
+					"text": "UNAVAILABLE"
+					"toolTipText": ""
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 1
+					"hAlign": 2
+					"vAlign": 0
+					"insets": new java.awt.Insets( 3, 3, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "positionLabel"
+					"text": new FormMessage( null, "singleVehicleView.label_position.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 2
+					"hAlign": 4
+					"vAlign": 0
+					"insets": new java.awt.Insets( 3, 3, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "positionValueLabel"
+					"text": "-"
+					"maximumSize": new java.awt.Dimension( 68, 14 )
+					"minimumSize": new java.awt.Dimension( 68, 14 )
+					"preferredSize": new java.awt.Dimension( 68, 14 )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 2
+					"hAlign": 2
+					"vAlign": 0
+					"insets": new java.awt.Insets( 3, 3, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "destinationLabel"
+					"text": new FormMessage( null, "singleVehicleView.label_destination.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 3
+					"hAlign": 4
+					"vAlign": 0
+					"insets": new java.awt.Insets( 3, 3, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "destinationValueLabel"
+					"text": "-"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 3
+					"hAlign": 2
+					"vAlign": 0
+					"insets": new java.awt.Insets( 3, 3, 0, 0 )
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 1
+				"gridwidth": 2
+				"vAlign": 0
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "fillLabel"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 2
+				"hAlign": 0
+				"vAlign": 0
+				"weightx": 1.0
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 170, 110 )
+		} )
+	}
+}

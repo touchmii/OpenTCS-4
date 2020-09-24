@@ -1,0 +1,36 @@
+JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPaneTree"
+				"horizontalScrollBarPolicy": 32
+				"verticalScrollBarPolicy": 22
+				add( new FormComponent( "javax.swing.JTree" ) {
+					name: "objectTree"
+					"rootVisible": false
+					auxiliary() {
+						"JavaCodeGenerator.customCreateCode": "new StandardActionTree(this);;"
+					}
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textFieldModelName"
+				"editable": false
+				"background": new java.awt.Color( 153, 153, 255, 255 )
+				"font": new com.jformdesigner.model.SwingDerivedFont( null, 1, 0, false )
+				"foreground": new java.awt.Color( 255, 255, 255, 255 )
+				"text": "Model"
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "First"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 400, 300 )
+		} )
+	}
+}

@@ -1,0 +1,13 @@
+JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JFileChooser", null ) {
+			name: "this"
+			addEvent( new FormEvent( "java.beans.PropertyChangeListener", "propertyChange", "formPropertyChange", true ) )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 425, 300 )
+		} )
+	}
+}

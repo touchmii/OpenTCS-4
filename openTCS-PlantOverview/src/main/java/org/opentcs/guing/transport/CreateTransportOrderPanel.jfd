@@ -1,0 +1,216 @@
+JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.bundlePackage": "i18n.org.opentcs.plantoverview.dialogs"
+	"i18n.bundleName": "createTransportOrder"
+	"i18n.autoExternalize": false
+	"i18n.keyPrefix": "CreateTransportOrderPanel"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "org.opentcs.guing.components.dialogs.DialogContent", new FormLayoutManager( class javax.swing.BoxLayout ) {
+			"axis": 1
+		} ) {
+			name: "this"
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0, 0"
+				"$rowSpecs": "0, 0, 0, 0, 0, 0"
+				"$hGap": 5
+				"$vGap": 5
+			} ) {
+				name: "stationsPanel"
+				"border": new javax.swing.border.TitledBorder( "Drive orders" )
+				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+					name: "driveOrdersScrollPane"
+					"preferredSize": new java.awt.Dimension( 200, 200 )
+					add( new FormComponent( "javax.swing.JTable" ) {
+						name: "driveOrdersTable"
+						"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector, new java.util.Vector {
+							add( "Station" )
+							add( "Aktion" )
+						}, new java.util.Vector {
+							add( class java.lang.Object )
+							add( class java.lang.Object )
+						}, new java.util.Vector {
+							add( false )
+							add( false )
+						}, new java.util.Vector {
+							add( null )
+							add( null )
+						} )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridheight": 6
+					"weightx": 1.0
+					"weighty": 1.0
+					"insets": new java.awt.Insets( 5, 5, 5, 5 )
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "addButton"
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					"text": new FormMessage( null, "createTransportOrderPanel.button_add.text" )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "addButtonActionPerformed", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"vAlign": 0
+					"insets": new java.awt.Insets( 5, 0, 0, 5 )
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "editButton"
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					"text": new FormMessage( null, "createTransportOrderPanel.button_edit.text" )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "editButtonActionPerformed", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 1
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 0, 0, 5 )
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "removeButton"
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					"text": new FormMessage( null, "createTransportOrderPanel.button_delete.text" )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "removeButtonActionPerformed", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 2
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 0, 0, 5 )
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "moveUpButton"
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					"text": new FormMessage( null, "createTransportOrderPanel.button_up.text" )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "moveUpButtonActionPerformed", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 3
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 0, 0, 5 )
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "moveDownButton"
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					"text": new FormMessage( null, "createTransportOrderPanel.button_moveDown.text" )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "moveDownButtonActionPerformed", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 4
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 0, 0, 5 )
+				} )
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0, 0, 0, 0"
+				"$rowSpecs": "0"
+				"$hGap": 5
+			} ) {
+				name: "deadlinePanel"
+				"border": new javax.swing.border.TitledBorder( "Deadline" )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "dateLabel"
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					"text": new FormMessage( null, "createTransportOrderPanel.label_date.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"hAlign": 2
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 5, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JTextField" ) {
+					name: "dateTextField"
+					"columns": 10
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					"text": "31.12.2099"
+					"toolTipText": "Geben Sie das Datum im Format TT.MM.JJJJ ein!"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"vAlign": 0
+					"weightx": 0.5
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "timeLabel"
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					"text": new FormMessage( null, "createTransportOrderPanel.label_time.text" )
+					"toolTipText": ""
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 2
+					"hAlign": 2
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 5, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JTextField" ) {
+					name: "timeTextField"
+					"columns": 10
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					"text": "23:59"
+					"toolTipText": "Geben Sie die Uhrzeit im Format HH:MM ein!"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 3
+					"vAlign": 0
+					"weightx": 0.5
+					"insets": new java.awt.Insets( 0, 0, 0, 5 )
+				} )
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0, 0"
+				"$rowSpecs": "0"
+				"$hGap": 5
+			} ) {
+				name: "categoryPanel"
+				"border": new javax.swing.border.TitledBorder( "Category" )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "categoryLabel"
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					"text": new FormMessage( null, "createTransportOrderPanel.label_category.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"hAlign": 2
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 5, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JComboBox" ) {
+					name: "categoryComboBox"
+					"editable": true
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					auxiliary() {
+						"JavaCodeGenerator.typeParameters": "String"
+					}
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"vAlign": 0
+					"weightx": 1.0
+					"insets": new java.awt.Insets( 0, 0, 0, 5 )
+				} )
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0, 0"
+				"$rowSpecs": "0"
+				"$hGap": 5
+			} ) {
+				name: "vehiclePanel"
+				"border": new javax.swing.border.TitledBorder( "Vehicle" )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "vehicleLabel"
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					"text": new FormMessage( null, "createTransportOrderPanel.label_vehicle.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"hAlign": 2
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 5, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JComboBox" ) {
+					name: "vehicleComboBox"
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					auxiliary() {
+						"JavaCodeGenerator.typeParameters": "String"
+					}
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"vAlign": 0
+					"weightx": 1.0
+					"insets": new java.awt.Insets( 0, 0, 0, 5 )
+				} )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 400, 382 )
+		} )
+	}
+}

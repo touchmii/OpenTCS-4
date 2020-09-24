@@ -1,0 +1,58 @@
+JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.bundlePackage": "i18n.org.opentcs.plantoverview.dialogs"
+	"i18n.bundleName": "vehiclePopup"
+	"i18n.autoExternalize": false
+	"i18n.keyPrefix": "LocationActionPanel"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "org.opentcs.guing.components.dialogs.DialogContent", new FormLayoutManager( class java.awt.GridBagLayout ) {
+			"$columnSpecs": "0, 0"
+			"$rowSpecs": "0, 0"
+		} ) {
+			name: "this"
+			"preferredSize": new java.awt.Dimension( 150, 40 )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "locationsLabel"
+				"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+				"text": new FormMessage( null, "locationActionPanel.label_location.text" )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"insets": new java.awt.Insets( 0, 4, 0, 4 )
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "locationsComboBox"
+				"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+				auxiliary() {
+					"JavaCodeGenerator.typeParameters": "String"
+				}
+				addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "locationsComboBoxItemStateChanged", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+				"vAlign": 0
+				"weightx": 0.5
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "actionsLabel"
+				"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+				"text": new FormMessage( null, "locationActionPanel.label_action.text" )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 1
+				"insets": new java.awt.Insets( 0, 4, 0, 4 )
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "actionsComboBox"
+				"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+				auxiliary() {
+					"JavaCodeGenerator.typeParameters": "String"
+				}
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+				"gridy": 1
+				"vAlign": 0
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 119, 64 )
+		} )
+	}
+}

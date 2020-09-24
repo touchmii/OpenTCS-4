@@ -1,0 +1,203 @@
+JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.bundlePackage": "i18n.org.opentcs.plantoverview.panels"
+	"i18n.bundleName": "orderSequences"
+	"i18n.autoExternalize": false
+	"i18n.keyPrefix": "OrderSequenceView"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "org.opentcs.guing.components.dialogs.DialogContent", new FormLayoutManager( class java.awt.GridBagLayout ) {
+			"$columnSpecs": "0, 0"
+			"$rowSpecs": "0, 0"
+		} ) {
+			name: "this"
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0, 0"
+				"$rowSpecs": "0"
+			} ) {
+				name: "generalPanel"
+				"border": new javax.swing.border.TitledBorder( "General" )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+					"$columnSpecs": "0, 0"
+					"$rowSpecs": "0, 0, 0, 0, 0"
+				} ) {
+					name: "jPanel1"
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelName"
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+						"text": "Name:"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"hAlign": 2
+						"vAlign": 0
+						"insets": new java.awt.Insets( 0, 4, 0, 4 )
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textFieldName"
+						"editable": false
+						"columns": 10
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"vAlign": 1
+						"weightx": 0.5
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelFinishedIndex"
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+						"text": new FormMessage( null, "orderSequenceView.label_finishedIndex.text" )
+						"toolTipText": new FormMessage( null, "orderSequenceView.label_finishedIndex.tooltipText" )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 1
+						"hAlign": 2
+						"vAlign": 0
+						"insets": new java.awt.Insets( 0, 4, 0, 4 )
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textFieldFinishedIndex"
+						"editable": false
+						"columns": 10
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"gridy": 1
+						"vAlign": 1
+						"weightx": 0.5
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelIntendedVehicle"
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+						"text": new FormMessage( null, "orderSequenceView.label_intendedVehicle.text" )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 2
+						"hAlign": 2
+						"vAlign": 0
+						"insets": new java.awt.Insets( 0, 4, 0, 4 )
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textFieldIntendedVehicle"
+						"editable": false
+						"columns": 10
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"gridy": 2
+						"vAlign": 1
+						"weightx": 0.5
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelProcessingVehicle"
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+						"text": new FormMessage( null, "orderSequenceView.label_processingVehicle.text" )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 3
+						"hAlign": 2
+						"vAlign": 0
+						"insets": new java.awt.Insets( 0, 4, 0, 4 )
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textFieldProcessingVehicle"
+						"editable": false
+						"columns": 10
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"gridy": 3
+						"vAlign": 1
+						"weightx": 0.5
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelCategroy"
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+						"text": new FormMessage( null, "orderSequenceView.label_category.text" )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 4
+						"hAlign": 2
+						"vAlign": 0
+						"insets": new java.awt.Insets( 0, 4, 0, 4 )
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textCategory"
+						"editable": false
+						"columns": 10
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"gridy": 4
+						"vAlign": 1
+						"weightx": 0.5
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"weightx": 0.5
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+					"$columnSpecs": "0, 0"
+					"$rowSpecs": "0, 0, 0"
+					"$hGap": 0
+				} ) {
+					name: "jPanel2"
+					add( new FormComponent( "javax.swing.JCheckBox" ) {
+						name: "checkBoxComplete"
+						"text": new FormMessage( null, "orderSequenceView.checkBox_complete.text" )
+						"toolTipText": new FormMessage( null, "orderSequenceView.checkBox_complete.tooltipText" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "checkBoxCompleteActionPerformed", true ) )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"hAlign": 2
+						"vAlign": 0
+					} )
+					add( new FormComponent( "javax.swing.JCheckBox" ) {
+						name: "checkBoxFinished"
+						"text": new FormMessage( null, "orderSequenceView.checkBox_finished.text" )
+						"toolTipText": new FormMessage( null, "orderSequenceView.checkBox_finished.tooltipText" )
+						"enabled": false
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"gridy": 1
+						"hAlign": 2
+						"vAlign": 0
+					} )
+					add( new FormComponent( "javax.swing.JCheckBox" ) {
+						name: "checkBoxFailureFatal"
+						"text": new FormMessage( null, "orderSequenceView.checkBox_failureFatal.text" )
+						"toolTipText": new FormMessage( null, "orderSequenceView.checkBox_failureFatal.tooltipText" )
+						"enabled": false
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"gridy": 2
+						"hAlign": 2
+						"vAlign": 0
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"weightx": 0.1
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0"
+				"$rowSpecs": "0"
+			} ) {
+				name: "transportOrdersPanel"
+				"border": new javax.swing.border.TitledBorder( "Transport orders" )
+				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+					name: "transportOrdersScrollPane"
+					"preferredSize": new java.awt.Dimension( 100, 100 )
+					add( new FormComponent( "javax.swing.JTable" ) {
+						name: "transportOrdersTable"
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"weightx": 1.0
+					"weighty": 1.0
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 1
+				"gridwidth": 2
+				"weightx": 1.0
+				"weighty": 1.0
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 443, 293 )
+		} )
+	}
+}

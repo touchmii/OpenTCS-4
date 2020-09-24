@@ -1,0 +1,32 @@
+JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.bundlePackage": "i18n.org.opentcs.plantoverview.dialogs"
+	"i18n.bundleName": "vehiclePopup"
+	"i18n.autoExternalize": false
+	"i18n.keyPrefix": "PointPanel"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "org.opentcs.guing.components.dialogs.DialogContent", new FormLayoutManager( class java.awt.FlowLayout ) {
+			"alignment": 0
+			"hgap": 10
+		} ) {
+			name: "this"
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "itemsLabel"
+				"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+				"text": new FormMessage( null, "pointPanel.label_points.text" )
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "itemsComboBox"
+				"editable": true
+				"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+				auxiliary() {
+					"JavaCodeGenerator.typeParameters": "String"
+				}
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 141, 62 )
+		} )
+	}
+}

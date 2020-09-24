@@ -1,0 +1,435 @@
+JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.bundlePackage": "i18n.org.opentcs.plantoverview.loadGeneratorPanel"
+	"i18n.bundleName": "Bundle"
+	"i18n.autoExternalize": false
+	"i18n.keyPrefix": "ContinuousLoadPanel"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "org.opentcs.components.plantoverview.PluggablePanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+			"$columnSpecs": "0"
+			"$rowSpecs": "0, 0, 0, 0"
+		} ) {
+			name: "this"
+			"preferredSize": new java.awt.Dimension( 520, 700 )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0, 0, 0, 0"
+				"$rowSpecs": "0, 0, 0"
+			} ) {
+				name: "triggerPanel"
+				"border": new javax.swing.border.TitledBorder( "Trigger for generating orders" )
+				add( new FormComponent( "javax.swing.JRadioButton" ) {
+					name: "thresholdTriggerRadioButton"
+					"$buttonGroup": new FormReference( "triggerButtonGroup" )
+					"text": new FormMessage( null, "continuousLoadPanel.radioButton_triggerByOrderThreshold.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 1
+					"vAlign": 0
+				} )
+				add( new FormComponent( "javax.swing.JSpinner" ) {
+					name: "thresholdSpinner"
+					"model": new javax.swing.SpinnerNumberModel( 10, 0, 100, 1 )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 1
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 3, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "thresholdOrdersLbl"
+					"text": new FormMessage( null, "continuousLoadPanel.label_unitOrdersToBeProcessed.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 2
+					"gridy": 1
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 3, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "fillingLbl"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 3
+					"gridy": 1
+					"weightx": 1.0
+				} )
+				add( new FormComponent( "javax.swing.JRadioButton" ) {
+					name: "timerTriggerRadioButton"
+					"$buttonGroup": new FormReference( "triggerButtonGroup" )
+					"text": new FormMessage( null, "continuousLoadPanel.radioButton_triggerAfterTimeout.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 2
+					"vAlign": 0
+				} )
+				add( new FormComponent( "javax.swing.JSpinner" ) {
+					name: "timerSpinner"
+					"model": new javax.swing.SpinnerNumberModel( 60, 1, 3600, 1 )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 2
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 3, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "timerSecondsLbl"
+					"text": new FormMessage( null, "continuousLoadPanel.label_unitSeconds.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 2
+					"gridy": 2
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 3, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JRadioButton" ) {
+					name: "singleTriggerRadioButton"
+					"$buttonGroup": new FormReference( "triggerButtonGroup" )
+					"selected": true
+					"text": new FormMessage( null, "continuousLoadPanel.radioButton_triggerOnce.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"vAlign": 0
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"vAlign": 1
+				"weightx": 1.0
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0"
+				"$rowSpecs": "0, 0"
+			} ) {
+				name: "orderProfilePanel"
+				"border": new javax.swing.border.TitledBorder( "Order profile" )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+					"$columnSpecs": "0, 0, 0, 0, 0, 0"
+					"$rowSpecs": "0"
+				} ) {
+					name: "randomOrderSpecPanel"
+					add( new FormComponent( "javax.swing.JRadioButton" ) {
+						name: "randomOrderSpecButton"
+						"$buttonGroup": new FormReference( "orderSpecButtonGroup" )
+						"selected": true
+						"text": new FormMessage( null, "continuousLoadPanel.radioButton_createOrdersRandomly.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "randomOrderSpecButtonActionPerformed", true ) )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"hAlign": 0
+						"vAlign": 0
+					} )
+					add( new FormComponent( "javax.swing.JSpinner" ) {
+						name: "randomOrderCountSpinner"
+						"model": new javax.swing.SpinnerNumberModel( 7, 1, 100, 1 )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"hAlign": 0
+						"vAlign": 0
+						"insets": new java.awt.Insets( 0, 3, 0, 0 )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "randomOrderCountLbl"
+						"text": new FormMessage( null, "continuousLoadPanel.label_unitOrdersAtATime.text" )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 2
+						"hAlign": 0
+						"vAlign": 0
+						"insets": new java.awt.Insets( 0, 3, 0, 0 )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "fillingLbl3"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 5
+						"weightx": 1.0
+					} )
+					add( new FormComponent( "javax.swing.JSpinner" ) {
+						name: "randomOrderSizeSpinner"
+						"model": new javax.swing.SpinnerNumberModel( 2, 1, 10, 1 )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 3
+						"hAlign": 0
+						"vAlign": 0
+						"insets": new java.awt.Insets( 0, 3, 0, 0 )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "randomOrderSizeLbl"
+						"text": new FormMessage( null, "continuousLoadPanel.label_unitDriveOrdersPerOrder.text" )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 4
+						"hAlign": 0
+						"vAlign": 0
+						"insets": new java.awt.Insets( 0, 3, 0, 0 )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"vAlign": 0
+					"weightx": 1.0
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+					"$columnSpecs": "0, 0"
+					"$rowSpecs": "0"
+				} ) {
+					name: "explicitOrderSpecPanel"
+					add( new FormComponent( "javax.swing.JRadioButton" ) {
+						name: "explicitOrderSpecButton"
+						"$buttonGroup": new FormReference( "orderSpecButtonGroup" )
+						"text": new FormMessage( null, "continuousLoadPanel.radioButton_createOrdersAccordingDefinition.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "explicitOrderSpecButtonActionPerformed", true ) )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"hAlign": 0
+						"vAlign": 0
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "fillingLbl4"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"weightx": 1.0
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 1
+					"vAlign": 0
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 1
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0, 0"
+				"$rowSpecs": "0"
+			} ) {
+				name: "orderGenPanel"
+				"border": new javax.swing.border.TitledBorder( "Order generation" )
+				add( new FormComponent( "javax.swing.JCheckBox" ) {
+					name: "orderGenChkBox"
+					"text": new FormMessage( null, "continuousLoadPanel.checkBox_enableOrderGeneration.text" )
+					addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "orderGenChkBoxItemStateChanged", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"hAlign": 0
+					"vAlign": 0
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "fillingLbl5"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"weightx": 1.0
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 3
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0, 0"
+				"$rowSpecs": "0, 0, 0"
+			} ) {
+				name: "transportOrderGenPanel"
+				"border": new javax.swing.border.TitledBorder( "Transport order modelling" )
+				"enabled": false
+				"preferredSize": new java.awt.Dimension( 1057, 800 )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+					"$columnSpecs": "0"
+					"$rowSpecs": "0, 0, 0, 0"
+				} ) {
+					name: "transportOrdersPanel"
+					"border": new javax.swing.border.TitledBorder( "Transport orders" )
+					"enabled": false
+					"preferredSize": new java.awt.Dimension( 568, 452 )
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "jScrollPane2"
+						"horizontalScrollBarPolicy": 31
+						"preferredSize": new java.awt.Dimension( 100, 500 )
+						add( new FormComponent( "javax.swing.JTable" ) {
+							name: "toTable"
+							"selectionMode": 0
+							auxiliary() {
+								"JavaCodeGenerator.preInitCode": "${field}.setModel(new TransportOrderTableModel());"
+								"JavaCodeGenerator.postCreateCode": "TOTableSelectionListener listener = new TOTableSelectionListener(toTable);\rtoTable.getSelectionModel().addListSelectionListener(listener);"
+							}
+						} )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"weightx": 1.0
+						"weighty": 1.0
+					} )
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+						"$columnSpecs": "0, 0"
+						"$rowSpecs": "0"
+					} ) {
+						name: "transportOrdersActionPanel"
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "addToTOTableButton"
+							"text": new FormMessage( null, "continuousLoadPanel.button_addTransportOrder.text" )
+							"toolTipText": new FormMessage( null, "continuousLoadPanel.button_addTransportOrder.tooltipText" )
+							"enabled": false
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "addToTOTableButtonActionPerformed", true ) )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"vAlign": 0
+							"weightx": 1.0
+						} )
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "deleteFromTOTableButton"
+							"text": new FormMessage( null, "continuousLoadPanel.button_deleteSelectedOrder.text" )
+							"toolTipText": new FormMessage( null, "continuousLoadPanel.button_deleteSelectedOrder.tooltipText" )
+							"enabled": false
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "deleteFromTOTableButtonActionPerformed", true ) )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridx": 1
+							"vAlign": 0
+							"weightx": 1.0
+							"insets": new java.awt.Insets( 0, 3, 0, 0 )
+						} )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 3
+						"hAlign": 0
+						"vAlign": 0
+						"weightx": 1.0
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridwidth": 2
+					"weightx": 1.0
+					"weighty": 1.0
+				} )
+				add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
+					name: "jTabbedPane1"
+					"enabled": false
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+						"$columnSpecs": "0, 0, 0"
+						"$rowSpecs": "0, 0"
+					} ) {
+						name: "driveOrdersPanel"
+						"border": new javax.swing.border.TitledBorder( "Drive orders" )
+						"enabled": false
+						add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+							name: "driveOrdersScrollPane"
+							add( new FormComponent( "javax.swing.JTable" ) {
+								name: "doTable"
+								"toolTipText": new FormMessage( null, "continuousLoadPanel.table_driveOrders.tooltipText" )
+								"selectionMode": 0
+								auxiliary() {
+									"JavaCodeGenerator.preInitCode": "${field}.setModel(new DriveOrderTableModel());"
+								}
+							} )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridwidth": 3
+							"weightx": 1.0
+							"weighty": 1.0
+						} )
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "deleteFromDOTableButton"
+							"text": new FormMessage( null, "continuousLoadPanel.button_deleteSelectedDriveOrder.text" )
+							"toolTipText": new FormMessage( null, "continuousLoadPanel.button_deleteSelectedDriveOrder.tooltipText" )
+							"enabled": false
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "deleteFromDOTableButtonActionPerformed", true ) )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridx": 1
+							"gridy": 1
+							"vAlign": 0
+							"weightx": 1.0
+						} )
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "addDOButton"
+							"text": new FormMessage( null, "continuousLoadPanel.button_addDriveOrder.text" )
+							"enabled": false
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "addDOButtonActionPerformed", true ) )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridy": 1
+							"vAlign": 0
+							"weightx": 1.0
+						} )
+					}, new FormLayoutConstraints( null ) {
+						"title": new FormMessage( null, "continuousLoadPanel.tab_driveOrders.title" )
+					} )
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+						"$columnSpecs": "0, 0"
+						"$rowSpecs": "0, 0"
+					} ) {
+						name: "propertyPanel"
+						"border": new javax.swing.border.TitledBorder( "Properties" )
+						"enabled": false
+						add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+							name: "jScrollPane1"
+							add( new FormComponent( "javax.swing.JTable" ) {
+								name: "propertyTable"
+							} )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridwidth": 2
+							"weightx": 1.0
+							"weighty": 1.0
+						} )
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "addPropertyButton"
+							"text": new FormMessage( null, "continuousLoadPanel.button_addProperty.text" )
+							"enabled": false
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "addPropertyButtonActionPerformed", true ) )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridy": 1
+							"vAlign": 0
+							"weightx": 1.0
+						} )
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "removePropertyButton"
+							"text": new FormMessage( null, "continuousLoadPanel.button_removeProperty.text" )
+							"enabled": false
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "removePropertyButtonActionPerformed", true ) )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridx": 1
+							"gridy": 1
+							"vAlign": 0
+							"weightx": 1.0
+						} )
+					}, new FormLayoutConstraints( null ) {
+						"title": new FormMessage( null, "continuousLoadPanel.tab_properties.title" )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 1
+					"gridwidth": 2
+					"weightx": 1.0
+					"weighty": 1.0
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) ) {
+					name: "openSavePanel"
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "openButton"
+						"text": new FormMessage( null, "continuousLoadPanel.button_open.text" )
+						"enabled": false
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "openButtonActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "saveButton"
+						"text": new FormMessage( null, "continuousLoadPanel.button_save.text" )
+						"enabled": false
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "saveButtonActionPerformed", true ) )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 2
+					"hAlign": 0
+					"vAlign": 0
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 2
+				"weightx": 1.0
+				"weighty": 1.0
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 556, 504 )
+		} )
+		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
+			name: "orderSpecButtonGroup"
+		} )
+		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
+			name: "triggerButtonGroup"
+		} )
+		add( new FormComponent( "javax.swing.JComboBox" ) {
+			name: "operationTypesComboBox"
+			"model": new javax.swing.DefaultComboBoxModel
+			"toolTipText": new FormMessage( null, "continuousLoadPanel.comboBox_operationTypes.tooltipText" )
+			auxiliary() {
+				"JavaCodeGenerator.typeParameters": "String"
+			}
+		} )
+		add( new FormComponent( "javax.swing.JComboBox" ) {
+			name: "locationsComboBox"
+			"model": new javax.swing.DefaultComboBoxModel
+			"toolTipText": new FormMessage( null, "continuousLoadPanel.comboBox_locations.tooltipText" )
+			auxiliary() {
+				"JavaCodeGenerator.postCreateCode": "locationsComboBox.setRenderer(new LocationComboBoxRenderer());"
+				"JavaCodeGenerator.typeParameters": "TCSObjectReference<Location>"
+			}
+			addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "locationsComboBoxItemStateChanged", true ) )
+		} )
+		add( new FormComponent( "javax.swing.JFileChooser" ) {
+			name: "fileChooser"
+			auxiliary() {
+				"JavaCodeGenerator.preInitCode": "${field}.setFileFilter(new FileNameExtensionFilter(\"*.xml\", \"xml\"));"
+			}
+		} )
+	}
+}

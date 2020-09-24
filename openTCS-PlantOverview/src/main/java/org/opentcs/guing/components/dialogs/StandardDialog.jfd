@@ -1,0 +1,39 @@
+JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.bundlePackage": "i18n.org.opentcs.plantoverview"
+	"i18n.bundleName": "system"
+	"i18n.autoExternalize": false
+	"i18n.keyPrefix": "StandardDialog"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosing", "closeDialog", true ) )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) ) {
+				name: "buttonPanel"
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "okButton"
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 1, 0, false )
+					"text": new FormMessage( null, "standardDialog.button_ok.text" )
+					"opaque": false
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "okButtonActionPerformed", true ) )
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "cancelButton"
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 0, false )
+					"text": new FormMessage( null, "standardDialog.button_cancel.text" )
+					"opaque": false
+					auxiliary() {
+						"JavaCodeGenerator.customCreateCode": "new CancelButton();"
+					}
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cancelButtonActionPerformed", true ) )
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "South"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 213, 150 )
+		} )
+	}
+}

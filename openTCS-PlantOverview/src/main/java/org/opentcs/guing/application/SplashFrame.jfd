@@ -1,0 +1,63 @@
+JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.bundlePackage": "i18n.org.opentcs.plantoverview"
+	"i18n.bundleName": "system"
+	"i18n.autoExternalize": false
+	"i18n.keyPrefix": "SplashFrame"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class java.awt.GridBagLayout ) {
+			"$columnSpecs": "0"
+			"$rowSpecs": "0"
+		} ) {
+			name: "this"
+			"defaultCloseOperation": 2
+			"title": new FormMessage( null, "splashFrame.title.text" )
+			"background": new java.awt.Color( 255, 255, 255, 255 )
+			"undecorated": true
+			"$sizePolicy": 1
+			"$locationPolicy": 1
+			auxiliary() {
+				"JavaCodeGenerator.preInitCode": "${field}.setIconImages(Icons.getOpenTCSIcons());"
+			}
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0"
+				"$rowSpecs": "0, 0, 0"
+			} ) {
+				name: "panel"
+				"background": new java.awt.Color( 255, 255, 255, 255 )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "labelImage"
+					"icon": new com.jformdesigner.model.SwingIcon( 0, "/org/opentcs/guing/res/symbols/openTCS/splash.320x152.gif" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "labelMessage"
+					"background": new java.awt.Color( 255, 255, 255, 255 )
+					"font": new java.awt.Font( "Arial", 1, 12 )
+					"text": new FormMessage( null, "splashFrame.label_message.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 1
+					"vAlign": 3
+					"weightx": 0.5
+					"weighty": 0.5
+					"insets": new java.awt.Insets( 0, 4, 0, 4 )
+				} )
+				add( new FormComponent( "javax.swing.JProgressBar" ) {
+					name: "progressBar"
+					"background": new java.awt.Color( 255, 255, 255, 255 )
+					"foreground": new java.awt.Color( 153, 153, 255, 255 )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 2
+					"vAlign": 3
+					"weighty": 0.5
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"weightx": 1.0
+				"weighty": 1.0
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 316, 186 )
+		} )
+	}
+}

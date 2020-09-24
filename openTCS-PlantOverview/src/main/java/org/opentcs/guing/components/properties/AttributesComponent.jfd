@@ -1,0 +1,23 @@
+JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
+			"axis": 1
+		} ) {
+			name: "this"
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "descriptionLabel"
+				"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 1, false )
+				"horizontalAlignment": 0
+				"border": new javax.swing.border.EmptyBorder( 5, 5, 5, 5 )
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 4
+				}
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 400, 300 )
+		} )
+	}
+}

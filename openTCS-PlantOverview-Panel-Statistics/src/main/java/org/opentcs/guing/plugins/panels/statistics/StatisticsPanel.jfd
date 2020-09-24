@@ -1,0 +1,170 @@
+JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.bundlePackage": "i18n.org.opentcs.plantoverview.statisticsPanel"
+	"i18n.bundleName": "Bundle"
+	"i18n.autoExternalize": false
+	"i18n.keyPrefix": "StatisticsPanel"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "org.opentcs.components.plantoverview.PluggablePanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0, 0, 0"
+				"$rowSpecs": "0, 0, 0"
+			} ) {
+				name: "jPanel1"
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "analysisInputFileLbl"
+					"text": new FormMessage( null, "statisticsPanel.label_inputFile.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"hAlign": 4
+					"vAlign": 0
+					"insets": new java.awt.Insets( 0, 0, 0, 3 )
+				} )
+				add( new FormComponent( "javax.swing.JTextField" ) {
+					name: "analysisInputFileTxt"
+					"editable": false
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 2
+					"vAlign": 0
+					"weightx": 1.0
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "parsedRecordsLbl"
+					"text": new FormMessage( null, "statisticsPanel.label_parsedRecords.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 1
+					"hAlign": 4
+					"vAlign": 0
+					"insets": new java.awt.Insets( 3, 0, 0, 3 )
+				} )
+				add( new FormComponent( "javax.swing.JTextField" ) {
+					name: "parsedRecordsTxt"
+					"editable": false
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 2
+					"gridy": 1
+					"vAlign": 0
+					"insets": new java.awt.Insets( 3, 0, 0, 0 )
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "startInputParsingBtn"
+					"text": new FormMessage( null, "statisticsPanel.button_readInputFile.text" )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "startInputParsingBtnActionPerformed", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridheight": 3
+					"hAlign": 0
+					"vAlign": 0
+					"insets": new java.awt.Insets( 3, 3, 0, 3 )
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "totalRuntimeLbl"
+					"text": new FormMessage( null, "statisticsPanel.label_totalRuntime.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 2
+					"hAlign": 4
+					"vAlign": 0
+					"insets": new java.awt.Insets( 3, 0, 0, 3 )
+				} )
+				add( new FormComponent( "javax.swing.JTextField" ) {
+					name: "totalRuntimeTxt"
+					"editable": false
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 2
+					"gridy": 2
+					"vAlign": 0
+					"insets": new java.awt.Insets( 3, 0, 0, 0 )
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "North"
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
+				"axis": 1
+			} ) {
+				name: "analysisDataPanel"
+				"border": new javax.swing.border.TitledBorder( "Analysis data" )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+					name: "analysisVehiclesPanel"
+					"border": new javax.swing.border.TitledBorder( "Vehicles" )
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "jScrollPane1"
+						"preferredSize": new java.awt.Dimension( 550, 200 )
+						add( new FormComponent( "javax.swing.JTable" ) {
+							name: "analysisVehiclesTable"
+							auxiliary() {
+								"JavaCodeGenerator.preInitCode": "${field}.setModel(new VehiclesTableModel());"
+							}
+						} )
+					}, new FormLayoutConstraints( class java.lang.String ) {
+						"value": "Center"
+					} )
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+					name: "analysisCoursePanel"
+					"border": new javax.swing.border.TitledBorder( "Course" )
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "jScrollPane2"
+						"preferredSize": new java.awt.Dimension( 550, 200 )
+						add( new FormComponent( "javax.swing.JTable" ) {
+							name: "analysisCourseTable"
+							auxiliary() {
+								"JavaCodeGenerator.preInitCode": "${field}.setModel(new PointsTableModel());"
+							}
+						} )
+					}, new FormLayoutConstraints( class java.lang.String ) {
+						"value": "Center"
+					} )
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+					name: "analysisOrdersPanel"
+					"border": new javax.swing.border.TitledBorder( "Orders" )
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "jScrollPane3"
+						"preferredSize": new java.awt.Dimension( 550, 200 )
+						add( new FormComponent( "javax.swing.JTable" ) {
+							name: "analysisOrdersTable"
+							auxiliary() {
+								"JavaCodeGenerator.preInitCode": "${field}.setModel(new OrdersTableModel());"
+							}
+						} )
+					}, new FormLayoutConstraints( class java.lang.String ) {
+						"value": "Center"
+					} )
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) ) {
+						name: "jPanel2"
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "ordersSuccRateLbl"
+							"text": new FormMessage( null, "statisticsPanel.label_ordersSuccessRate.text" )
+						} )
+						add( new FormComponent( "javax.swing.JTextField" ) {
+							name: "ordersSuccRateTxt"
+							"editable": false
+							"columns": 12
+							"text": "0"
+						} )
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "ordersDeadlineRateLbl"
+							"text": new FormMessage( null, "statisticsPanel.label_ordersDeadlineCrossedRate.text" )
+						} )
+						add( new FormComponent( "javax.swing.JTextField" ) {
+							name: "ordersDeadlineRateTxt"
+							"editable": false
+							"columns": 12
+							"text": "0"
+						} )
+					}, new FormLayoutConstraints( class java.lang.String ) {
+						"value": "South"
+					} )
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 547, 431 )
+		} )
+	}
+}
