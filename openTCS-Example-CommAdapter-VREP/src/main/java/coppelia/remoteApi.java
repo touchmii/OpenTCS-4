@@ -11,58 +11,350 @@ public class remoteApi
         File directory = new File(".");
 //        directory.getCanonicalPath()
         try {
+            String os = System.getProperty("os.name").toLowerCase();
+            if(os.indexOf("windwos") >= 0) {
 
-            System.load(directory.getCanonicalPath().replace("\\", "/")+"/lib/remoteApiJava.dll");
+                System.load(directory.getCanonicalPath().replace("\\", "/")+"/lib/remoteApiJava.dll");
+            } else if (os.indexOf("mac") >= 0) {
+                System.load(directory.getCanonicalPath()+"/lib/libremoteApiJava.dylib");
+            } else if (os.indexOf("linux") >= 0) {
+                System.load(directory.getCanonicalPath()+"/lib/libremoteApiJava.so");
+            }
+
         }
         catch (IOException e) {
 
         }
     }
 
+    /**
+     * 设置连接
+     * @param connectionAddress 地址 如"127.0.0.1"
+     * @param connectionPort 端口
+     * @param waitUntilConnected 是否等待直到连接成功
+     * @param doNotReconnectOnceDisconnected 是否断连不自动连接
+     * @param timeOutInMs 连接超时毫秒
+     * @param commThreadCycleInMs 线程循环时间毫秒
+     * @return clientID 返回clientID
+     */
     public native int simxStart(final String connectionAddress, int connectionPort, boolean waitUntilConnected, boolean doNotReconnectOnceDisconnected, int timeOutInMs, int commThreadCycleInMs);
+
+    /**
+     * 终止连接
+     * @param clientID 设置-1终止所有远程连接
+     */
     public native void simxFinish(int clientID);
     public native int simxGetConnectionId(int clientID);
+
+    /**
+     * 获取对象句柄
+     * @param clientID 连接ID
+     * @param objectName 对象名称
+     * @param handle 句柄
+     * @param operationMode 操作模式
+     * @return 状态 0表示成功 -1失败
+     */
     public native int simxGetObjectHandle(int clientID,final String objectName, IntW handle, int operationMode);
+
+    /**
+     * 获取关节坐标
+     * @param clientID
+     * @param jointHandle 关节句柄
+     * @param position 位置
+     * @param operationMode 模式
+     * @return
+     */
     public native int simxGetJointPosition(int clientID,int jointHandle, FloatW position, int operationMode);
     public native int simxSetJointPosition(int clientID,int jointHandle, float position, int operationMode);
+
+    /**
+     * 获取对象坐标
+     * @param clientID
+     * @param objectHandle 对象句柄，如果类型为IntW 可以通过getValue()获取int值
+     * @param relativeToObjectHandle 相对于某个对象的句柄，设置-1表示获取绝对坐标
+     * @param position 坐标
+     * @param operationMode 模式，需要设置阻塞模式，即sim.simx_opmode_blocking否则获取
+     *                      到的坐标为0
+     * @return 0 成功，-1失败
+     */
     public native int simxGetObjectPosition(int clientID,int objectHandle, int relativeToObjectHandle, FloatWA position, int operationMode);
+
+    /**
+     * 设置对象坐标
+     * @param clientID
+     * @param objectHandle
+     * @param relativeToObjectHandle
+     * @param position
+     * @param operationMode
+     * @return 0 成功， -1失败
+     */
     public native int simxSetObjectPosition(int clientID,int objectHandle, int relativeToObjectHandle, final FloatWA position, int operationMode);
+
+    /**
+     * 获取视觉传感器图像
+     * @param clientID
+     * @param sensorHandle 传感器句柄
+     * @param resolution 分辨率
+     * @param image 图像
+     * @param options 参数
+     * @param operationMode 模式
+     * @return
+     */
     public native int simxGetVisionSensorImage(int clientID,int sensorHandle, IntWA resolution, CharWA image, int options, int operationMode);
     public native int simxSetVisionSensorImage(int clientID,int sensorHandle, CharWA image, int bufferSize, int options, int operationMode);
     public native int simxGetJointMatrix(int clientID,int jointHandle, FloatWA matrix, int operationMode);
     public native int simxSetSphericalJointMatrix(int clientID,int jointHandle,FloatWA matrix,int operationMode);
+
+    /**
+     * 设置关节目标速度
+     * @param clientID
+     * @param jointHandle 关节句柄
+     * @param targetVelocity 目标速度
+     * @param operationMode 操作模式
+     * @return
+     */
     public native int simxSetJointTargetVelocity(int clientID,int jointHandle,float targetVelocity,int operationMode);
     public native int simxSetJointTargetPosition(int clientID,int jointHandle,float targetPosition,int operationMode);
     public native int simxJointGetForce(int clientID,int jointHandle,FloatW force,int operationMode);
+
+    /**
+     * 获取关节力矩
+     * @param clientID
+     * @param jointHandle
+     * @param force
+     * @param operationMode
+     * @return
+     */
     public native int simxGetJointForce(int clientID,int jointHandle,FloatW force,int operationMode);
+
+    /**
+     * 设置关节力矩
+     * @param clientID
+     * @param jointHandle
+     * @param force
+     * @param operationMode
+     * @return
+     */
     public native int simxSetJointForce(int clientID,int jointHandle,float force,int operationMode);
+
+    /**
+     * 设置关节最大力矩
+     * @param clientID
+     * @param jointHandle
+     * @param force
+     * @param operationMode
+     * @return
+     */
     public native int simxSetJointMaxForce(int clientID,int jointHandle,float force,int operationMode);
+
+    /**
+     * 获取关节最大力矩
+     * @param clientID
+     * @param jointHandle
+     * @param force
+     * @param operationMode
+     * @return
+     */
     public native int simxGetJointMaxForce(int clientID,int jointHandle,FloatW force,int operationMode);
     public native int simxReadForceSensor(int clientID,int forceSensorHandle, IntW state,FloatWA forceVector,FloatWA torqueVector,int operationMode);
     public native int simxBreakForceSensor(int clientID,int forceSensorHandle,int operationMode);
+
+    /**
+     * 获取视觉传感器光强
+     * @param clientID
+     * @param sensorHandle
+     * @param detectionState
+     * @param auxValues
+     * @param operationMode
+     * @return
+     */
     public native int simxReadVisionSensor(int clientID,int sensorHandle,BoolW detectionState, FloatWAA auxValues, int operationMode);
     public native int simxGetObjectFloatParameter(int clientID,int objectHandle,int parameterID,FloatW parameterValue,int operationMode);
     public native int simxSetObjectFloatParameter(int clientID,int objectHandle,int parameterID,float parameterValue,int operationMode);
     public native int simxGetObjectIntParameter(int clientID,int objectHandle,int parameterID,IntW parameterValue,int operationMode);
     public native int simxSetObjectIntParameter(int clientID,int objectHandle,int parameterID,int parameterValue,int operationMode);
+
+    /**
+     * 获取模型属性
+     * @param clientID
+     * @param objectHandle
+     * @param prop
+     * @param operationMode
+     * @return
+     */
     public native int simxGetModelProperty(int clientID,int objectHandle,IntW prop,int operationMode);
+
+    /**
+     * 设置模型属性
+     * @param clientID
+     * @param objectHandle
+     * @param prop
+     * @param operationMode
+     * @return
+     */
     public native int simxSetModelProperty(int clientID,int objectHandle,int prop,int operationMode);
     public native int simxGetVisionSensorDepthBuffer(int clientID,int sensorHandle,IntWA resolution,FloatWA buffer,int operationMode);
+
+    /**
+     * 获取对象子节点
+     * @param clientID
+     * @param parentObjectHandle
+     * @param childIndex
+     * @param childObjectHandle
+     * @param operationMode
+     * @return
+     */
     public native int simxGetObjectChild(int clientID,int parentObjectHandle,int childIndex,IntW childObjectHandle,int operationMode);
+
+    /**
+     * 获取对象夫节点
+     * @param clientID
+     * @param childObjectHandle
+     * @param parentObjectHandle
+     * @param operationMode
+     * @return
+     */
     public native int simxGetObjectParent(int clientID,int childObjectHandle,IntW parentObjectHandle,int operationMode);
+
+    /**
+     * 启动仿真
+     * @param clientID
+     * @param operationMode
+     * @return
+     */
     public native int simxStartSimulation(int clientID,int operationMode);
+
+    /**
+     * 暂停仿真
+     * @param clientID
+     * @param operationMode
+     * @return
+     */
     public native int simxPauseSimulation(int clientID,int operationMode);
+
+    /**
+     * 终止仿真
+     * @param clientID
+     * @param operationMode
+     * @return
+     */
     public native int simxStopSimulation(int clientID,int operationMode);
+
+    /**
+     * 获取滑块位置
+     * @param clientID
+     * @param uiHandle
+     * @param uiButtonID
+     * @param position
+     * @param operationMode
+     * @return
+     */
     public native int simxGetUISlider(int clientID,int uiHandle,int uiButtonID,IntW position,int operationMode);
+
+    /**
+     * 设置滑块位置
+     * @param clientID
+     * @param uiHandle
+     * @param uiButtonID
+     * @param position
+     * @param operationMode
+     * @return
+     */
     public native int simxSetUISlider(int clientID,int uiHandle,int uiButtonID,int position,int operationMode);
+
+    /**
+     * 获取按钮事件
+     * @param clientID
+     * @param uiHandle
+     * @param uiEventButtonID
+     * @param auxValues
+     * @param operationMode
+     * @return
+     */
     public native int simxGetUIEventButton(int clientID,int uiHandle,IntW uiEventButtonID,IntWA auxValues,int operationMode);
+
+    /**
+     * 获取按钮属性
+     * @param clientID
+     * @param uiHandle
+     * @param uiButtonID
+     * @param prop
+     * @param operationMode
+     * @return
+     */
     public native int simxGetUIButtonProperty(int clientID,int uiHandle,int uiButtonID,IntW prop,int operationMode);
+
+    /**
+     * 设置按钮属性
+     * @param clientID
+     * @param uiHandle
+     * @param uiButtonID
+     * @param prop
+     * @param operationMode
+     * @return
+     */
     public native int simxSetUIButtonProperty(int clientID,int uiHandle,int uiButtonID,int prop,int operationMode);
+
+    /**
+     * 关闭辅助控制台
+     * @param clientID
+     * @param consoleHandle
+     * @param operationMode
+     * @return
+     */
     public native int simxAuxiliaryConsoleClose(int clientID,int consoleHandle,int operationMode);
+
+    /**
+     * 显示辅助控制台
+     * @param clientID
+     * @param consoleHandle
+     * @param showState
+     * @param operationMode
+     * @return
+     */
     public native int simxAuxiliaryConsoleShow(int clientID,int consoleHandle,boolean showState,int operationMode);
+
+    /**
+     * 获取对象角度，欧拉角
+     * @param clientID
+     * @param objectHandle 对象句柄
+     * @param relativeToObjectHandle 相对对象句柄，-1为绝对角度
+     * @param eulerAngles 欧拉角需new FloatWA(3)一个对象接收xyz三个轴的角度
+     * @param operationMode 模式，需要blocking
+     * @return
+     */
     public native int simxGetObjectOrientation(int clientID,int objectHandle,int relativeToObjectHandle,FloatWA eulerAngles,int operationMode);
+
+    /**
+     * 获取对象角度，四元数
+     * @param clientID
+     * @param objectHandle
+     * @param relativeToObjectHandle
+     * @param quaternion 四元数， new FloatWA(4)
+     * @param operationMode
+     * @return
+     */
     public native int simxGetObjectQuaternion(int clientID,int objectHandle,int relativeToObjectHandle,FloatWA quaternion,int operationMode);
+
+    /**
+     * 设置对象夫节点
+     * @param clientID
+     * @param objectHandle
+     * @param parentObject
+     * @param keepInPlace
+     * @param operationMode
+     * @return
+     */
     public native int simxSetObjectParent(int clientID,int objectHandle,int parentObject,boolean keepInPlace,int operationMode);
+
+    /**
+     * 设置数组参数
+     * @param clientID
+     * @param paramIdentifier
+     * @param paramValues
+     * @param operationMode
+     * @return
+     */
     public native int simxGetArrayParameter(int clientID,int paramIdentifier,FloatWA paramValues,int operationMode);
     public native int simxSetArrayParameter(int clientID,int paramIdentifier,FloatWA paramValues,int operationMode);
     public native int simxGetIntegerParameter(int clientID,int paramIdentifier,IntW paramValue,int operationMode);
@@ -70,36 +362,264 @@ public class remoteApi
     public native int simxGetBooleanParameter(int clientID,int paramIdentifier,BoolW paramValue,int operationMode);
     public native int simxGetDialogResult(int clientID,int dialogHandle,IntW result,int operationMode);
     public native int simxSetFloatingParameter(int clientID,int paramIdentifier,float paramValue,int operationMode);
+
+    /**
+     * 移除对象
+     * @param clientID
+     * @param objectHandle
+     * @param operationMode
+     * @return
+     */
     public native int simxRemoveObject(int clientID,int objectHandle,int operationMode);
+
+    /**
+     * 移除模型
+     * @param clientID
+     * @param objectHandle
+     * @param operationMode
+     * @return
+     */
     public native int simxRemoveModel(int clientID,int objectHandle,int operationMode);
     public native int simxRemoveUI(int clientID,int uiHandle,int operationMode);
+
+    /**
+     * 关闭场景
+     * @param clientID
+     * @param operationMode
+     * @return
+     */
     public native int simxCloseScene(int clientID,int operationMode);
+
+    /**
+     * 结束对话框
+     * @param clientID
+     * @param dialogHandle
+     * @param operationMode
+     * @return
+     */
     public native int simxEndDialog(int clientID,int dialogHandle,int operationMode);
+
+    /**
+     * 读取距离
+     * @param clientID
+     * @param distanceObjectHandle
+     * @param minimumDistance
+     * @param operationMode
+     * @return
+     */
     public native int simxReadDistance(int clientID,int distanceObjectHandle,FloatW minimumDistance,int operationMode);
     public native int simxGetFloatingParameter(int clientID,int paramIdentifier,FloatW paramValue,int operationMode);
+
+    /**
+     * 设置对象角度，欧拉角
+     * @param clientID
+     * @param objectHandle
+     * @param relativeToObjectHandle
+     * @param eulerAngles
+     * @param operationMode
+     * @return
+     */
     public native int simxSetObjectOrientation(int clientID,int objectHandle,int relativeToObjectHandle,FloatWA eulerAngles,int operationMode);
+
+    /**
+     * 设置对象角度，四元数
+     * @param clientID
+     * @param objectHandle
+     * @param relativeToObjectHandle
+     * @param quaternion
+     * @param operationMode
+     * @return
+     */
     public native int simxSetObjectQuaternion(int clientID,int objectHandle,int relativeToObjectHandle,FloatWA quaternion,int operationMode);
+
+    /**
+     * 获取接近传感器状态
+     * @param clientID
+     * @param sensorHandle 传感器句柄
+     * @param detectionState 检测状态
+     * @param detectedPoint 检测到的点
+     * @param detectedObjectHandle 检测到的物体句柄
+     * @param detectedSurfaceNormalVector 检测到的曲目向量#TODO
+     * @param operationMode
+     * @return
+     */
     public native int simxReadProximitySensor(int clientID,int sensorHandle, BoolW detectionState, FloatWA detectedPoint, IntW detectedObjectHandle, FloatWA detectedSurfaceNormalVector,int operationMode);
 
+    /**
+     * 载入模型
+     * @param clientID
+     * @param modelPathAndName 模型路径和名字
+     * @param options
+     * @param baseHandle
+     * @param operationMode
+     * @return
+     */
     public native int simxLoadModel(int clientID,final String modelPathAndName, int options, IntW baseHandle, int operationMode);
+
+    /**
+     * 载入图形操作界面
+     * @param clientID
+     * @param uiPathAndName
+     * @param options
+     * @param uiHandles
+     * @param operationMode
+     * @return
+     */
     public native int simxLoadUI(int clientID,final String uiPathAndName, int options, IntWA uiHandles, int operationMode);
+
+    /**
+     * 载入场景
+     * @param clientID
+     * @param scenePathAndName
+     * @param options
+     * @param operationMode
+     * @return
+     */
     public native int simxLoadScene(int clientID,final String scenePathAndName, int options, int operationMode);
+
+    /**
+     * 获取UI句柄
+     * @param clientID
+     * @param uiName
+     * @param handle
+     * @param operationMode
+     * @return
+     */
     public native int simxGetUIHandle(int clientID,final String uiName,IntW handle,int operationMode);
+
+    /**
+     * 添加状态条信息#TODO
+     * @param clientID
+     * @param message
+     * @param operationMode
+     * @return
+     */
     public native int simxAddStatusbarMessage(int clientID,final String message,int operationMode);
+
+    /**
+     * 打开辅助控制台
+     * @param clientID
+     * @param title 标题
+     * @param maxLines 最大行数
+     * @param mode 模式
+     * @param position 位置
+     * @param size 尺寸
+     * @param textColor 文字颜色
+     * @param backgroundColor 背景颜色
+     * @param consoleHandle 控制台句柄
+     * @param operationMode 模式
+     * @return
+     */
     public native int simxAuxiliaryConsoleOpen(int clientID,final String title,int maxLines,int mode,IntWA position,IntWA size,FloatWA textColor,FloatWA backgroundColor,IntW consoleHandle,int operationMode);
+
+    /**
+     * 辅助控制台打印信息
+     * @param clientID
+     * @param consoleHandle 控制台句柄
+     * @param txt 要打印的信息
+     * @param operationMode
+     * @return
+     */
     public native int simxAuxiliaryConsolePrint(int clientID,int consoleHandle, final String txt,int operationMode);
+
+    /**
+     * 设置按钮标签
+     * @param clientID
+     * @param uiHandle 操作界面句柄
+     * @param uiButtonID 按钮ID
+     * @param upStateLabel 未按下按钮标签
+     * @param downStateLabel 按下按钮标签
+     * @param operationMode
+     * @return
+     */
     public native int simxSetUIButtonLabel(int clientID,int uiHandle,int uiButtonID,final String upStateLabel,final String downStateLabel,int operationMode);
+
+    /**
+     * 获取最近错误
+     * @param clientID
+     * @param errorStrings 错误信息
+     * @param operationMode
+     * @return
+     */
     public native int simxGetLastErrors(int clientID,StringWA errorStrings,int operationMode);
     public native int simxSetBooleanParameter(int clientID,int paramIdentifier,boolean paramValue,int operationMode);
     public native int simxGetStringParameter(int clientID,int paramIdentifier,StringW paramValue,int operationMode);
+
+    /**
+     * 获取碰撞句柄#TODO
+     * @param clientID
+     * @param collisionObjectName
+     * @param handle
+     * @param operationMode
+     * @return
+     */
     public native int simxGetCollisionHandle(int clientID,final String collisionObjectName,IntW handle,int operationMode);
     public native int simxGetDistanceHandle(int clientID,final String distanceObjectName,IntW handle,int operationMode);
+
+    /**
+     * 获取集合句柄
+     * @param clientID
+     * @param collectionName 集合名称
+     * @param handle
+     * @param operationMode
+     * @return
+     */
     public native int simxGetCollectionHandle(int clientID,final String collectionName,IntW handle,int operationMode);
     public native int simxReadCollision(int clientID,int collisionObjectHandle,BoolW collisionState,int operationMode);
+
+    /**
+     * 获取指定类型的所有对象
+     * @param clientID
+     * @param objectType 对象类型#TODO
+     * @param objectHandles 对象句柄
+     * @param operationMode
+     * @return
+     */
     public native int simxGetObjects(int clientID,int objectType,IntWA objectHandles,int operationMode);
+
+    /**
+     * 显示对话框
+     * @param clientID
+     * @param titleText 标题
+     * @param mainText 主要信息
+     * @param dialogType 对话框类型#TODO
+     * @param initialText 初始化文本
+     * @param titleColors 标题颜色
+     * @param dialogColors 对话框颜色
+     * @param dialogHandle 对话框句柄
+     * @param uiHandle ui句柄
+     * @param operationMode 模式
+     * @return
+     */
     public native int simxDisplayDialog(int clientID,final String titleText,final String mainText,int dialogType,final String initialText,FloatWA titleColors,FloatWA dialogColors,IntW dialogHandle,IntW uiHandle,int operationMode);
+
+    /**
+     * 获取对话框输入文本
+     * @param clientID
+     * @param dialogHandle 对话框句柄
+     * @param inputText 输入文本
+     * @param operationMode 模式
+     * @return
+     */
     public native int simxGetDialogInput(int clientID,int dialogHandle,StringW inputText,int operationMode);
+
+    /**
+     * 批量拷贝粘贴对象
+     * @param clientID
+     * @param objectHandles 被拷贝对象句柄
+     * @param newObjectHandles 新对象句柄
+     * @param operationMode
+     * @return
+     */
     public native int simxCopyPasteObjects(int clientID,IntWA objectHandles, IntWA newObjectHandles, int operationMode);
+
+    /**
+     * 获取对象选中状态#TODO
+     * @param clientID
+     * @param objectHandles
+     * @param operationMode
+     * @return
+     */
     public native int simxGetObjectSelection(int clientID,IntWA objectHandles, int operationMode);
     public native int simxSetObjectSelection(int clientID,IntWA objectHandles, int operationMode);
     public native int simxClearFloatSignal(int clientID,final String signalName, int operationMode);
@@ -117,24 +637,122 @@ public class remoteApi
     public native int simxAppendStringSignal(int clientID,final String signalName, final String signalValue, int operationMode);
     public native int simxWriteStringStream(int clientID,final String signalName, final CharWA signalValue, int operationMode);
 
+    /**
+     * 获取跟服务器ping延时
+     * @param clientID
+     * @param pingTime
+     * @return
+     */
     public native int simxGetPingTime(int clientID,IntW pingTime);
+
+    /**
+     * 获取最近一条指令执行时间
+     * @param clientID
+     * @return
+     */
     public native int simxGetLastCmdTime(int clientID);
+
+    /**
+     * 开启/关闭同步锁
+     * @param clientID
+     * @return
+     */
     public native int simxSynchronousTrigger(int clientID);
+
+    /**
+     * 获取同步锁开启状态
+     * @param clientID
+     * @param enable
+     * @return
+     */
     public native int simxSynchronous(int clientID,boolean enable);
+
+    /**
+     * 暂停通信
+     * @param clientID
+     * @param enable
+     * @return
+     */
     public native int simxPauseCommunication(int clientID,boolean enable);
+
+    /**
+     * 获取输入信息详情#TODO
+     * @param clientID
+     * @param infoType
+     * @param info
+     * @return
+     */
     public native int simxGetInMessageInfo(int clientID,int infoType, IntW info);
     public native int simxGetOutMessageInfo(int clientID,int infoType, IntW info);
+
+    /**
+     * 传输文件
+     * @param clientID
+     * @param filePathAndName 文件路径和名字
+     * @param fileName_serverSide 传输到服务器的文件名字
+     * @param timeOut 超时时间ms
+     * @param operationMode
+     * @return
+     */
     public native int simxTransferFile(int clientID,final String filePathAndName, final String fileName_serverSide, int timeOut, int operationMode);
+
+    /**
+     * 删除文件
+     * @param clientID
+     * @param fileName_serverSide 服务器上的文件名
+     * @param operationMode
+     * @return
+     */
     public native int simxEraseFile(int clientID,final String fileName_serverSide, int operationMode);
 
     public native int simxCreateDummy(int clientID,float size,CharWA color,IntW dummyHandle,int operationMode);
+
+    /**
+     * 查询#TODO
+     * @param clientID
+     * @param signalName
+     * @param signalValue
+     * @param retSignalName
+     * @param retSignalValue
+     * @param timeOutInMs
+     * @return
+     */
     public native int simxQuery(int clientID,final String signalName, final CharWA signalValue,final String retSignalName, CharWA retSignalValue, int timeOutInMs);
+
+    /**
+     * 获取对象分组信息#TODO
+     * @param clientID
+     * @param objectType
+     * @param dataType
+     * @param handles
+     * @param intData
+     * @param floatData
+     * @param stringData
+     * @param operationMode
+     * @return
+     */
     public native int simxGetObjectGroupData(int clientID,int objectType,int dataType,IntWA handles,IntWA intData,FloatWA floatData,StringWA stringData,int operationMode);
+
+    /**
+     * 获取对象速度
+     * @param clientID
+     * @param objectHandle 对象句柄
+     * @param linearVelocity 线速度
+     * @param angularVelocity 角速度
+     * @param operationMode 模式
+     * @return
+     */
     public native int simxGetObjectVelocity(int clientID,int objectHandle, FloatWA linearVelocity, FloatWA angularVelocity, int operationMode);
     public native int simxCallScriptFunction(int clientID,final String scriptDescription,int options,final String functionName,final IntWA inInts,final FloatWA inFloats,final StringWA inStrings,final CharWA inBuffer,IntWA outInts,FloatWA outFloats,StringWA outStrings,CharWA outBuffer,int operationMode);
 
 
+    /**
+     * 标头（前缀）长度
+     */
     public static final int SIMX_HEADER_SIZE = 18;
+    /**
+     * 校验位
+     */
     public static final int simx_headeroffset_crc = 0;              /* 1 simxUShort. Generated by the client or server. The CRC for the message */
     public static final int simx_headeroffset_version = 2;          /* 1 byte. Generated by the client or server. The version of the remote API software */
     public static final int simx_headeroffset_message_id = 3;       /* 1 simxInt. Generated by the client (and used in a reply by the server) */
@@ -156,20 +774,59 @@ public class remoteApi
     public static final int simx_cmdheaderoffset_reserved = 25;     /* 1 byte. Not yet used */
 
 
+    /**
+     * Shape 实体类型
+     */
     public static final int sim_object_shape_type                   = 0;
+    /**
+     * 关节类型
+     */
     public static final int sim_object_joint_type                       = 1;
+    /**
+     * 图像类型
+     */
     public static final int sim_object_graph_type                   = 2;
+    /**
+     * 相机类型
+     */
     public static final int sim_object_camera_type                  = 3;
+    /**
+     * 虚拟类型
+     */
     public static final int sim_object_dummy_type                   = 4;
+    /**
+     * 接近传感器类型
+     */
     public static final int sim_object_proximitysensor_type             = 5;
     public static final int sim_object_reserved1                        = 6;
     public static final int sim_object_reserved2                        = 7;
+    /**
+     * 对象路径类型
+     */
     public static final int sim_object_path_type                        = 8;
+    /**
+     * 视觉传感器类型
+     */
     public static final int sim_object_visionsensor_type                = 9;
+    /**
+     * vlume 声音类型
+     */
     public static final int sim_object_volume_type                  = 10;
+    /**
+     * mill 类型
+     */
     public static final int sim_object_mill_type                        = 11;
+    /**
+     * 压力传感器类型
+     */
     public static final int sim_object_forcesensor_type                 = 12;
+    /**
+     * 亮度传感器类型
+     */
     public static final int sim_object_light_type                       = 13;
+    /**
+     * 镜像类型
+     */
     public static final int sim_object_mirror_type                      = 14;
     public static final int sim_object_type_end                         = 108;
 
@@ -206,15 +863,33 @@ public class remoteApi
     public static final int sim_light_spot_subtype                  = 2;
     public static final int sim_light_directional_subtype               = 3;
     /* Joint sub-types: */
+    /**
+     * #TODO
+     */
     public static final int sim_joint_revolute_subtype              = 10;
+    /**
+     * 圆柱关节子类型
+     */
     public static final int sim_joint_prismatic_subtype                 = 11;
+    /**
+     * 圆球关节子类型
+     */
     public static final int sim_joint_spherical_subtype                 = 12;
     /* Shape sub-types: */
     public static final int sim_shape_simpleshape_subtype           = 20;
     public static final int sim_shape_multishape_subtype            = 21;
     /* Proximity sensor sub-types: */
+    /**
+     * 锥心接近传感器子类型
+     */
     public static final int sim_proximitysensor_pyramid_subtype     = 30;
+    /**
+     * 圆柱接近传感器子类型
+     */
     public static final int sim_proximitysensor_cylinder_subtype    = 31;
+    /**
+     * 距离接近传感器子类型
+     */
     public static final int sim_proximitysensor_disc_subtype        = 32;
     public static final int sim_proximitysensor_cone_subtype        = 33;
     public static final int sim_proximitysensor_ray_subtype         = 34;
@@ -224,6 +899,9 @@ public class remoteApi
     public static final int sim_mill_disc_subtype                       = 42;
     public static final int sim_mill_cone_subtype                   = 43;
     /* No sub-type: */
+    /**
+     * 无子类型
+     */
     public static final int sim_object_no_subtype                   = 200;
 
     /* Scene object main properties (serialized): */
@@ -252,7 +930,7 @@ public class remoteApi
     public static final int sim_modelproperty_not_visible = 256; /* Whole model is invisible, independent of local visibility settings */
     public static final int sim_modelproperty_not_model = 61440;  /* object is not a model */
 
-        /* Check the documentation instead of comments below!! */
+    /* Check the documentation instead of comments below!! */
     /* Following messages are dispatched to the Lua-message container: */
     public static final int sim_message_ui_button_state_change = 0; /* a UI button, slider, etc. changed (due to a user's action). aux[0]=UI handle, aux[1]=button handle, aux[2]=button attributes, aux[3]=slider position (if slider) */
     public static final int sim_message_reserved9 = 1;                  /* Do not use */
@@ -279,19 +957,19 @@ public class remoteApi
     public static final int sim_message_reserved6 = 267;                                /* Do not use */
     public static final int sim_message_reserved7 = 268;                                /* Do not use */
     public static final int sim_message_eventcallback_instancepass = 269;               /* Called once every main application loop pass. auxiliaryData[0] contains event flags of events that happened since last time: */
-                                                            /* bit0 set: object(s) erased */
-                                                            /* bit1 set: object(s) created */
-                                                            /* bit2 set: model loaded */
-                                                            /* bit3 set: scene loaded */
-                                                            /* bit4 set: undo called */
-                                                            /* bit5 set: redo called */
-                                                            /* bit6 set: scene switched (similar to scene loaded, basically: scene content completely changed) */
-                                                            /* bit7 set: edit mode active. This is not an event flag, but a state flag */
-                                                            /* bit8 set: object(s) scaled */
-                                                            /* bit9 set: selection state changed. (different objects are selected now) */
-                                                            /* bit10 set: key pressed */
-                                                            /* bit11 set: simulation started */
-                                                            /* bit12 set: simulation ended */
+    /* bit0 set: object(s) erased */
+    /* bit1 set: object(s) created */
+    /* bit2 set: model loaded */
+    /* bit3 set: scene loaded */
+    /* bit4 set: undo called */
+    /* bit5 set: redo called */
+    /* bit6 set: scene switched (similar to scene loaded, basically: scene content completely changed) */
+    /* bit7 set: edit mode active. This is not an event flag, but a state flag */
+    /* bit8 set: object(s) scaled */
+    /* bit9 set: selection state changed. (different objects are selected now) */
+    /* bit10 set: key pressed */
+    /* bit11 set: simulation started */
+    /* bit12 set: simulation ended */
 
     public static final int sim_message_eventcallback_broadcast = 270;
     public static final int sim_message_eventcallback_imagefilter_enumreset = 271;
@@ -872,6 +1550,9 @@ public class remoteApi
     public static final int sim_navigation_camerarotaterightbutton = 8192;
 
     /* Command return codes */
+    /**
+     * 执行成功
+     */
     public static final int simx_return_ok = 0;
     public static final int simx_return_novalue_flag = 1;       /* input buffer doesn't contain the specified command */
     public static final int simx_return_timeout_flag = 2;       /* command reply not received in time for simx_opmode_blocking operation mode */
@@ -892,19 +1573,22 @@ public class remoteApi
     public static final int simx_error_initialize_error_flag = 64;      /* simxStart was not yet called */
 
 
-            /* Regular operation modes */
+    /* Regular operation modes */
     public static final int simx_opmode_oneshot = 0;        /* sends command as one chunk. Reply will also come as one chunk. Doesn't wait for the reply. */
+    /**
+     * 阻塞模式
+     */
     public static final int simx_opmode_blocking = 65536;       /* sends command as one chunk. Reply will also come as one chunk. Waits for the reply (_REPLY_WAIT_TIMEOUT_IN_MS is the timeout). */
     public static final int simx_opmode_oneshot_wait = 65536;       /* sends command as one chunk. Reply will also come as one chunk. Waits for the reply (_REPLY_WAIT_TIMEOUT_IN_MS is the timeout). */
     public static final int simx_opmode_streaming = 131072;
     public static final int simx_opmode_continuous = 131072;
 
-            /* Operation modes for heavy data */
+    /* Operation modes for heavy data */
     public static final int simx_opmode_oneshot_split = 196608;     /* sends command as several chunks (max chunk size is x bytes, where x can be _MIN_SPLIT_AMOUNT_IN_BYTES-65535. Just add x to simx_opmode_oneshot_split). Reply will also come as several chunks. Doesn't wait for the reply. */
     public static final int simx_opmode_streaming_split = 262144;
     public static final int simx_opmode_continuous_split = 262144;
 
-            /* Special operation modes */
+    /* Special operation modes */
     public static final int simx_opmode_discontinue = 327680;       /* removes and cancels all commands stored on the client or server side (also continuous commands) */
     public static final int simx_opmode_buffer = 393216;    /* doesn't send anything, but checks if a reply for the given command is available in the input buffer (i.e. previously received from the server) */
     public static final int simx_opmode_remove = 458752;        /* doesn't send anything and doesn't return any specific value. It just erases a similar command reply in the inbox (to free some memory) */

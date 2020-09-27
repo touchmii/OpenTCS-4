@@ -7,85 +7,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c5c42f44-ef51-4b0a-a016-5f5d59ce337e" name="Default Changelist" comment="fixup! 添加取消路径指令，获取叉货状态。已叉货无法再发送叉货路径">
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/build.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/build/libs/opentcs-example-commadapter-modbus-4.17.0-SNAPSHOT.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/build/resources/guiceConfig/META-INF/services/org.opentcs.customizations.controlcenter.ControlCenterInjectionModule" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/build/resources/guiceConfig/META-INF/services/org.opentcs.customizations.kernel.KernelInjectionModule" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/build/resources/main/com/lvsrobot/Bundle.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/build/resources/main/com/lvsrobot/Bundle_de.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/build/resources/main/com/lvsrobot/Bundle_zh.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/build/resources/main/rebel.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/build/tmp/jar/MANIFEST.MF" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/guiceConfig/java/com/lvsrobot/vrep/ExampleControlCenterInjectionModule.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/guiceConfig/java/com/lvsrobot/vrep/ExampleKernelInjectionModule.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/guiceConfig/resources/META-INF/services/org.opentcs.customizations.controlcenter.ControlCenterInjectionModule" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/guiceConfig/resources/META-INF/services/org.opentcs.customizations.kernel.KernelInjectionModule" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/AgvInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/AgvTelegram.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/AgvTelegramNetty.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/AgvTelegramNew.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/ConfigRoute.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/ExampleAdapterComponentsFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/ExampleCommAdapter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/ExampleCommAdapterDescription.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/ExampleCommAdapterFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/ExampleModbusMasterResponseProcessor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/ExampleProcessModel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/ExampleProcessModelTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/LoopbackCommAdapterPanel.form" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/LoopbackCommAdapterPanel.jfd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/LoopbackCommunicationAdapterPanel.form" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/Parsers.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/SocketUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/VelocityController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/VelocityHistory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/VelocityListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/commands/SetPauseVehicle.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/coppelia/BoolW.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/coppelia/BoolWA.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/coppelia/CharW.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/coppelia/CharWA.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/coppelia/FloatW.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/coppelia/FloatWA.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/coppelia/FloatWAA.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/coppelia/IntW.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/coppelia/IntWA.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/coppelia/StringW.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/coppelia/StringWA.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/coppelia/remoteApi.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/exchange/AdapterPanelComponentsFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/exchange/ExampleCommAdapterPanelFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/exchange/TCSObjectComboBoxEditor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/exchange/myPanel2.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/exchange/myPanel2.jfd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/libremoteApiJava.dylib" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep/remoteApiJava.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/resources/com/lvsrobot/Bundle.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/resources/com/lvsrobot/Bundle_de.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/resources/com/lvsrobot/Bundle_zh.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/resources/rebel.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/test/java/SimpleMasterTCP.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/test/java/modbustest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/test/java/nettytest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-WebClient/.gradle/4.10.3/fileContent/fileContent.lock" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-WebClient/.gradle/4.10.3/taskHistory/taskHistory.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-WebClient/.gradle/4.10.3/taskHistory/taskHistory.lock" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-WebClient/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-WebClient/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-WebClient/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-WebClient/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/openTCS-WebClient/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/openTCS-Kernel/src/dist/lib/libremoteApiJava.so" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/openTCS-Common/src/main/java/org/opentcs/common/DefaultPortalManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/openTCS-Common/src/main/java/org/opentcs/common/DefaultPortalManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/openTCS-Example-CommAdapter-Modbus/src/guiceConfig/resources/META-INF/services/org.opentcs.customizations.controlcenter.ControlCenterInjectionModule" beforeDir="false" afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-Modbus/src/guiceConfig/resources/META-INF/services/org.opentcs.customizations.controlcenter.ControlCenterInjectionModule" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/openTCS-Example-CommAdapter-Modbus/src/guiceConfig/resources/META-INF/services/org.opentcs.customizations.kernel.KernelInjectionModule" beforeDir="false" afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-Modbus/src/guiceConfig/resources/META-INF/services/org.opentcs.customizations.kernel.KernelInjectionModule" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/openTCS-Kernel/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/openTCS-Kernel/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/openTCS-KernelControlCenter/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/openTCS-KernelControlCenter/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/openTCS-WebClient/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/openTCS-WebClient/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/WEB-INF/web.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/coppelia/remoteApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/coppelia/remoteApi.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -154,7 +78,48 @@
         </task>
         <projects_view>
           <tree_state>
-            <expand />
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="openTCS" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="openTCS" type="f1a62948:ProjectNode" />
+                <item name="openTCS-Kernel" type="2d1252cf:ModuleNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="openTCS" type="f1a62948:ProjectNode" />
+                <item name="openTCS-Kernel" type="2d1252cf:ModuleNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="openTCS" type="f1a62948:ProjectNode" />
+                <item name="openTCS-Kernel" type="2d1252cf:ModuleNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="application" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="openTCS" type="f1a62948:ProjectNode" />
+                <item name="openTCS-PlantOverview" type="2d1252cf:ModuleNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="openTCS" type="f1a62948:ProjectNode" />
+                <item name="openTCS-PlantOverview" type="2d1252cf:ModuleNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="openTCS" type="f1a62948:ProjectNode" />
+                <item name="openTCS-PlantOverview" type="2d1252cf:ModuleNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="application" type="c8890929:TasksNode$1" />
+              </path>
+            </expand>
             <select />
           </tree_state>
         </projects_view>
@@ -212,7 +177,7 @@
     <property name="add_unversioned_files" value="$PROJECT_DIR$/openTCS-Documentation/build/api-base/index.html" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="XML" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/openTCS-Kernel/src/dist/lib" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -221,36 +186,36 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="preferences.general" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="show.unlinked.gradle.project.popup" value="true" />
   </component>
   <component name="RebelAgentSelection">
     <selection>jxr</selection>
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep" />
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/openTCS-WebClient/src/main/webapp/WEB_INF" />
-      <recent name="$PROJECT_DIR$/openTCS-WebClient/src/main/java" />
-      <recent name="$PROJECT_DIR$/openTCS-PlantOverview/src/dist/data" />
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/openTCS-Example-CommAdapter-Modbus/src/test/java" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.lvsrobot.vehicle" />
       <recent name="org.opentcs.virtualvehicle" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/openTCS-Example-CommAdapter-Modbus/src/test/java" />
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/openTCS-Kernel/src/dist/lib" />
+      <recent name="$PROJECT_DIR$/openTCS-Example-CommAdapter-VREP/src/main/java/com/lvsrobot/vrep" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/openTCS-WebClient/src/main/webapp/WEB_INF" />
+      <recent name="$PROJECT_DIR$/openTCS-WebClient/src/main/java" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.OpenTCS-4.17:openTCS-WebClient [jettyRun]">
-    <configuration name="OpenTCS-4.17:openTCS-WebClient [appRunWar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+  <component name="RunManager" selected="Gradle.OpenTCS-4.17:openTCS-Kernel [run]">
+    <configuration name="OpenTCS-4.17:openTCS-Kernel [run]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/openTCS-WebClient" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/openTCS-Kernel" />
         <option name="externalSystemIdString" value="GRADLE" />
         <option name="scriptParameters" />
         <option name="taskDescriptions">
@@ -258,7 +223,7 @@
         </option>
         <option name="taskNames">
           <list>
-            <option value="appRunWar" />
+            <option value="run" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -266,10 +231,10 @@
       <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="OpenTCS-4.17:openTCS-WebClient [appStart]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="OpenTCS-4.17:openTCS-PlantOverview [run]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/openTCS-WebClient" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/openTCS-PlantOverview" />
         <option name="externalSystemIdString" value="GRADLE" />
         <option name="scriptParameters" />
         <option name="taskDescriptions">
@@ -277,7 +242,7 @@
         </option>
         <option name="taskNames">
           <list>
-            <option value="appStart" />
+            <option value="run" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -1371,21 +1336,21 @@
     </configuration>
     <list>
       <item itemvalue="Gradle.OpenTCS-4.17:openTCS-WebClient [jettyRunWar]" />
-      <item itemvalue="Gradle.OpenTCS-4.17:openTCS-WebClient [appStart]" />
-      <item itemvalue="Gradle.OpenTCS-4.17:openTCS-WebClient [appRunWar]" />
       <item itemvalue="Gradle.OpenTCS-4.17:openTCS-WebClient [tomcatRun]" />
       <item itemvalue="Gradle.OpenTCS-4.17:openTCS-WebClient [tomcatRunWar]" />
       <item itemvalue="Gradle.OpenTCS-4.17:openTCS-WebClient [jettyRun]" />
+      <item itemvalue="Gradle.OpenTCS-4.17:openTCS-PlantOverview [run]" />
       <item itemvalue="Jetty Server.Jetty Server" />
       <item itemvalue="Tomcat Server.Tomcat 9.0.37" />
+      <item itemvalue="Gradle.OpenTCS-4.17:openTCS-Kernel [run]" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.OpenTCS-4.17:openTCS-Kernel [run]" />
+        <item itemvalue="Gradle.OpenTCS-4.17:openTCS-PlantOverview [run]" />
         <item itemvalue="Gradle.OpenTCS-4.17:openTCS-WebClient [jettyRun]" />
         <item itemvalue="Gradle.OpenTCS-4.17:openTCS-WebClient [tomcatRunWar]" />
         <item itemvalue="Gradle.OpenTCS-4.17:openTCS-WebClient [tomcatRun]" />
-        <item itemvalue="Gradle.OpenTCS-4.17:openTCS-WebClient [appRunWar]" />
-        <item itemvalue="Gradle.OpenTCS-4.17:openTCS-WebClient [appStart]" />
       </list>
     </recent_temporary>
   </component>
@@ -1402,17 +1367,7 @@
               </path>
               <path>
                 <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-                <item name="Jetty Server" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-                <item name="Finished" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              </path>
-              <path>
-                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
                 <item name="Tomcat Server" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              </path>
-              <path>
-                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-                <item name="Tomcat Server" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-                <item name="Finished" type="7427dc5b:ServiceModel$ServiceGroupNode" />
               </path>
             </expand>
             <select />
@@ -1474,6 +1429,7 @@
       <workItem from="1600475579898" duration="1207000" />
       <workItem from="1600476799836" duration="8511000" />
       <workItem from="1600610759829" duration="10067000" />
+      <workItem from="1601110240266" duration="3866000" />
     </task>
     <task id="LOCAL-00001" summary="use jlibmodbus">
       <created>1597752500198</created>
@@ -1552,7 +1508,14 @@
       <option name="project" value="LOCAL" />
       <updated>1600478517071</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="更新循环搬运插件翻译，可通过此插件循环生成运输订单">
+      <created>1600918981496</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1600918981496</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1581,7 +1544,8 @@
     <MESSAGE value="添加取消路径指令，获取叉货状态。已叉货无法再发送叉货路径" />
     <MESSAGE value="添加python web gui" />
     <MESSAGE value="添加 RAP Example 适配Gradel和Maven，Gradel需使用尾缀带War的指令，jetty和tomcat都支持。Maven直接使用jetty插件的功能，如jettyRun或jettyRunwar。" />
-    <option name="LAST_COMMIT_MESSAGE" value="添加 RAP Example 适配Gradel和Maven，Gradel需使用尾缀带War的指令，jetty和tomcat都支持。Maven直接使用jetty插件的功能，如jettyRun或jettyRunwar。" />
+    <MESSAGE value="更新循环搬运插件翻译，可通过此插件循环生成运输订单" />
+    <option name="LAST_COMMIT_MESSAGE" value="更新循环搬运插件翻译，可通过此插件循环生成运输订单" />
   </component>
   <component name="WindowStateProjectService">
     <state x="240" y="77" key="#Google_App_Engine" timestamp="1596588077650">
@@ -1600,10 +1564,10 @@
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state x="240" y="77" key="#Plugins/0.23.1280.777@0.23.1280.777" timestamp="1597544364779" />
-    <state x="240" y="77" key="#Project_Structure" timestamp="1600531311188">
+    <state x="240" y="77" key="#Project_Structure" timestamp="1600916156760">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="240" y="77" key="#Project_Structure/0.23.1280.777@0.23.1280.777" timestamp="1600531311188" />
+    <state x="240" y="77" key="#Project_Structure/0.23.1280.777@0.23.1280.777" timestamp="1600916156760" />
     <state x="276" y="77" key="#Server" timestamp="1599670835365">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
@@ -1654,42 +1618,42 @@
     </state>
     <state x="710" y="168" key="#xdebugger.evaluate/0.23.1280.777@0.23.1280.777" timestamp="1597364514602" />
     <state x="541" y="136" key="#xdebugger.evaluate/1280.23.1920.1057/0.23.1280.777@0.23.1280.777" timestamp="1596383793345" />
-    <state x="0" y="23" width="1280" height="777" key="CommitChangelistDialog2" timestamp="1600561618614">
+    <state x="0" y="23" width="1280" height="777" key="CommitChangelistDialog2" timestamp="1601217065221">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="0" y="23" width="1280" height="777" key="CommitChangelistDialog2/0.23.1280.777@0.23.1280.777" timestamp="1600561618614" />
+    <state x="0" y="23" width="1280" height="777" key="CommitChangelistDialog2/0.23.1280.777@0.23.1280.777" timestamp="1601217065221" />
     <state width="526" height="466" key="DebuggerActiveHint" timestamp="1597337671807">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state width="526" height="466" key="DebuggerActiveHint/0.23.1280.777@0.23.1280.777" timestamp="1597337671807" />
     <state width="504" height="466" key="DebuggerActiveHint/1280.23.1920.1057/0.23.1280.777@0.23.1280.777" timestamp="1596362634984" />
-    <state x="111" y="144" width="1060" height="537" key="DiffContextDialog" timestamp="1599786721343">
+    <state x="111" y="144" width="1060" height="537" key="DiffContextDialog" timestamp="1601217023677">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="111" y="144" width="1060" height="537" key="DiffContextDialog/0.23.1280.777@0.23.1280.777" timestamp="1599786721335" />
+    <state x="111" y="144" width="1060" height="537" key="DiffContextDialog/0.23.1280.777@0.23.1280.777" timestamp="1601217023677" />
     <state x="469" y="325" key="GitRewordDialog" timestamp="1599786651689">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state x="469" y="325" key="GitRewordDialog/0.23.1280.777@0.23.1280.777" timestamp="1599786651689" />
-    <state width="1218" height="184" key="GridCell.Tab.0.bottom" timestamp="1600532072151">
+    <state width="1218" height="184" key="GridCell.Tab.0.bottom" timestamp="1601216678866">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state width="1218" height="184" key="GridCell.Tab.0.bottom/0.23.1280.777@0.23.1280.777" timestamp="1600532072151" />
+    <state width="1218" height="184" key="GridCell.Tab.0.bottom/0.23.1280.777@0.23.1280.777" timestamp="1601216678866" />
     <state width="1218" height="229" key="GridCell.Tab.0.bottom/1280.23.1920.1057/0.23.1280.777@0.23.1280.777" timestamp="1596383699650" />
-    <state width="1218" height="184" key="GridCell.Tab.0.center" timestamp="1600532072150">
+    <state width="1218" height="184" key="GridCell.Tab.0.center" timestamp="1601216678865">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state width="1218" height="184" key="GridCell.Tab.0.center/0.23.1280.777@0.23.1280.777" timestamp="1600532072150" />
+    <state width="1218" height="184" key="GridCell.Tab.0.center/0.23.1280.777@0.23.1280.777" timestamp="1601216678865" />
     <state width="1218" height="229" key="GridCell.Tab.0.center/1280.23.1920.1057/0.23.1280.777@0.23.1280.777" timestamp="1596383699649" />
-    <state width="1218" height="184" key="GridCell.Tab.0.left" timestamp="1600532072150">
+    <state width="1218" height="184" key="GridCell.Tab.0.left" timestamp="1601216678865">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state width="1218" height="184" key="GridCell.Tab.0.left/0.23.1280.777@0.23.1280.777" timestamp="1600532072150" />
+    <state width="1218" height="184" key="GridCell.Tab.0.left/0.23.1280.777@0.23.1280.777" timestamp="1601216678865" />
     <state width="1218" height="229" key="GridCell.Tab.0.left/1280.23.1920.1057/0.23.1280.777@0.23.1280.777" timestamp="1596383699649" />
-    <state width="1218" height="184" key="GridCell.Tab.0.right" timestamp="1600532072151">
+    <state width="1218" height="184" key="GridCell.Tab.0.right" timestamp="1601216678866">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state width="1218" height="184" key="GridCell.Tab.0.right/0.23.1280.777@0.23.1280.777" timestamp="1600532072151" />
+    <state width="1218" height="184" key="GridCell.Tab.0.right/0.23.1280.777@0.23.1280.777" timestamp="1601216678866" />
     <state width="1218" height="229" key="GridCell.Tab.0.right/1280.23.1920.1057/0.23.1280.777@0.23.1280.777" timestamp="1596383699650" />
     <state width="844" height="184" key="GridCell.Tab.1.bottom" timestamp="1600531239066">
       <screen x="0" y="23" width="1280" height="777" />
@@ -1771,19 +1735,19 @@
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state x="126" y="130" key="RollbackChangesDialog/0.23.1280.777@0.23.1280.777" timestamp="1599786385469" />
-    <state x="16" y="23" width="1198" height="722" key="SettingsEditor" timestamp="1600531415278">
+    <state x="16" y="23" width="1198" height="722" key="SettingsEditor" timestamp="1601203131260">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="16" y="23" width="1198" height="722" key="SettingsEditor/0.23.1280.777@0.23.1280.777" timestamp="1600531415278" />
+    <state x="16" y="23" width="1198" height="722" key="SettingsEditor/0.23.1280.777@0.23.1280.777" timestamp="1601203131260" />
     <state x="128" y="23" key="SettingsEditor/1280.23.1920.1057/0.23.1280.777@0.23.1280.777" timestamp="1596362316566" />
     <state x="381" y="334" key="VCS.ChangelistChooser" timestamp="1599786726884">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state x="381" y="334" key="VCS.ChangelistChooser/0.23.1280.777@0.23.1280.777" timestamp="1599786726884" />
-    <state x="240" y="151" key="Vcs.Push.Dialog.v2" timestamp="1600478555345">
+    <state x="240" y="151" key="Vcs.Push.Dialog.v2" timestamp="1600919063664">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="240" y="151" key="Vcs.Push.Dialog.v2/0.23.1280.777@0.23.1280.777" timestamp="1600478555345" />
+    <state x="240" y="151" key="Vcs.Push.Dialog.v2/0.23.1280.777@0.23.1280.777" timestamp="1600919063664" />
     <state x="485" y="318" key="WebDeployment.AddServerDialog.v.1" timestamp="1599794426978">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
@@ -1792,14 +1756,14 @@
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state width="630" height="368" key="XDebugger.FullValuePopup/0.23.1280.777@0.23.1280.777" timestamp="1596530565875" />
-    <state x="110" y="143" width="1060" height="537" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1600477202167">
+    <state x="110" y="143" width="1060" height="537" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1601217023677">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="110" y="143" width="1060" height="537" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.23.1280.777@0.23.1280.777" timestamp="1600477202167" />
-    <state x="319" y="244" key="com.intellij.ide.util.TipDialog" timestamp="1600180059726">
+    <state x="110" y="143" width="1060" height="537" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.23.1280.777@0.23.1280.777" timestamp="1601217023677" />
+    <state x="319" y="244" key="com.intellij.ide.util.TipDialog" timestamp="1601110238382">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="319" y="244" key="com.intellij.ide.util.TipDialog/0.23.1280.777@0.23.1280.777" timestamp="1600180059726" />
+    <state x="319" y="244" key="com.intellij.ide.util.TipDialog/0.23.1280.777@0.23.1280.777" timestamp="1601110238382" />
     <state x="219" y="75" key="com.intellij.javaee.view.ServerArtifactsDialog" timestamp="1600529920999">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
@@ -1812,10 +1776,10 @@
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state x="156" y="154" width="968" height="590" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1280.777@0.23.1280.777" timestamp="1597729088051" />
-    <state x="328" y="211" key="git4idea.merge.GitPullDialog" timestamp="1600254901561">
+    <state x="328" y="211" key="git4idea.merge.GitPullDialog" timestamp="1600912269398">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="328" y="211" key="git4idea.merge.GitPullDialog/0.23.1280.777@0.23.1280.777" timestamp="1600254901561" />
+    <state x="328" y="211" key="git4idea.merge.GitPullDialog/0.23.1280.777@0.23.1280.777" timestamp="1600912269398" />
     <state x="54" y="28" key="new project wizard" timestamp="1599611969791">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
