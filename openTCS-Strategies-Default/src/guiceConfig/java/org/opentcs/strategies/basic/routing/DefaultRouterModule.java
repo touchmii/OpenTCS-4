@@ -8,18 +8,8 @@
 package org.opentcs.strategies.basic.routing;
 
 import org.opentcs.customizations.kernel.KernelInjectionModule;
-import org.opentcs.strategies.basic.routing.jgrapht.BellmanFordPointRouterFactory;
-import org.opentcs.strategies.basic.routing.jgrapht.DefaultModelGraphMapper;
-import org.opentcs.strategies.basic.routing.jgrapht.DijkstraPointRouterFactory;
-import org.opentcs.strategies.basic.routing.jgrapht.EdgeEvaluator;
-import org.opentcs.strategies.basic.routing.jgrapht.EdgeEvaluatorComposite;
-import org.opentcs.strategies.basic.routing.jgrapht.EdgeEvaluatorDistance;
-import org.opentcs.strategies.basic.routing.jgrapht.EdgeEvaluatorExplicitProperties;
-import org.opentcs.strategies.basic.routing.jgrapht.EdgeEvaluatorHops;
-import org.opentcs.strategies.basic.routing.jgrapht.EdgeEvaluatorTravelTime;
-import org.opentcs.strategies.basic.routing.jgrapht.FloydWarshallPointRouterFactory;
-import org.opentcs.strategies.basic.routing.jgrapht.ModelGraphMapper;
-import org.opentcs.strategies.basic.routing.jgrapht.ShortestPathConfiguration;
+import org.opentcs.strategies.basic.routing.jgrapht.*;
+
 import static org.opentcs.strategies.basic.routing.jgrapht.ShortestPathConfiguration.EvaluatorType.EXPLICIT;
 import static org.opentcs.strategies.basic.routing.jgrapht.ShortestPathConfiguration.EvaluatorType.TRAVELTIME;
 import org.slf4j.Logger;
@@ -59,6 +49,10 @@ public class DefaultRouterModule
         .to(DefaultModelGraphMapper.class);
 
     switch (spConfiguration.algorithm()) {
+      case ASTAR:
+        bind(PointRouterFactory.class)
+                .to(AStarPointRouterFactory.class);
+        break;
       case DIJKSTRA:
         bind(PointRouterFactory.class)
             .to(DijkstraPointRouterFactory.class);

@@ -46,6 +46,7 @@ public interface ShortestPathConfiguration {
   List<EvaluatorType> edgeEvaluators();
 
   enum Algorithm {
+    ASTAR(false),
     DIJKSTRA(false),
     BELLMAN_FORD(true),
     FLOYD_WARSHALL(false);
