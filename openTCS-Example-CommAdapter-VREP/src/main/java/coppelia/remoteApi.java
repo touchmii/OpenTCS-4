@@ -12,7 +12,7 @@ public class remoteApi
 //        directory.getCanonicalPath()
         try {
             String os = System.getProperty("os.name").toLowerCase();
-            if(os.indexOf("windwos") >= 0) {
+            if(os.indexOf("windows") >= 0) {
 
                 System.load(directory.getCanonicalPath().replace("\\", "/")+"/lib/remoteApiJava.dll");
             } else if (os.indexOf("mac") >= 0) {

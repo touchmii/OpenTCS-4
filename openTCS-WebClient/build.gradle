@@ -42,6 +42,18 @@ dependencies {
     implementation 'org.eclipse.platform:org.eclipse.core.runtime:3.18.0'
     implementation 'org.eclipse.rap:org.eclipse.rap.nebula.widgets.richtext:3.13.0'
     implementation 'org.eclipse.rap:org.eclipse.rap.jface.databinding:3.13.0'
+    implementation 'org.eclipse.equinox:org.eclipse.equinox.app:1.3.100'
+    implementation 'org.eclipse.rap:org.eclipse.rap.ui:3.14.0'
+    implementation 'org.eclipse.rap:org.eclipse.rap.ui.views:3.14.0'
+    implementation 'org.eclipse.rap:org.eclipse.rap.ui.workbench:3.14.0'
+    // https://mvnrepository.com/artifact/org.eclipse.rap/org.eclipse.rap.rwt
+    compile group: 'org.eclipse.rap', name: 'org.eclipse.rap.rwt', version: '3.14.0'
+//    implementation 'org.eclipse.platform:org.eclipse.ui:3.118.0'
+    // https://mvnrepository.com/artifact/org.eclipse.ui/org.eclipse.ui
+//    compile group: 'org.eclipse.ui', name: 'org.eclipse.ui', version: '3.5.0.I20090604-2000'
+    // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.ui
+//    compile group: 'org.eclipse.platform', name: 'org.eclipse.ui', version: '3.115.0'
+    implementation 'org.eclipse.rap:org.eclipse.rap.ui.forms:3.14.0'
 }
 
 //apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'

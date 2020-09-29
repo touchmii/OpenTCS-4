@@ -120,7 +120,7 @@
             <version>4.0.1</version>
         </dependency>
     </dependencies>
-    <build>
+     <build>
         <finalName>com.lvsrobot.webclient.controls</finalName>
         <plugins>
             <!-- see http://wiki.eclipse.org/Jetty/Feature/Jetty_Maven_Plugin#jetty:run_:__Running_an_unassembled_webapp -->
