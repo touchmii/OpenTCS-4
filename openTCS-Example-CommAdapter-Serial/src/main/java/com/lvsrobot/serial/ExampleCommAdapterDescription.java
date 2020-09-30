@@ -1,7 +1,7 @@
 /**
  * Copyright (c) Fraunhofer IML
  */
-package com.lvsrobot.vehicle;
+package com.lvsrobot.serial;
 
 import java.util.ResourceBundle;
 
@@ -16,6 +16,6 @@ public class ExampleCommAdapterDescription extends VehicleCommAdapterDescription
 
     @Override
     public String getDescription() {
-        return ResourceBundle.getBundle("com/lvsrobot/modbus/Bundle").getString("AdapterFactoryDescription");
+        return ResourceBundle.getBundle("com/lvsrobot/serial/Bundle").getString("AdapterFactoryDescription");
     }
 }

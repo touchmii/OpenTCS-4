@@ -26,6 +26,7 @@ import org.opentcs.access.LocalKernel;
 import org.opentcs.common.LoopbackAdapterConstants;
 import org.opentcs.customizations.kernel.KernelExecutor;
 import org.opentcs.data.ObjectPropConstants;
+import org.opentcs.data.model.Triple;
 import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.model.Vehicle.Orientation;
 import org.opentcs.data.order.DriveOrder;
@@ -442,6 +443,16 @@ public class LoopbackCommunicationAdapter extends BasicVehicleCommAdapter implem
                 return;
             }
 
+            Triple SourcePositon = step.getSourcePoint().getPosition();
+            Triple DestPosition = step.getDestinationPoint().getPosition();
+            getProcessModel().setVehiclePrecisePosition(SourcePositon);
+            Triple new_sim_positon = SourcePositon;
+            int sim_dir = 0;
+            if (Math.abs(SourcePositon.getX() - DestPosition.getX()) < 100) {
+                sim_dir = 1;
+            } else if (Math.abs(SourcePositon.getY() - DestPosition.getY()) < 100){
+                sim_dir = 2;
+            }
             Orientation orientation = step.getVehicleOrientation();
             long pathLength = step.getPath().getLength();
             int maxVelocity;
@@ -462,6 +473,15 @@ public class LoopbackCommunicationAdapter extends BasicVehicleCommAdapter implem
                 WayEntry wayEntry = getProcessModel().getVelocityController().getCurrentWayEntry();
                 Uninterruptibles.sleepUninterruptibly(ADVANCE_TIME, TimeUnit.MILLISECONDS);
                 getProcessModel().getVelocityController().advanceTime(simAdvanceTime);
+                LOG.info("simulate delay...");
+//                Triple new_sim_positon = getProcessModel().getVehiclePrecisePosition();
+                if (sim_dir == 1) {
+                    new_sim_positon.setY(new_sim_positon.getY()+50);
+                } else if (sim_dir == 2) {
+                    new_sim_positon.setX(new_sim_positon.getX()+50);
+                }
+                getProcessModel().setVehiclePrecisePosition(new_sim_positon);
+                LOG.info("set Position X: {}, Y: {}", new_sim_positon.getX(), new_sim_positon.getY());
                 WayEntry nextWayEntry = getProcessModel().getVelocityController().getCurrentWayEntry();
                 if (wayEntry != nextWayEntry) {
                     getProcessModel().setVehiclePosition(wayEntry.getDestPointName());

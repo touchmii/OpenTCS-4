@@ -44,6 +44,12 @@ public class remoteApi
      * @param clientID 设置-1终止所有远程连接
      */
     public native void simxFinish(int clientID);
+
+    /**
+     * 获取连接ID
+     * @param clientID 连接ID
+     * @return
+     */
     public native int simxGetConnectionId(int clientID);
 
     /**
@@ -65,6 +71,15 @@ public class remoteApi
      * @return
      */
     public native int simxGetJointPosition(int clientID,int jointHandle, FloatW position, int operationMode);
+
+    /**
+     * 设置关节坐标,区别于对象坐标,此坐标指单轴旋转角度
+     * @param clientID
+     * @param jointHandle 关节句柄
+     * @param position 坐标
+     * @param operationMode 模式
+     * @return
+     */
     public native int simxSetJointPosition(int clientID,int jointHandle, float position, int operationMode);
 
     /**
@@ -101,8 +116,37 @@ public class remoteApi
      * @return
      */
     public native int simxGetVisionSensorImage(int clientID,int sensorHandle, IntWA resolution, CharWA image, int options, int operationMode);
+
+    /**
+     * 设置视觉传感器图像
+     * @param clientID
+     * @param sensorHandle 传感器句柄
+     * @param image 图像
+     * @param bufferSize 缓冲大小
+     * @param options 选项
+     * @param operationMode 模式
+     * @return
+     */
     public native int simxSetVisionSensorImage(int clientID,int sensorHandle, CharWA image, int bufferSize, int options, int operationMode);
+
+    /**
+     * 获取关节变换矩阵
+     * @param clientID
+     * @param jointHandle 关节句柄
+     * @param matrix 矩阵12个值
+     * @param operationMode 模式
+     * @return
+     */
     public native int simxGetJointMatrix(int clientID,int jointHandle, FloatWA matrix, int operationMode);
+
+    /**
+     * 获取球形关节变换矩阵
+     * @param clientID
+     * @param jointHandle
+     * @param matrix
+     * @param operationMode
+     * @return
+     */
     public native int simxSetSphericalJointMatrix(int clientID,int jointHandle,FloatWA matrix,int operationMode);
 
     /**
@@ -114,6 +158,15 @@ public class remoteApi
      * @return
      */
     public native int simxSetJointTargetVelocity(int clientID,int jointHandle,float targetVelocity,int operationMode);
+
+    /**
+     * 获取目标关节角度
+     * @param clientID
+     * @param jointHandle
+     * @param targetPosition
+     * @param operationMode
+     * @return
+     */
     public native int simxSetJointTargetPosition(int clientID,int jointHandle,float targetPosition,int operationMode);
     public native int simxJointGetForce(int clientID,int jointHandle,FloatW force,int operationMode);
 
@@ -138,7 +191,7 @@ public class remoteApi
     public native int simxSetJointForce(int clientID,int jointHandle,float force,int operationMode);
 
     /**
-     * 设置关节最大力矩
+     * 设置关节可施加的最大力矩
      * @param clientID
      * @param jointHandle
      * @param force
@@ -148,7 +201,7 @@ public class remoteApi
     public native int simxSetJointMaxForce(int clientID,int jointHandle,float force,int operationMode);
 
     /**
-     * 获取关节最大力矩
+     * 获取关节可施加的最大力矩
      * @param clientID
      * @param jointHandle
      * @param force
@@ -156,7 +209,28 @@ public class remoteApi
      * @return
      */
     public native int simxGetJointMaxForce(int clientID,int jointHandle,FloatW force,int operationMode);
+
+    /**
+     * 读取施加到力传感器的力和扭矩（读取过滤值），以及其当前状态（“不间断”或“间断”）。另请参见 {@link remoteApi#simxBreakForceSensor}, {@link remoteApi#simxGetJointForce} and {@link remoteApi#simxGetObjectGroupData}.
+     * @param clientID 客户端ID, 请参考{@link remoteApi#simxStart}。
+     * @param forceSensorHandle 力传感器的句柄
+     * @param state 力传感器（输出）的状态。可以为空
+     * Bit 0：力和扭矩数据可用，否则（尚）不可用（例如，当过滤器没有足够的值时）
+     * Bit 1：力传感器损坏，否则它仍然完好无损（“未损坏”）
+     * @param forceVector 力矢量（输出）,可以为空
+     * @param torqueVector 转矩矢量（输出）,可以为空
+     * @param operationMode 远程API函数操作模式。此功能的推荐操作模式是{@link remoteApi#simx_opmode_streaming}（第一次调用）和{@link remoteApi#simx_opmode_buffer}（随后的调用）.
+     * @return
+     */
     public native int simxReadForceSensor(int clientID,int forceSensorHandle, IntW state,FloatWA forceVector,FloatWA torqueVector,int operationMode);
+
+    /**
+     * 在仿真过程中允许破坏力传感器。断裂的力传感器将失去其位置和方向约束。另请参见simxReadForceSensor。
+     * @param clientID 客户端ID, 请参考{@link remoteApi#simxStart}。
+     * @param forceSensorHandle 力传感器的句柄
+     * @param operationMode 远程API函数操作模式。此功能的建议操作模式为{@link remoteApi#simx_opmode_oneshot}
+     * @return 远程API函数返回码 {@link remoteApi#simx_return_ok}
+     */
     public native int simxBreakForceSensor(int clientID,int forceSensorHandle,int operationMode);
 
     /**
@@ -169,6 +243,17 @@ public class remoteApi
      * @return
      */
     public native int simxReadVisionSensor(int clientID,int sensorHandle,BoolW detectionState, FloatWAA auxValues, int operationMode);
+
+    /**
+     * 检索对象的浮点参数。另请参见{@link remoteApi#simxSetObjectFloatParameter}和{@link remoteApi#simxGetObjectIntParameter}。
+     * @param clientID 客户端ID, 请参考{@link remoteApi#simxStart}。
+     * @param objectHandle 对象的句柄
+     * @param parameterID 要检索的参数的标识符, 请参阅所有可能的对象参数标识符列表.
+     * See <a href="https://www.coppeliarobotics.com/helpFiles/en/objectParameterIDs.htm">objectParameterIDs</a>
+     * @param parameterValue 参数的值（输出）
+     * @param operationMode 远程API函数操作模式。此功能的建议操作模式是{@link remoteApi#simx_opmode_streaming}（第一次调用）和{@link remoteApi#simx_opmode_buffer}（随后的调用）或{@link remoteApi#simx_opmode_blocking}（取决于预期的用法）
+     * @return
+     */
     public native int simxGetObjectFloatParameter(int clientID,int objectHandle,int parameterID,FloatW parameterValue,int operationMode);
     public native int simxSetObjectFloatParameter(int clientID,int objectHandle,int parameterID,float parameterValue,int operationMode);
     public native int simxGetObjectIntParameter(int clientID,int objectHandle,int parameterID,IntW parameterValue,int operationMode);
@@ -700,7 +785,7 @@ public class remoteApi
      * 删除文件
      * @param clientID
      * @param fileName_serverSide 服务器上的文件名
-     * @param operationMode
+     * @param operationMode 操作模式, 请参见 {@link remoteApi#simx_opmode_oneshot} / {@link remoteApi#simx_opmode_remove}
      * @return
      */
     public native int simxEraseFile(int clientID,final String fileName_serverSide, int operationMode);
