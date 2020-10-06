@@ -4,32 +4,57 @@ public class IntWA
 {
     int[] w;
 
+    /**
+     * 创建int型数组
+     * @param i 数组长度
+     */
     public IntWA(int i)
     {
         w = new int[i];
     }
 
+    /**
+     * 初始化数组
+     * @param i 数组长度
+     */
     public void initArray(int i)
     {
         w = new int[i];
     }
 
+    /**
+     * 获取数组长度
+     * @return 长度
+     */
     public int getLength()
     {
         return w.length;
     }
 
+    /**
+     * 设置新数组
+     * @param i 数组长度
+     * @return 新的数组
+     */
     public int[] getNewArray(int i)
     {
         w = new int[i];
         return w;
     }
 
+    /**
+     * 获取数组
+     * @return 数组
+     */
     public int[] getArray()
     {
         return w;
     }
-    
+
+    /**
+     * 从int型数组获取char型数组
+     * @return char数组
+     */
     public char[] getCharArrayFromArray()
     {
         char[] a=new char[4*w.length];
@@ -42,7 +67,11 @@ public class IntWA
         }
         return a;
     }
-    
+
+    /**
+     * 从char数组初始化int数组
+     * @param a char数组
+     */
     public void initArrayFromCharArray(char[] a)
     {
         w = new int[a.length/4];

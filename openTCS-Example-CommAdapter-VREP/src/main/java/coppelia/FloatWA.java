@@ -4,6 +4,10 @@ public class FloatWA
 {
     float[] w;
 
+    /**
+     * 创建浮点数组
+     * @param i 数组长度
+     */
     public FloatWA(int i)
     {
         w = new float[i];

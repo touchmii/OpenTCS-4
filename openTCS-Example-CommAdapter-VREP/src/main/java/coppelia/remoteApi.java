@@ -709,17 +709,129 @@ public class remoteApi
     public native int simxSetObjectSelection(int clientID,IntWA objectHandles, int operationMode);
     public native int simxClearFloatSignal(int clientID,final String signalName, int operationMode);
     public native int simxClearStringSignal(int clientID,final String signalName,int operationMode);
+
+    /**
+     * 清除整数信号（将其删除）。另请参见simxSetIntegerSignal，simxClearFloatSignal和simxClearStringSignal。
+     * @param clientID
+     * @param signalName 信号名称或空字符串以清除所有整数信号
+     * @param operationMode  远程API函数操作模式。此功能的建议操作模式为simx_opmode_oneshot
+     * @return
+     */
     public native int simxClearIntegerSignal(int clientID,final String signalName,int operationMode);
     public native int simxGetFloatSignal(int clientID,final String signalName,FloatW signalValue,int operationMode);
+
+    /**
+     * 获取整数信号的值。在仿真开始时清除信号。另请参见simxSetIntegerSignal，simxClearIntegerSignal，simxGetFloatSignal和simxGetStringSignal。
+     * @param clientID
+     * @param signalName 信号名称
+     * @param signalValue 信号值（输出）
+     * @param operationMode 远程API函数操作模式。此功能的推荐操作模式是simx_opmode_streaming（第一次调用）和simx_opmode_buffer（随后的调用）
+     * @return
+     */
     public native int simxGetIntegerSignal(int clientID,final String signalName,IntW signalValue,int operationMode);
+
+    /**
+     * 获取字符串信号的值。在仿真开始时清除信号。要将整数/浮点数与字符串打包/解包，请参阅IntWA和FloatWA。另请参见simxSetStringSignal，simxClearStringSignal，simxGetIntegerSignal和simxGetFloatSignal。
+     * @param clientID
+     * @param signalName 信号名称
+     * @param signalValue 信号的值，可能包含任何值，包括嵌入的零（输出）。
+     * @param operationMode 远程API函数操作模式。此功能的推荐操作模式是simx_opmode_streaming（第一次调用）和simx_opmode_buffer（随后的调用）
+     * @return
+     */
     public native int simxGetStringSignal(int clientID,final String signalName,CharWA signalValue, int operationMode);
     public native int simxGetAndClearStringSignal(int clientID,final String signalName, CharWA signalValue, int operationMode);
+
+    /**
+     * 获取字符串信号的值，然后将其清除。从服务器检索连续数据很有用。要将整数/浮点数与字符串打包/解包，请参阅{@link IntWA}和 {@link FloatWA}。另请参见{@link remoteApi#simxWriteStringStream}。
+     * @param clientID
+     * @param signalName 信号名称
+     * @param signalValue 信号的值，可能包含任何值，包括嵌入的零（输出）。
+     * @param operationMode 远程API函数操作模式。此函数的推荐操作模式为simx_opmode_streaming（第一次调用）和simx_opmode_buffer（随后的调用）。禁止simx_opmode_blocking。使用以下结构以便与CoppeliaSim连续交换数据：
+     *
+     * 远程API客户端：
+     * // Initialization phase:
+     * CharWA str=new CharWA(1);
+     * sim.simxReadStringStream(clientID,"toClient",str,sim.simx_opmode_streaming);
+     *
+     * // while we are connected:
+     * while (sim.simxGetConnectionId(clientID)!=-1)
+     * {
+     *   if (sim.simxReadStringStream(clientID,"toClient",str,sim.simx_opmode_buffer)==
+     *   		simx_return_ok)
+     *   {
+     *     // Data produced by the child script was retrieved! Send it back to the child script:
+     *     sim.simxWriteStringStream(clientID,"fromClient",str,sim.simx_opmode_oneshot);
+     *   }
+     * }
+     *
+     *
+     * 服务器端（CoppeliaSim），来自非线程子脚本：
+     *
+     * function sysCall_init()
+     *     -- initialization phase:
+     *     i=0
+     *     lastReceived=-1
+     * end
+     *
+     * function sysCall_actuation()
+     *     -- First send a stream of integers that count up:
+     *     dat=sim.getStringSignal('toClient')
+     *     if not dat then
+     *         dat=''
+     *     end
+     *     dat=dat..sim.packInt32Table({i})
+     *     i=i+1
+     *     sim.setStringSignal('toClient',dat)
+     *
+     *     -- Here receive the integer stream in return and check if each number is correct:
+     *     dat=sim.getStringSignal('fromClient')
+     *     if dat then
+     *         sim.clearStringSignal('fromClient')
+     *         dat=sim.unpackInt32Table(dat)
+     *         for j=1,#dat,1 do
+     *             if (dat[j]~=lastReceived+1) then
+     *                 print('Error')
+     *             else
+     *                 io.write('.')
+     *                 lastReceived=dat[j]
+     *             end
+     *         end
+     *     end
+     * end
+     * @return a remote API function return code
+     */
     public native int simxReadStringStream(int clientID,final String signalName, CharWA signalValue, int operationMode);
 
     public native int simxSetFloatSignal(int clientID,final String signalName,float signalValue,int operationMode);
+
+    /**
+     * 设置整数信号的值。如果该信号尚不存在，则将其添加。另请参见simxGetIntegerSignal，simxClearIntegerSignal，simxSetFloatSignal和simxSetStringSignal。
+     * @param clientID
+     * @param signalName 信号名称
+     * @param signalValue 信号值
+     * @param operationMode 远程API函数操作模式。此功能的建议操作模式为simx_opmode_oneshot
+     */
     public native int simxSetIntegerSignal(int clientID,final String signalName,int signalValue,int operationMode);
+
+    /**
+     * 设置字符串信号的值。如果该信号尚不存在，则将其添加。要将整数/浮点数与字符串打包/解包，请参阅IntWA和FloatWA。另请参见simxGetStringSignal，simxClearStringSignal，simxSetIntegerSignal和simxSetFloatSignal。
+     * @param clientID
+     * @param signalName 信号名称
+     * @param signalValue 信号值（可能包含任何值，包括嵌入的零）
+     * @param operationMode 远程API函数操作模式。此功能的建议操作模式为simx_opmode_oneshot
+     * @return
+     */
     public native int simxSetStringSignal(int clientID,final String signalName, final CharWA signalValue, int operationMode);
     public native int simxAppendStringSignal(int clientID,final String signalName, final String signalValue, int operationMode);
+
+    /**
+     * 将字符串附加到字符串信号。如果该信号尚不存在，则将其添加。要将整数/浮点数与字符串打包/解包，请参阅IntWA和FloatWA。另请参见 {@link remoteApi#simxReadStringStream}。
+     * @param clientID
+     * @param signalName 信号名称
+     * @param signalValue 附加到信号上的值。该值可以包含任何值，包括嵌入的零
+     * @param operationMode 远程API函数操作模式。此功能的建议操作模式为simx_opmode_oneshot
+     * @return a remote API function return code
+     */
     public native int simxWriteStringStream(int clientID,final String signalName, final CharWA signalValue, int operationMode);
 
     /**

@@ -4,6 +4,10 @@ public class FloatWAA
 {
     FloatWA[] w;
 
+    /**
+     * 创建多维浮点数组
+     * @param i 浮点数组层数
+     */
     public FloatWAA(int i)
     {
         w = new FloatWA[i];
