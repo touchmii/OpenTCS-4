@@ -57,3 +57,5 @@ target/
 /.idea/
 !/.idea/workspace.xml
 !/.idea/
+/openTCS-Example-CommAdapter-Serial/out/
+/openTCS-Example-CommAdapter-Serial/build/

@@ -15,6 +15,7 @@ dependencies {
   compile project(':openTCS-Impl-Configuration-cfg4j')
   compile project(':openTCS-Example-CommAdapter')
   compile project(':openTCS-Example-CommAdapter-Modbus')
+  compile project(':openTCS-Example-CommAdapter-HTTP')
   compile project(':openTCS-Example-CommAdapter-TCP')
   compile project(':openTCS-Example-CommAdapter-VREP')
   compile project(':openTCS-Example-CommAdapter-Serial')
