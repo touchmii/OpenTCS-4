@@ -2,7 +2,7 @@ apply from: "${rootDir}/gradle/guice-project.gradle"
 //plugins {
 //    id 'application'
 //}
-apply plugin: 'application'
+//apply plugin: 'application'
 
 dependencies {
     compile project(':openTCS-API-Injection')
@@ -13,7 +13,7 @@ dependencies {
 
     compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
     compileOnly group: 'commons-codec', name: 'commons-codec', version: '1.10', classifier: 'sources'
-    compile files("${rootDir}/lib/EasyModbusJava.jar")
+//    compile files("${rootDir}/lib/EasyModbusJava.jar")
 //    implementation 'com.github.zengfr:easymodbus4j:0.0.5'
 //    implementation 'com.github.zengfr:easymodbus4j-example:0.0.1'
 //    implementation 'com.github.zengfr:easymodbus4j-client:0.0.5'
@@ -37,9 +37,5 @@ task release {
 //run {
 //    systemProperties['MYPROP'] = '/my/prop/value'
 //}
-task currentDir << {
-    println file('.')
-    println projectDir
-}
 
 //applicationDefaultJvmArgs = ["--Djava.library.path="]

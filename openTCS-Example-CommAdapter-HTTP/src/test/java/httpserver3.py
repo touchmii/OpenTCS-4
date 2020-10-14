@@ -11,6 +11,8 @@ import re
 import cgi
 import json
 import threading
+import asyncio
+from queue import Queue
 from urllib import parse
 
 
@@ -87,6 +89,29 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_response(403)
 
         self.end_headers()
+current_position = [0,0]
+class sim_vehicle:
+    def __init__(self, sim_time=0.1):
+        self.sim_time = sim_time
+        global current_position
+        self.target_position = [0,0]
+        self.position_queue = Queue(100)
+    def set_sim_time(self, new_sim_time):
+        self.sim_time = new_sim_time
+    def add_path(self, new_path):
+        for path_point in new_path:
+            self.position_queue.put(path_point)
+    def get_path(self):
+        # pass
+        return list(self.position_queue.queue)
+    async def start_simulate(self):
+        while True:
+            await asyncio.sleep(self.sim_time)
+            if self.target_position != current_position:
+                if self.target_position[0] - current_position[0] > 10:
+                    pass
+
+
 
 
 def main():
@@ -97,7 +122,17 @@ def main():
 
     server = HTTPServer((args.ip, args.port), HTTPRequestHandler)
     print('HTTP Server Running...........')
-    server.serve_forever()
+    # server.serve_forever()
+    threading.Thread(target=server.serve_forever).start()
+    loop = asyncio.get_event_loop()
+    # loop.run_until_complete(server.serve_forever)
+    sim = sim_vehicle()
+    pp = []
+    for i in range(10):
+        pp.append([i,i*2])
+    sim.add_path(pp)
+    print(sim.get_path())
+
 
 
 if __name__ == '__main__':

@@ -2,7 +2,13 @@ public class ascii {
     public static void main(String[] args) {
         int a = 0x30;
         byte[] b = {49};
-        String s = new String(b, "ISO8859-1");
+        String s = null;
+        try {
+
+        s = new String(b, "ISO8859-1");
+        } catch ( Exception e ) {
+
+        }
 //		String s = new String(new byte[]{'A', 'B', 'C'}, "US-ASCII");
 //		System.out.println(b & 0xFF);
         System.out.printf("%s \n", s);

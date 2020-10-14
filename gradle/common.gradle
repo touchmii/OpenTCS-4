@@ -4,7 +4,7 @@
 
 apply plugin: 'java'
 apply plugin: 'maven'
-apply plugin: 'checkstyle'
+//apply plugin: 'checkstyle'
 apply plugin: 'org.kordamp.gradle.stats'
 
 apply from: "${rootDir}/gradle/versioning.gradle"
@@ -62,12 +62,12 @@ compileTestJava {
   options.compilerArgs << "-Xlint:-serial"
 }
 
-checkstyle {
-  toolVersion = '8.16'
-  configFile = rootProject.file("config/checkstyle/checkstyle.xml")
-  configProperties = [suppressions_file:rootDir.absolutePath + "/config/checkstyle/suppressions.xml"]
-  showViolations = false
-}
+//checkstyle {
+//  toolVersion = '8.16'
+//  configFile = rootProject.file("config/checkstyle/checkstyle.xml")
+//  configProperties = [suppressions_file:rootDir.absolutePath + "/config/checkstyle/suppressions.xml"]
+//  showViolations = false
+//}
 
 project.afterEvaluate { project ->
   project.tasks.withType(Checkstyle) {

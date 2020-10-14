@@ -3,7 +3,9 @@ plugins {
   // To use AsciiDoctor for documentation
   id 'org.asciidoctor.convert' version '1.5.3'
 }
-
+tasks.withType(Javadoc) {
+  options.encoding = 'UTF-8'
+}
 evaluationDependsOn(':openTCS-API-Base')
 evaluationDependsOn(':openTCS-API-Injection')
 evaluationDependsOn(':openTCS-Common')

@@ -15,6 +15,11 @@ buildscript {
   }
 }
 
+tasks.withType(Javadoc) {
+  options.encoding = "UTF-8"
+  options.charSet = "UTF-8"
+}
+
 apply plugin: 'base' // To add "clean" task to the root project.
 apply plugin: 'distribution'
 apply plugin: 'com.github.ben-manes.versions'
