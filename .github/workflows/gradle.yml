@@ -28,5 +28,3 @@ jobs:
       with:
         name: openTCS-4.17.0-SNAPSHOT-bin.zip
         path: build/distributions/openTCS-4.17.0-SNAPSHOT-bin.zip
-        name: openTCS-4.17.0-SNAPSHOT-src.zip
-        path: build/distributions/openTCS-4.17.0-SNAPSHOT-src.zip 
