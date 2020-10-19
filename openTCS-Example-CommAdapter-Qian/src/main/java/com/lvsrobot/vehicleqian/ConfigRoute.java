@@ -31,8 +31,8 @@ public class ConfigRoute {
     public void setAngle(double _angle) {
         angle = _angle;
     }
-    public int[] getPath() {
-        int[] path = new int[steps.size()*2+4];
+    public byte[] getPath() {
+        byte[] path = new byte[steps.size()*2+4];
 //        switch (driveorder.getDestination().getOperation()) {
 //            case "MOVE":
 //                path[1] = 0;
@@ -54,15 +54,15 @@ public class ConfigRoute {
 //        path[3] = Integer.parseInt(new String(current_point.getName()));
 //        path[3] = Integer.parseInt(new String(steps.get(0).getSourcePoint().getName()));
         //起点
-        path[0] = (int)steps.get(0).getSourcePoint().getPosition().getX()/100;
-        path[1] = (int)steps.get(0).getSourcePoint().getPosition().getY()/100;
-        //终点
-        path[2] = (int)steps.get(steps.size()-1).getSourcePoint().getPosition().getX()/100;
-        path[3] = (int)steps.get(steps.size()-1).getSourcePoint().getPosition().getY()/100;
+//        path[0] = (int)steps.get(0).getSourcePoint().getPosition().getX()/100;
+//        path[1] = (int)steps.get(0).getSourcePoint().getPosition().getY()/100;
+//        //终点
+//        path[2] = (int)steps.get(steps.size()-1).getSourcePoint().getPosition().getX()/100;
+//        path[3] = (int)steps.get(steps.size()-1).getSourcePoint().getPosition().getY()/100;
 
         //暂时车辆第一步需要往前走
-        path[4] = 0;
-        path[5] = 1;
+        path[4] = 48;
+        path[5] = 49;
 
         for(int i = 1; i < steps.size(); i++) {
             //判断是否需要转弯至少需要三个点
@@ -80,18 +80,18 @@ public class ConfigRoute {
             || (A1 > td && Math.abs(A2) < td && Math.abs(B1) < td && B2 < td2) || (A1 > td && Math.abs(A2) < td && Math.abs(B1) < td && B2 > td) ) {
                 //右转 "3"
                 turn_time++;
-                path[4+2*i] = 3;
-                path[5+2*i] = 1;
+                path[4+2*i] = 51;
+                path[5+2*i] = 49;
             } else if((A1 < td && A1 > td2 && B1 < td && B1 > td2) || (A2 < td && A2 > td2 && B2 < td && B2 > td2)) {
                 //直行 "0"
                 //path[4+2*(i-1)] = 0
-                path[4+2*i] = 0;
-                path[5+2*i] = 1;
+                path[4+2*i] = 48;
+                path[5+2*i] = 49;
             } else {
                 //左转 "2"
                 turn_time++;
-                path[4+2*i] = 2;
-                path[5+2*i] = 1;
+                path[4+2*i] = 50;
+                path[5+2*i] = 49;
             }
 
         }

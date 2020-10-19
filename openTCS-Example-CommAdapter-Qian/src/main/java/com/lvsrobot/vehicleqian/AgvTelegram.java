@@ -47,26 +47,28 @@ public class AgvTelegram {
         return true;
     }
 
-    public boolean sendPath(int sour, int dest, int director) {
+    public boolean sendPath(byte[] _path) {
 //        byte[] sendBytes = new byte[9];
-        byte [] sendBytes = {0, 1, 12, 0, 12, 0, 0, 1, 1};
-        byte[] sendBytes2 = new byte[8];
-        sendBytes2[0] = (byte) (sour >> 8);
-        sendBytes[1] = (byte) (sour & 0xFF);
-        sendBytes[2] = (byte)director;
-        sendBytes[3] = 1;
-        sendBytes[4] = (byte) (dest >> 8);
-        sendBytes[6] = (byte) (dest & 0xFF);
-        sendBytes[7] = 0;
-        sendBytes[8] = 0;
+//        byte[] senBytes = new byte[leng(_path)];
+
+//        byte [] sendBytes = {0, 1, 12, 0, 12, 0, 0, 1, 1};
+//        byte[] sendBytes2 = new byte[8];
+//        sendBytes2[0] = (byte) (sour >> 8);
+//        sendBytes[1] = (byte) (sour & 0xFF);
+//        sendBytes[2] = (byte)director;
+//        sendBytes[3] = 1;
+//        sendBytes[4] = (byte) (dest >> 8);
+//        sendBytes[6] = (byte) (dest & 0xFF);
+//        sendBytes[7] = 0;
+//        sendBytes[8] = 0;
 //        byte[18] sendBytes3 =
 
-        byte[] retBytes = socket.send(sendBytes);
-        if (retBytes == null)
-            return false;
-        if (retBytes.length != 8) {
-            return false;
-        }
+        byte[] retBytes = socket.send(_path);
+//        if (retBytes == null)
+//            return false;
+//        if (retBytes.length != 8) {
+//            return false;
+//        }
         return true;
     }
     public static byte[] unitByteArray(byte[] byte1,byte[] byte2){

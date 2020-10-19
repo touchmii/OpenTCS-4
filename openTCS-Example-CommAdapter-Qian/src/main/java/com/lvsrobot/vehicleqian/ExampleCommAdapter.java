@@ -127,6 +127,10 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
         agv = new AgvTelegram(getProcessModel().getIp(), getProcessModel().getPort());
 
         getProcessModel().getVelocityController().addVelocityListener(getProcessModel());
+        getProcessModel().setVehiclePosition("010");
+//                if (currentStatus == 0) {
+        getProcessModel().setVehicleState(Vehicle.State.IDLE);
+        getProcessModel().setVehicleOrientationAngle(90);
         // Create task for vehicle simulation.
         vehicleSimulationTask = new VehicleSimulationTask();
         Thread simThread = new Thread(vehicleSimulationTask, getName() + "-simulationTask");
@@ -270,13 +274,11 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 //                }
 //                String currentPoint = String.valueOf(agvInfo.getPosition());
 //                int currentStatus = agvInfo.getStatus();
-                getProcessModel().setVehiclePosition("010");
-//                if (currentStatus == 0) {
-                getProcessModel().setVehicleState(Vehicle.State.IDLE);
+
 //                } else if (currentStatus == 1) {
 //                    getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
 //                }
-                getProcessModel().setVehicleOrientationAngle(90);
+
 
 
                 final MovementCommand curCommand = null;
@@ -284,11 +286,13 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 //                    curCommand = getSentQueue().peek();
 //
 //                }
-                configRoute.setRoute(currentDriveOrder);
-                configRoute.setAngle(90);
-                int[] path = configRoute.getPath();
-                //使用agvinfo 发送path
-                if(currentDriveOrder != null) {
+
+                if(currentDriveOrder != null && !getSentQueue().isEmpty()) {
+                    configRoute.setRoute(currentDriveOrder);
+                    configRoute.setAngle(90);
+                    byte[] path = configRoute.getPath();
+                    agv.sendPath(path);
+                    //使用agvinfo 发送path
 
                     simulateMove(currentDriveOrder.getRoute());
                 }
