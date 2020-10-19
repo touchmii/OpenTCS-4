@@ -16,6 +16,7 @@ dependencies {
   compile project(':openTCS-Example-CommAdapter')
   compile project(':openTCS-Example-CommAdapter-Modbus')
   compile project(':openTCS-Example-CommAdapter-HTTP')
+  compile project(':openTCS-Example-CommAdapter-Qian')
   compile project(':openTCS-Example-CommAdapter-TCP')
   compile project(':openTCS-Example-CommAdapter-VREP')
   compile project(':openTCS-Example-CommAdapter-Serial')

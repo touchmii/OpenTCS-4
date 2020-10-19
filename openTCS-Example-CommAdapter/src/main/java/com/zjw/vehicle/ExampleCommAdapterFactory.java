@@ -87,7 +87,7 @@ public class ExampleCommAdapterFactory implements VehicleCommAdapterFactory {
             return false;
         }
         try {
-            checkInRange(Integer.parseInt(vehicle.getProperty("port")), 1024, 65535);
+            checkInRange(Integer.parseInt(vehicle.getProperty("port")), 102, 65535);
         } catch (IllegalArgumentException exc) {
             return false;
         }
