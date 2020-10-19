@@ -101,7 +101,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
      */
     @Inject
     public ExampleCommAdapter(@Assisted Vehicle vehicle, ExampleAdapterComponentsFactory componentsFactory, @KernelExecutor ExecutorService kernelExecutor) {
-        super(new ExampleProcessModel(vehicle), 3, 2, "Charge");
+        super(new ExampleProcessModel(vehicle), 30, 30, "Charge");
         this.componentsFactory = requireNonNull(componentsFactory, "componentsFactory");
         this.vehicle = requireNonNull(vehicle, "vehicle");
         this.kernelExecutor = requireNonNull(kernelExecutor, "kernelExecutor");
@@ -281,7 +281,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 
 
 
-                final MovementCommand curCommand = null;
+//                final MovementCommand curCommand;
 //                synchronized (ExampleCommAdapter.this) {
 //                    curCommand = getSentQueue().peek();
 //
@@ -297,74 +297,92 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                     simulateMove(currentDriveOrder.getRoute());
                 }
 
-                simAdvanceTime = (int) (ADVANCE_TIME * 1.0);
-                if (curCommand == null) {
-                    Uninterruptibles.sleepUninterruptibly(ADVANCE_TIME, TimeUnit.MILLISECONDS);
-                    getProcessModel().getVelocityController().advanceTime(simAdvanceTime);
-                } else {
-                    // If we were told to move somewhere, simulate the journey.
-                    LOG.debug("Processing MovementCommand...");
-                    final Route.Step curStep = curCommand.getStep();
-                    // Simulate the movement.
-                    simulateMovement(curStep);
-                    // Simulate processing of an operation.
-                    if (!curCommand.isWithoutOperation()) {
-                        simulateOperation(curCommand.getOperation());
-                    }
-                    LOG.debug("Processed MovementCommand.");
-                    if (!isTerminated()) {
-                        // Set the vehicle's state back to IDLE, but only if there aren't
-                        // any more movements to be processed.
-                        if (getSentQueue().size() <= 1 && getCommandQueue().isEmpty()) {
-                            getProcessModel().setVehicleState(Vehicle.State.IDLE);
-                        }
-                        // Update GUI.
-                        synchronized (ExampleCommAdapter.this) {
-                            MovementCommand sentCmd = getSentQueue().poll();
-                            // If the command queue was cleared in the meantime, the kernel
-                            // might be surprised to hear we executed a command we shouldn't
-                            // have, so we only peek() at the beginning of this method and
-                            // poll() here. If sentCmd is null, the queue was probably cleared
-                            // and we shouldn't report anything back.
-                            if (sentCmd != null && sentCmd.equals(curCommand)) {
-                                // Let the vehicle manager know we've finished this command.
-                                getProcessModel().commandExecuted(curCommand);
-                                ExampleCommAdapter.this.notify();
-                            }
-                        }
-                    }
-                }
+//                simAdvanceTime = (int) (ADVANCE_TIME * 1.0);
+//                if (curCommand == null) {
+//                    Uninterruptibles.sleepUninterruptibly(ADVANCE_TIME, TimeUnit.MILLISECONDS);
+//                    getProcessModel().getVelocityController().advanceTime(simAdvanceTime);
+//                } else {
+//                    // If we were told to move somewhere, simulate the journey.
+//                    LOG.debug("Processing MovementCommand...");
+//                    final Route.Step curStep = curCommand.getStep();
+//                    // Simulate the movement.
+//                    simulateMovement(curStep);
+//                    // Simulate processing of an operation.
+//                    if (!curCommand.isWithoutOperation()) {
+//                        simulateOperation(curCommand.getOperation());
+//                    }
+//                    LOG.debug("Processed MovementCommand.");
+//                    if (!isTerminated()) {
+//                        // Set the vehicle's state back to IDLE, but only if there aren't
+//                        // any more movements to be processed.
+//                        if (getSentQueue().size() <= 1 && getCommandQueue().isEmpty()) {
+//                            getProcessModel().setVehicleState(Vehicle.State.IDLE);
+//                        }
+//                        // Update GUI.
+//                        synchronized (ExampleCommAdapter.this) {
+//                            MovementCommand sentCmd = getSentQueue().poll();
+//                            // If the command queue was cleared in the meantime, the kernel
+//                            // might be surprised to hear we executed a command we shouldn't
+//                            // have, so we only peek() at the beginning of this method and
+//                            // poll() here. If sentCmd is null, the queue was probably cleared
+//                            // and we shouldn't report anything back.
+//                            if (sentCmd != null && sentCmd.equals(curCommand)) {
+//                                // Let the vehicle manager know we've finished this command.
+//                                getProcessModel().commandExecuted(curCommand);
+//                                ExampleCommAdapter.this.notify();
+//                            }
+//                        }
+//                    }
+//                }
             } catch (Exception ex) {
                 LOG.error(ex.getMessage());
             }
         }
 
         private void simulateMove(Route _route) {
+            getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
             for(int i=0; i < _route.getSteps().size(); i++) {
                 final MovementCommand curCommandd;
                 synchronized (ExampleCommAdapter.this) {
-                    curCommandd = getSentQueue().peek();
+                    curCommandd = getSentQueue().poll();
 
                 }
-                int path_leng = (int)(_route.getSteps().get(i).getPath().getLength())/100;
+                int path_leng = (int)(_route.getSteps().get(i).getPath().getLength())/20;
                 org.opentcs.data.model.Triple point1 = _route.getSteps().get(i).getSourcePoint().getPosition();
                 org.opentcs.data.model.Triple point2 = _route.getSteps().get(i).getDestinationPoint().getPosition();
+                long A1 = point2.getX()-point1.getX();
+                long A2 = point2.getY()-point1.getY();
                 for (int n=0; n<path_leng; n++){
                     org.opentcs.data.model.Triple current_point = _route.getSteps().get(i).getSourcePoint().getPosition();
                     org.opentcs.data.model.Triple new_point = new Triple(current_point.getX(), current_point.getY(), current_point.getZ());
-                    new_point.setX(current_point.getX()+100*n);
+                    //往右
+                    if(A1 > 500 && Math.abs(A2) < 200) {
+                        new_point.setX(current_point.getX() + 20*n);
+                     //往左
+                    } else if (A1 < -500 && Math.abs(A2) < 200) {
+                        new_point.setX(current_point.getX() - 20*n);
+                    //往上
+                    } else if (Math.abs(A1) < 200 && A2 > 500) {
+                        new_point.setY(current_point.getY() + 20*n);
+                    //往下
+                    } else if (Math.abs(A1) < 200 && A2 < -500) {
+                        new_point.setY(current_point.getY() - 20*n);
+                    } else {
+
+                    }
 //                    new_point.setY(current_point.getY()+100);
                     getProcessModel().setVehiclePrecisePosition(new_point);
 //                    Thread.sleep(200);
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(20);
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
                     }
                 }
-
+                getProcessModel().setVehiclePosition(_route.getSteps().get(i).getDestinationPoint().getName());
                 getProcessModel().commandExecuted(curCommandd);
             }
+            getProcessModel().setVehicleState(Vehicle.State.IDLE);
         }
         private void simulateMovement(Step step) throws Exception {
             if (step.getPath() == null) {

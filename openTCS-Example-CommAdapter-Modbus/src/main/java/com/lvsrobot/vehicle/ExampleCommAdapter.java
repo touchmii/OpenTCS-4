@@ -124,7 +124,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
     @Inject
     public ExampleCommAdapter(@Assisted Vehicle vehicle, ExampleAdapterComponentsFactory componentsFactory, @KernelExecutor ExecutorService kernelExecutor) {
         //父类BasicVehicleCommAdapter实例需要的参数
-        super(new ExampleProcessModel(vehicle), 30, 2, "Charge");
+        super(new ExampleProcessModel(vehicle), 30, 20, "Charge");
         this.componentsFactory = requireNonNull(componentsFactory, "componentsFactory");
         this.vehicle = requireNonNull(vehicle, "vehicle");
         this.kernelExecutor = requireNonNull(kernelExecutor, "kernelExecutor");
