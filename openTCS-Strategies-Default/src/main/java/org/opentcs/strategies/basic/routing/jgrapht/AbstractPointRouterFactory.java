@@ -7,6 +7,7 @@
  */
 package org.opentcs.strategies.basic.routing.jgrapht;
 
+import java.util.Collection;
 import java.util.Iterator;
 import static java.util.Objects.requireNonNull;
 import java.util.Set;
@@ -66,7 +67,7 @@ public abstract class AbstractPointRouterFactory
                                                            objectService.fetchObjects(Path.class),
                                                            vehicle);
 
-    PointRouter router = new ShortestPathPointRouter(createShortestPathAlgorithm(graph), points);
+    PointRouter router = new ShortestPathPointRouter(createShortestPathAlgorithm(graph, points), points);
     // Make a single request for a route from one point to a different one to make sure the
     // point router is primed. (Some implementations are initialized lazily.)
     if (points.size() >= 2) {
@@ -88,5 +89,5 @@ public abstract class AbstractPointRouterFactory
    * @return A shortest path algorithm implementation working on the given graph.
    */
   protected abstract ShortestPathAlgorithm<String, ModelEdge> createShortestPathAlgorithm(
-      Graph<String, ModelEdge> graph);
+      Graph<String, ModelEdge> graph, Collection<Point> points);
 }

@@ -15,6 +15,9 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.opentcs.components.kernel.services.TCSObjectService;
 import org.opentcs.strategies.basic.routing.PointRouter;
 
+import org.opentcs.data.model.Point;
+import java.util.Collection;
+
 /**
  * Creates {@link PointRouter} instances based on the Dijkstra algorithm.
  *
@@ -37,7 +40,7 @@ public class DijkstraPointRouterFactory
 
   @Override
   protected ShortestPathAlgorithm<String, ModelEdge> createShortestPathAlgorithm(
-      Graph<String, ModelEdge> graph) {
+      Graph<String, ModelEdge> graph, Collection<Point> points) {
     return new DijkstraShortestPath<>(graph);
   }
 

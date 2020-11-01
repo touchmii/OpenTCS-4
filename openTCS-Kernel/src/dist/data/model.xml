@@ -156,6 +156,7 @@
     <point name="047" xPosition="50000" yPosition="25000" zPosition="0" vehicleOrientationAngle="NaN" type="HALT_POSITION">
         <outgoingPath name="047 --- 048"/>
         <outgoingPath name="047 --- 055"/>
+        <property name="astar" value="1"/>
     </point>
     <point name="048" xPosition="50000" yPosition="20000" zPosition="0" vehicleOrientationAngle="NaN" type="HALT_POSITION">
         <outgoingPath name="048 --- 049"/>
@@ -169,6 +170,7 @@
     <point name="051" xPosition="50000" yPosition="5000" zPosition="0" vehicleOrientationAngle="NaN" type="HALT_POSITION">
         <outgoingPath name="051 --- 032"/>
         <outgoingPath name="051 --- 076"/>
+        <property name="astar" value="1"/>
     </point>
     <point name="052" xPosition="70000" yPosition="25000" zPosition="0" vehicleOrientationAngle="NaN" type="HALT_POSITION">
         <outgoingPath name="052 --- 022"/>
@@ -293,6 +295,7 @@
     <point name="102" xPosition="15000" yPosition="25000" zPosition="0" vehicleOrientationAngle="NaN" type="HALT_POSITION">
         <outgoingPath name="102 --- 009"/>
         <outgoingPath name="102 --- 097"/>
+        <property name="astar" value="1"/>
     </point>
     <point name="103" xPosition="15000" yPosition="20000" zPosition="0" vehicleOrientationAngle="NaN" type="HALT_POSITION">
         <outgoingPath name="103 --- 102"/>
@@ -305,6 +308,7 @@
     </point>
     <point name="106" xPosition="15000" yPosition="5000" zPosition="0" vehicleOrientationAngle="NaN" type="HALT_POSITION">
         <outgoingPath name="106 --- 105"/>
+        <property name="astar" value="1"/>
     </point>
     <point name="107" xPosition="10000" yPosition="5000" zPosition="0" vehicleOrientationAngle="NaN" type="HALT_POSITION">
         <outgoingPath name="107 --- 106"/>
@@ -1649,5 +1653,5 @@
             <property name="ROUTE_COLOR" value="#FF0000"/>
         </modelLayoutElement>
     </visualLayout>
-    <property name="tcs:modelFileLastModified" value="2020-10-07T09:12:31.768Z"/>
+    <property name="tcs:modelFileLastModified" value="2020-11-01T11:35:30.175Z"/>
 </model>

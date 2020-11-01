@@ -17,6 +17,7 @@ import org.opentcs.strategies.basic.routing.PointRouter;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -45,7 +46,7 @@ public class AStarPointRouterFactory
 
   @Override
   protected ShortestPathAlgorithm<String, ModelEdge> createShortestPathAlgorithm(
-      Graph<String, ModelEdge> graph) {
+      Graph<String, ModelEdge> graph, Collection<Point> points) {
 //    graph.getAllEdges();
 //    HashMap<String, Object> map = new HashMap<String, Object>();
 //    Point pointA = new Point("A");
@@ -61,8 +62,14 @@ public class AStarPointRouterFactory
     Set<String> landmarks = new HashSet<String>();
 //    map.put("1", pointA);
     //随意选取两个点，如果地图没有这两个点会报错
-    landmarks.add("1");
-    landmarks.add("2");
+//    landmarks.add("1");
+//    landmarks.add("2");
+    for (Point point : points) {
+//      this.points.put(point.getName(), point);
+      if(point.getProperty("astar") != null) {
+        landmarks.add(point.getName());
+      }
+    }
     return new AStarShortestPath<>(graph, new ALTAdmissibleHeuristic(graph, landmarks));
   }
 
