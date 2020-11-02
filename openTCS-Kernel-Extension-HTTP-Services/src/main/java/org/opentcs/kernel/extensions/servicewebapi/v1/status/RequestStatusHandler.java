@@ -13,13 +13,16 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
+import org.opentcs.components.kernel.services.TCSObjectService;
 import org.opentcs.components.kernel.services.TransportOrderService;
 import org.opentcs.components.kernel.services.VehicleService;
 import org.opentcs.customizations.kernel.KernelExecutor;
 import org.opentcs.data.ObjectUnknownException;
+import org.opentcs.data.model.Point;
 import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.order.TransportOrder;
 import org.opentcs.kernel.extensions.servicewebapi.v1.status.binding.TransportOrderState;
@@ -47,6 +50,8 @@ public class RequestStatusHandler {
      */
     private final ExecutorService kernelExecutor;
 
+    private final TCSObjectService objectService;
+
     /**
      * Creates a new instance.
      *
@@ -55,10 +60,15 @@ public class RequestStatusHandler {
      * @param kernelExecutor The kernel's executor service.
      */
     @Inject
-    public RequestStatusHandler(TransportOrderService orderService, VehicleService vehicleService, @KernelExecutor ExecutorService kernelExecutor) {
+    public RequestStatusHandler(TransportOrderService orderService, VehicleService vehicleService, @KernelExecutor ExecutorService kernelExecutor, @Nonnull TCSObjectService objectService) {
         this.orderService = requireNonNull(orderService, "orderService");
         this.vehicleService = requireNonNull(vehicleService, "vehicleService");
         this.kernelExecutor = requireNonNull(kernelExecutor, "kernelExecutor");
+        this.objectService = requireNonNull(objectService, "objectService");
+    }
+
+    public List<Point> getPoints() {
+        return objectService.fetchObjects(Point.class).stream().collect(Collectors.toList());
     }
 
     /**

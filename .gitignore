@@ -17,6 +17,8 @@ target/
 *.iws
 *.iml
 *.ipr
+*out*
+*build*
 
 ### NetBeans ###
 /nbproject/private/
@@ -59,3 +61,4 @@ target/
 !/.idea/
 /openTCS-Example-CommAdapter-Serial/out/
 /openTCS-Example-CommAdapter-Serial/build/
+/openTCS-Example-CommAdapter-Jbh/build/

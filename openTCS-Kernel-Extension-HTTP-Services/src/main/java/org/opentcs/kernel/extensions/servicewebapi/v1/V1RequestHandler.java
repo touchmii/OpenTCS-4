@@ -105,6 +105,12 @@ public class V1RequestHandler
         service.post("/transportOrders/:NAME", this::handlePostTransportOrder);
         service.get("/transportOrders/:NAME", this::handleGetTransportOrderByName);
         service.get("/transportOrders", this::handleGetTransportOrders);
+        service.get("/points", this::handleGetPoints);
+    }
+
+    private Object handleGetPoints(Request request, Response response) throws IllegalArgumentException, IllegalStateException {
+        response.type(HttpConstants.CONTENT_TYPE_APPLICATION_JSON_UTF8);
+        return toJson(statusInformationProvider.getPoints());
     }
 
     private Object handleGetEvents(Request request, Response response) throws IllegalArgumentException, IllegalStateException {
