@@ -1,4 +1,5 @@
 # openTCS4.17src
+![Java CI with Gradle](https://github.com/touchmii/OpenTCS-4.17-Modbus/workflows/Java%20CI%20with%20Gradle/badge.svg)
 
 #### 介绍
 开源的交通控制系统，可用于AGV的交通管制系统
