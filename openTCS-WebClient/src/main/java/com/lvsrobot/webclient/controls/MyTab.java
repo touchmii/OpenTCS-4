@@ -115,7 +115,7 @@ public class MyTab extends ExampleTab {
 
     // Poll events, waiting up to a second if none are currently there.
     // This should be done periodically, and probably in a separate thread.
-    List<Object> events = servicePortal.fetchEvents(1000);
+//    List<Object> events = servicePortal.fetchEvents(1000);
 
     parent.setLayout( new GridLayout( 1, false ) );
     int style = getStyle();
