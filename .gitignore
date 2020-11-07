@@ -57,8 +57,6 @@ target/
 /openTCS-API-Injection/build/
 /openTCS-API-Base/build/
 /.idea/
-!/.idea/workspace.xml
-!/.idea/
 /openTCS-Example-CommAdapter-Serial/out/
 /openTCS-Example-CommAdapter-Serial/build/
 /openTCS-Example-CommAdapter-Jbh/build/
