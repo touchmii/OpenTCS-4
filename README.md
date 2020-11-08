@@ -1,3 +1,5 @@
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/touchmii/OpenTCS-4.17-Modbus)
+
 # openTCS4.17src
 ![Java CI with Gradle](https://github.com/touchmii/OpenTCS-4.17-Modbus/workflows/Java%20CI%20with%20Gradle/badge.svg)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/tag/touchmii/OpenTCS-4.17-Modbus)
