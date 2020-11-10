@@ -7,6 +7,8 @@ class opentcs:
         self.kernel_address = kernel_address
         self.vehicles = []
         self.orders = []
+        self.points = []
+        self.locations = []
     def send_request(self, request_url, data1="", method="GET"):
         try:
             if(method == "GET"):
@@ -36,6 +38,19 @@ class opentcs:
             return -1
         self.orders = json.loads(rec.content)
         return self.orders
+    def get_points(self):
+        rec = self.send_request(request_url="http://{}:55200/v1/points".format(self.kernel_address))
+        if rec.ok == False:
+            return -1
+        self.points = json.loads(rec.content)
+        return self.points
+    def get_locations(self):
+            rec = self.send_request(request_url="http://{}:55200/v1/locations".format(self.kernel_address))
+            if rec.ok == False:
+                return -1
+            self.locations = json.loads(rec.content)
+            return self.locations
+
     def get_vehicles_status(self):
         vehicles_status = []
         if(self.vehicles == []):
@@ -79,6 +94,8 @@ if __name__ == "__main__":
     tcs = opentcs("127.0.0.1")
     # tcs.get_vehicle()
     print(tcs.get_orders())
+    print(tcs.get_locations())
+    a = tcs.get_locations()
     # print(tcs.vehicles[1])
     # print(tcs.orders)
     # print(tcs.get_vehicles_status())

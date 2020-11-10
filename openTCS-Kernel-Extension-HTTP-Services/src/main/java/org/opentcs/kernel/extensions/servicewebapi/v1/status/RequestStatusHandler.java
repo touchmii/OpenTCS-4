@@ -22,6 +22,7 @@ import org.opentcs.components.kernel.services.TransportOrderService;
 import org.opentcs.components.kernel.services.VehicleService;
 import org.opentcs.customizations.kernel.KernelExecutor;
 import org.opentcs.data.ObjectUnknownException;
+import org.opentcs.data.model.Location;
 import org.opentcs.data.model.Point;
 import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.order.TransportOrder;
@@ -69,6 +70,10 @@ public class RequestStatusHandler {
 
     public List<Point> getPoints() {
         return objectService.fetchObjects(Point.class).stream().collect(Collectors.toList());
+    }
+
+    public List<Location> getLocations() {
+        return objectService.fetchObjects(Location.class).stream().collect(Collectors.toList());
     }
 
     /**
