@@ -101,14 +101,36 @@ public class V1RequestHandler
         service.post("/vehicles/:NAME/withdrawal", this::handlePostWithdrawalByVehicle);
         service.get("/vehicles/:NAME", this::handleGetVehicleByName);
         service.get("/vehicles", this::handleGetVehicles);
+        service.post("/vehicle/sndpath:START/:END", this::handleSendPath);
         service.post("/transportOrders/:NAME/withdrawal", this::handlePostWithdrawalByOrder);
         service.post("/transportOrders/:NAME", this::handlePostTransportOrder);
         service.get("/transportOrders/:NAME", this::handleGetTransportOrderByName);
         service.get("/transportOrders", this::handleGetTransportOrders);
         service.get("/points", this::handleGetPoints);
         service.get("/locations", this::handleGetLocations);
+        service.get("/paths", this::handleGetPaths);
+        service.get("/driverorders", this::handleGetDriverOrder);
+        service.get("/driverorder/:NAME", this::handleGetDriverOrderByName);
+        service.get("/vehicledetails", this::handleGetVehicleDetails);
     }
 
+    private Object handleSendPath(Request request, Response response) throws IllegalArgumentException, IllegalStateException {
+        orderHandler.createOrder(request.params(":END"), fromJson(request.body(), Transport.class));
+        response.type(HttpConstants.CONTENT_TYPE_TEXT_PLAIN_UTF8);
+        return "";
+    }
+    private Object handleGetDriverOrder(Request request, Response response) throws IllegalArgumentException, IllegalStateException {
+        response.type(HttpConstants.CONTENT_TYPE_TEXT_PLAIN_UTF8);
+        return toJson(statusInformationProvider.getDriverOrder());
+    }
+    private Object handleGetDriverOrderByName(Request request, Response response) throws IllegalArgumentException, IllegalStateException {
+        response.type(HttpConstants.CONTENT_TYPE_TEXT_PLAIN_UTF8);
+        return toJson(statusInformationProvider.getDriverOrderByName(request.params(":NAME")));
+    }
+    private Object handleGetVehicleDetails(Request request, Response response) throws IllegalArgumentException, IllegalStateException {
+        response.type(HttpConstants.CONTENT_TYPE_APPLICATION_JSON_UTF8);
+        return toJson(statusInformationProvider.getVehicles());
+    }
     private Object handleGetPoints(Request request, Response response) throws IllegalArgumentException, IllegalStateException {
         response.type(HttpConstants.CONTENT_TYPE_APPLICATION_JSON_UTF8);
         return toJson(statusInformationProvider.getPoints());
@@ -117,6 +139,11 @@ public class V1RequestHandler
     private Object handleGetLocations(Request request, Response response) throws IllegalArgumentException, IllegalStateException {
         response.type(HttpConstants.CONTENT_TYPE_APPLICATION_JSON_UTF8);
         return toJson(statusInformationProvider.getLocations());
+    }
+
+    private Object handleGetPaths(Request request, Response response) throws IllegalArgumentException, IllegalStateException {
+        response.type(HttpConstants.CONTENT_TYPE_APPLICATION_JSON_UTF8);
+        return toJson(statusInformationProvider.getPaths());
     }
 
     private Object handleGetEvents(Request request, Response response) throws IllegalArgumentException, IllegalStateException {

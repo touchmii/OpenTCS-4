@@ -17,6 +17,7 @@ import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.model.Vehicle.IntegrationLevel;
 import org.opentcs.data.model.Vehicle.ProcState;
 import org.opentcs.data.model.Vehicle.State;
+import org.opentcs.data.order.DriveOrder;
 
 /**
  *
@@ -55,9 +56,12 @@ public class VehicleState {
 
   @JsonPropertyDescription("The name of the point which the vehicle currently occupies.")
   private String currentPosition;
+  @JsonPropertyDescription("The vehicle's current driverorder.")
+  private DriveOrder driveOrder = null;
 
   @JsonPropertyDescription("The vehicle's current state.")
   private State state = State.UNKNOWN;
+
 
   private VehicleState() {
   }
@@ -145,6 +149,8 @@ public class VehicleState {
   public Map<String, String> getProperties() {
     return properties;
   }
+
+  public void setDriveOrder(DriveOrder driveOrder) { this.driveOrder = driveOrder;}
 
   public void setProperties(Map<String, String> properties) {
     this.properties = requireNonNull(properties, "properties");

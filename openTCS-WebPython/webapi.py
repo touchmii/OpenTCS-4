@@ -27,7 +27,7 @@ class opentcs:
                 return response
         except requests.exceptions.RequestException:
             print('HTTP Request failed')
-    def get_vehicle(self, vehicle=""):
+    def get_vehicles(self, vehicle=""):
         # if(vehicle == null):
         rec = self.send_request(request_url="http://{}:55200/v1/vehicles".format(self.kernel_address))
         self.vehicles = json.loads(rec.content)
@@ -38,12 +38,25 @@ class opentcs:
             return -1
         self.orders = json.loads(rec.content)
         return self.orders
+    def get_driver_orders_byname(self, order_name):
+        rec = self.send_request(request_url="http://{}:55200/v1/driverorder/{}".format(self.kernel_address, order_name))
+        # print(rec)
+        if rec.ok == False:
+            return -1
+        return json.loads(rec.content)
+        # return self.orders
     def get_points(self):
         rec = self.send_request(request_url="http://{}:55200/v1/points".format(self.kernel_address))
         if rec.ok == False:
             return -1
         self.points = json.loads(rec.content)
         return self.points
+    def get_paths(self):
+        rec = self.send_request(request_url="http://{}:55200/v1/paths".format(self.kernel_address))
+        if rec.ok == False:
+            return -1
+        self.paths = json.loads(rec.content)
+        return self.paths
     def get_locations(self):
             rec = self.send_request(request_url="http://{}:55200/v1/locations".format(self.kernel_address))
             if rec.ok == False:
@@ -52,6 +65,7 @@ class opentcs:
             return self.locations
 
     def get_vehicles_status(self):
+        self.get_vehicles()
         vehicles_status = []
         if(self.vehicles == []):
             return null
@@ -77,8 +91,10 @@ class opentcs:
             order_status.append(order["processingVehicle"])
             orders_status.append(order_status)
         return orders_status
-    def creat_order(self, vehicle="", locations = []):
+    def creat_order(self, vehicle='', locations = []):
         locations_json = {"destinations":[]}
+        if vehicle != '':
+            locations_json["intendedVehicle"] = vehicle
         for location in locations:
             location_1 = {"locationName": "{}".format(location[0])}
             location_1.update({"operation": "{}".format(location[1])})
@@ -99,6 +115,7 @@ if __name__ == "__main__":
     # print(tcs.vehicles[1])
     # print(tcs.orders)
     # print(tcs.get_vehicles_status())
+    tcs.creat_order(locations=[["D", "NOP"]])
     tcs.creat_order(locations=[["D", "NOP"]])
     # for a in tcs.vehicles[1]:
     #     print("name: {}, value: {}".format(a, tcs.vehicles[1][a]))

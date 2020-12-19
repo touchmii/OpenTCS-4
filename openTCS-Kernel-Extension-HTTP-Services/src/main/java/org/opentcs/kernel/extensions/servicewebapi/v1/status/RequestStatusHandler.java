@@ -23,8 +23,10 @@ import org.opentcs.components.kernel.services.VehicleService;
 import org.opentcs.customizations.kernel.KernelExecutor;
 import org.opentcs.data.ObjectUnknownException;
 import org.opentcs.data.model.Location;
+import org.opentcs.data.model.Path;
 import org.opentcs.data.model.Point;
 import org.opentcs.data.model.Vehicle;
+import org.opentcs.data.order.DriveOrder;
 import org.opentcs.data.order.TransportOrder;
 import org.opentcs.kernel.extensions.servicewebapi.v1.status.binding.TransportOrderState;
 import org.opentcs.kernel.extensions.servicewebapi.v1.status.binding.VehicleState;
@@ -74,6 +76,28 @@ public class RequestStatusHandler {
 
     public List<Location> getLocations() {
         return objectService.fetchObjects(Location.class).stream().collect(Collectors.toList());
+    }
+
+    public List<Path> getPaths() {
+        return objectService.fetchObjects(Path.class).stream().collect(Collectors.toList());
+    }
+
+    public List<DriveOrder> getDriverOrder() {
+//        Vehicle vehicle = orderService.fetchObjects(Vehicle.class, )
+        return orderService.fetchObjects(TransportOrder.class).stream().map(order -> order.getCurrentDriveOrder()).collect(Collectors.toList());
+    }
+    public DriveOrder getDriverOrderByName(String name) throws ObjectUnknownException {
+//        Vehicle vehicle = orderService.fetchObjects(Vehicle.class, )
+        return orderService.fetchObjects(TransportOrder.class, t -> t.getName().equals(name)).stream().map(order -> order.getCurrentDriveOrder())
+                .findAny()
+                .orElseThrow(() -> new ObjectUnknownException("Unknown transport order: " + name));
+    }
+
+    public List<Vehicle> getVehicles() {
+        List<Vehicle> vehicles = orderService.fetchObjects(Vehicle.class,
+                new VehicleFilter("PROCESSING_ORDER"))
+                .stream().collect(Collectors.toList());
+        return vehicles;
     }
 
     /**
@@ -128,6 +152,9 @@ public class RequestStatusHandler {
                 new VehicleFilter(procState))
                 .stream()
                 .map(vehicle -> VehicleState.fromVehicle(vehicle))
+//                .map((v) -> { VehicleState vehicleState = VehicleState.fromVehicle(v);
+//                    vehicleState.setDriveOrder(getDriverOrderByName(vehicleState.getTransportOrder()));
+//                    return vehicleState;})
                 .collect(Collectors.toList());
         return vehicles;
     }
@@ -144,7 +171,11 @@ public class RequestStatusHandler {
 
         return orderService.fetchObjects(Vehicle.class, v -> v.getName().equals(name))
                 .stream()
-                .map(v -> VehicleState.fromVehicle(v))
+                .map(vehicle -> VehicleState.fromVehicle(vehicle))
+//                .map((v) -> { VehicleState vehicleState = VehicleState.fromVehicle(v);
+//                vehicleState.setDriveOrder(getDriverOrderByName(vehicleState.getTransportOrder()));
+//                return vehicleState;})
+//                .map(v -> v.setDriveOrder(getDriverOrderByName(v.getTransportOrder())))
                 .findAny()
                 .orElseThrow(() -> new ObjectUnknownException("Unknown vehicle: " + name));
     }

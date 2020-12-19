@@ -23,6 +23,8 @@ import org.opentcs.components.kernel.Router;
 import org.opentcs.components.kernel.services.TCSObjectService;
 import org.opentcs.data.TCSObject;
 import org.opentcs.data.model.Vehicle;
+import org.optaplanner.core.api.domain.entity.PlanningEntity;
+import es.usc.citius.hipster.algorithm.Hipster;
 
 /**
  * Test cases for the {@link DefaultRouter}.

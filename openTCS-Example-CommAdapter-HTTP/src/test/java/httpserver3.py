@@ -12,12 +12,18 @@ import cgi
 import json
 import threading
 import asyncio
+import time
 from queue import Queue
 from urllib import parse
+from pymodbus.client.sync import ModbusSerialClient as ModbusClient
+import serial
 
+
+position = [0,0]
 
 class LocalData(object):
     records = {}
+    qu = Queue(100)
 
 
 class HTTPRequestHandler(BaseHTTPRequestHandler):
@@ -45,6 +51,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 data = parse.parse_qs(rfile_str, keep_blank_values=1)
                 record_id = self.path.split('/')[-1]
                 LocalData.records[record_id] = data
+                path = json.loads(rfile_str)
+                # global sim
+                # sim.add_path(path)
+                LocalData.qu.put(path)
                 print("addrecord %s: %s" % (record_id, data))
                 # HTTP 200: ok
                 self.send_response(200)
@@ -83,7 +93,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            data =json.dumps({"x":0,"y":0,"status":"idle","battery":50,"fork":"unload"})
+            data =json.dumps({"x":position[0],"y":position[1],"status":"idle","battery":50,"fork":"unload"})
             self.wfile.write(data.encode('utf8'))
         else:
             self.send_response(403)
@@ -107,11 +117,16 @@ class sim_vehicle:
     async def start_simulate(self):
         while True:
             await asyncio.sleep(self.sim_time)
+            # print(",\n")
+            print(LocalData.qu.qsize())
             if self.target_position != current_position:
                 if self.target_position[0] - current_position[0] > 10:
                     pass
 
-
+async def get_pose():
+    while True:
+        await asyncio.sleep(0.2)
+        #获取串口数据代码
 
 
 def main():
@@ -125,13 +140,39 @@ def main():
     # server.serve_forever()
     threading.Thread(target=server.serve_forever).start()
     loop = asyncio.get_event_loop()
-    # loop.run_until_complete(server.serve_forever)
-    sim = sim_vehicle()
+#    sim = sim_vehicle()
+    loop.run_until_complete(get_pose())
     pp = []
     for i in range(10):
         pp.append([i,i*2])
     sim.add_path(pp)
     print(sim.get_path())
+    #28H 测距定位使能:0:不测距 1 单次测量 2 持续测量 3 单 次自动输出 4 持续自动输出
+#    client = ModbusClient(method='rtu', port='COM1', timeout=1, baudrate=115200)
+#    client.connect()
+#    client.write_register(0x28, 2)
+
+    serial = serial.Serial("COM3",115200)
+    serial.open()
+    serial.write([0x01,0x10,0x00,0x28,0x00,0x01,0x02,0x00,0x02,0x21,0xB9])
+    n = serial.inWaiting()
+    time.sleep(0.1)
+    serial.read(n)
+
+
+    while True:
+        #0x2C标签X坐标,0x2D Y坐标
+#        request = client.read_input_registers(0x2C, 2)
+        # request = client.read_holding_registers(0x2C, 2)
+        n2 = serial.inWaiting()
+        serial.write([0x01,0x03,0x00,0x2A,0x00,0x0D,0xA5,0xC7])
+        time.sleep(0.1)
+        rec_data = serial.read(n2)
+        rec_data[7:9]
+        position[0] = request.registers[0]
+        position[1] = request.registers[1]
+        print('positon: x {}, y{}'.format(positon[0], positon[1]))
+        time.sleep(0.1)
 
 
 

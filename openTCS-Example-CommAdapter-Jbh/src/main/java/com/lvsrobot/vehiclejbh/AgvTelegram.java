@@ -94,9 +94,10 @@ public class AgvTelegram {
 //        sendBytes[7] = 0;
 //        sendBytes[8] = 0;
 //        byte[18] sendBytes3 =
-        LOG.info("Int to Bytes", ttoByteArray(_path));
+        byte[] path_bytes = ttoByteArray(_path);
+        LOG.info("Int to Bytes", path_bytes);
 
-        byte[] retBytes = socket.send(ttoByteArray(_path));
+        byte[] retBytes = socket.send(path_bytes);
 //        if (retBytes == null)
 //            return false;
 //        if (retBytes.length != 8) {
