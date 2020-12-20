@@ -34,6 +34,8 @@ import org.opentcs.data.order.DriveOrder.Destination;
 import org.opentcs.data.order.Route;
 import org.opentcs.data.order.TransportOrder;
 import static org.opentcs.strategies.basic.routing.PointRouter.INFINITE_COSTS;
+
+import org.opentcs.strategies.basic.routing.jgrapht.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +84,12 @@ public class DefaultRouter
    */
   private boolean initialized;
 
+  private final AStarPointRouterFactory aStarPointRouterFactory;
+  private final DijkstraPointRouterFactory dijkstraPointRouterFactory;
+  private final FloydWarshallPointRouterFactory floydWarshallPointRouterFactory;
+  private final BellmanFordPointRouterFactory bellmanFordPointRouterFactory;
+  private final ModelGraphMapper modelGraphMapper;
+
   /**
    * Creates a new instance.
    *
@@ -92,10 +100,16 @@ public class DefaultRouter
   @Inject
   public DefaultRouter(TCSObjectService objectService,
                        PointRouterFactory pointRouterFactory,
-                       DefaultRouterConfiguration configuration) {
+                       DefaultRouterConfiguration configuration,
+                       ModelGraphMapper modelGraphMapper) {
     this.objectService = requireNonNull(objectService, "objectService");
     this.pointRouterFactory = requireNonNull(pointRouterFactory, "pointRouterFactory");
     this.configuration = requireNonNull(configuration, "configuration");
+    this.modelGraphMapper = requireNonNull(modelGraphMapper, "modelGraphMapper");
+    this.aStarPointRouterFactory = new AStarPointRouterFactory(this.objectService, this.modelGraphMapper);
+    this.dijkstraPointRouterFactory = new DijkstraPointRouterFactory(this.objectService, this.modelGraphMapper);
+    this.bellmanFordPointRouterFactory = new BellmanFordPointRouterFactory(this.objectService, this.modelGraphMapper);
+    this.floydWarshallPointRouterFactory = new FloydWarshallPointRouterFactory(this.objectService, this.modelGraphMapper);
   }
 
   @Override
@@ -144,8 +158,35 @@ public class DefaultRouter
       for (Vehicle curVehicle : objectService.fetchObjects(Vehicle.class)) {
         String currentGroup = getRoutingGroupOfVehicle(curVehicle);
         if (!pointRoutersByVehicleGroup.containsKey(currentGroup)) {
-          pointRoutersByVehicleGroup.put(currentGroup,
-                                         pointRouterFactory.createPointRouter(curVehicle));
+//          pointRoutersByVehicleGroup.put(currentGroup,
+//                                         pointRouterFactory.createPointRouter(curVehicle));
+          String curVehicleRoute = curVehicle.getProperty("route");
+          if (curVehicleRoute == null) {
+            pointRoutersByVehicleGroup.put(currentGroup,
+                    pointRouterFactory.createPointRouter(curVehicle));
+          }
+          else if (curVehicleRoute.equals("astar")) {
+            pointRoutersByVehicleGroup.put(currentGroup,
+                    aStarPointRouterFactory.createPointRouter(curVehicle));
+          }
+          else if (curVehicleRoute.equals("dijkstra")) {
+
+            pointRoutersByVehicleGroup.put(currentGroup,
+                    dijkstraPointRouterFactory.createPointRouter(curVehicle));
+          }
+          else if (curVehicleRoute.equals("bellman")) {
+
+            pointRoutersByVehicleGroup.put(currentGroup,
+                    bellmanFordPointRouterFactory.createPointRouter(curVehicle));
+          }
+          else if (curVehicleRoute.equals("floyd")) {
+
+            pointRoutersByVehicleGroup.put(currentGroup,
+                    floydWarshallPointRouterFactory.createPointRouter(curVehicle));
+          }
+          else {
+
+          }
         }
       }
       LOG.debug("Number of point routers created: {}", pointRoutersByVehicleGroup.size());
