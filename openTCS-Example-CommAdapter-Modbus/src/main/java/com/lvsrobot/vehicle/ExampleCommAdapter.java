@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 
-import io.netty.handler.codec.mqtt.MqttMessageBuilders;
 import org.opentcs.customizations.kernel.KernelExecutor;
 import org.opentcs.data.model.Point;
 import org.opentcs.data.model.Triple;

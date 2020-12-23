@@ -15,7 +15,6 @@ import java.net.ConnectException;
 import java.net.InetAddress;
 import java.rmi.ConnectIOException;
 
-import de.re.easymodbus.exceptions.ModbusException;
 import org.opentcs.data.model.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

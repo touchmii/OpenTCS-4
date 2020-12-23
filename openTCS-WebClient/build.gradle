@@ -10,10 +10,14 @@ if (gradle.startParameter.initScripts) {
         debugArgs = ((line =~ /.*'(.*)'.*/)[0][1] as String).split(' ')
     }
 }
+
+//gretty config manual http://akhikhl.github.io/gretty-doc/Gretty-configuration.html
+// url http://localhost:8090/Demo
 gretty {
     httpPort = 8090
     contextPath = "/"
-    servletContainer = 'jetty9'
+    servletContainer = 'jetty9.4'
+//    servletContainer = 'tomcat8'
     jvmArgs = ['-Dorg.eclipse.jetty.annotations.maxWait=300', *debugArgs]
 }
 
