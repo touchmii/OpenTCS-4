@@ -3,7 +3,7 @@ package com.lvsrobot.vehiclejbh;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import org.opentcs.contrib.tcp.netty.*;
+//import org.opentcs.contrib.tcp.netty.*;
 
 public class SocketUtils {
     private String ip;
