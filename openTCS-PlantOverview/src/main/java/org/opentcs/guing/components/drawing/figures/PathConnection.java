@@ -111,6 +111,11 @@ public class PathConnection
   }
 
   @Override
+  public int getLayer() {
+    return 3;
+  }
+
+  @Override
   public PathModel getModel() {
     return (PathModel) get(FigureConstants.MODEL);
   }

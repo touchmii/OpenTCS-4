@@ -1,23 +1,28 @@
+apply from: "${rootDir}/gradle/java-project.gradle"
+apply from: "${rootDir}/gradle/java-artifacts.gradle"
+apply from: "${rootDir}/gradle/java-codequality.gradle"
 apply from: "${rootDir}/gradle/guice-application.gradle"
+apply from: "${rootDir}/gradle/maven-publishing.gradle"
 apply from: "${rootDir}/gradle/license-headers.gradle"
+apply plugin: 'org.kordamp.gradle.stats'
 
 if (!hasProperty('mainClass')) {
-    ext.mainClass = 'org.opentcs.kernel.RunKernel'
+  ext.mainClass = 'org.opentcs.kernel.RunKernel'
 }
 mainClassName = ext.mainClass
 
 ext.collectableDistDir = new File(buildDir, 'install')
 
 dependencies {
-    compile project(':openTCS-API-Injection')
-    compile project(':openTCS-Common')
-    compile project(':openTCS-CommAdapter-Loopback')
-    compile project(':openTCS-Strategies-Default')
-    compile project(':openTCS-Impl-Configuration-cfg4j')
-    compile project(':openTCS-Kernel-Extension-HTTP-Services')
-    compile project(':openTCS-Kernel-Extension-RMI-Services')
-    compile project(':openTCS-Kernel-Extension-Statistics')
-    compile project(':openTCS-Kernel-Extension-TCP-Host-Interface')
+  compile project(':openTCS-API-Injection')
+  compile project(':openTCS-Common')
+  compile project(':openTCS-CommAdapter-Loopback')
+  compile project(':openTCS-Strategies-Default')
+  compile project(':openTCS-Impl-Configuration-cfg4j')
+  compile project(':openTCS-Kernel-Extension-HTTP-Services')
+  compile project(':openTCS-Kernel-Extension-RMI-Services')
+  compile project(':openTCS-Kernel-Extension-Statistics')
+  compile project(':openTCS-Kernel-Extension-TCP-Host-Interface')
     compile project(':openTCS-Example-CommAdapter')
     compile project(':openTCS-Example-CommAdapter-Modbus')
     compile project(':openTCS-Example-CommAdapter-HTTP')
@@ -26,20 +31,19 @@ dependencies {
     compile project(':openTCS-Example-CommAdapter-TCP')
     compile project(':openTCS-Example-CommAdapter-VREP')
     compile project(':openTCS-Example-CommAdapter-Serial')
-//    compile project(':openTCS-LaurusTCS-CommAdapter-Vehicle')
-
-    compile group: 'de.huxhorn.sulky', name: 'de.huxhorn.sulky.ulid', version: '8.2.0'
-    compileOnly group: 'de.huxhorn.sulky', name: 'de.huxhorn.sulky.ulid', version: '8.2.0', classifier: 'sources'
-
-    runtime group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.21'
+  
+  compile group: 'de.huxhorn.sulky', name: 'de.huxhorn.sulky.ulid', version: '8.2.0'
+  compileOnly group: 'de.huxhorn.sulky', name: 'de.huxhorn.sulky.ulid', version: '8.2.0', classifier: 'sources'
+  
+  runtime group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.21'
 }
 
 distributions {
-    main {
-        contents {
-            from "${sourceSets.main.resources.srcDirs[0]}/org/opentcs/kernel/distribution"
-        }
+  main {
+    contents {
+      from "${sourceSets.main.resources.srcDirs[0]}/org/opentcs/kernel/distribution"
     }
+  }
 }
 
 // For now, we're using hand-crafted start scripts, so disable the application
@@ -47,14 +51,15 @@ distributions {
 startScripts.enabled = false
 
 task release {
-    dependsOn build
-    dependsOn installDist
+  dependsOn build
+  dependsOn installDist
 }
 
 run {
-    systemProperties(['java.util.logging.config.file': './config/logging.config', \
-                     'java.security.policy': 'file:./config/java.policy', \
-                     'opentcs.base': '.', \
-                     'opentcs.home': '.'])
-    jvmArgs('-XX:-OmitStackTraceInFastThrow')
+  systemProperties(['java.util.logging.config.file':'./config/logging.config',\
+                    'java.security.policy':'file:./config/java.policy',\
+                    'opentcs.base':'.',\
+                    'opentcs.home':'.',\
+                    'opentcs.cfg4j.reload.interval':'10000'])
+  jvmArgs('-XX:-OmitStackTraceInFastThrow')
 }

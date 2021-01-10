@@ -49,6 +49,11 @@ public abstract class LabeledFigure
     // Do nada.
   }
 
+  @Override
+  public int getLayer() {
+    return 20;
+  }
+
   public void setLabel(TCSLabelFigure label) {
     add(0, label);  // Allow only one label for each figure
     addFigureListener(label);

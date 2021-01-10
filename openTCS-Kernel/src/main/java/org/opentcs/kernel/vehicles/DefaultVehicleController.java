@@ -22,7 +22,6 @@ import java.util.Objects;
 import static java.util.Objects.requireNonNull;
 import java.util.Queue;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -222,10 +221,6 @@ public class DefaultVehicleController
     updateVehicleState(commAdapter.getProcessModel().getVehicleState());
     updateCommAdapterState(commAdapter.getProcessModel().getVehicleAdapterState());
 
-    //设置适配器当前内核模型
-//    commAdapter.setKernel(this.localKernel);
-    commAdapter.setPointLists(this.localKernel.getTCSObjects(Point.class).stream().collect(Collectors.toList()));
-
     // Add a first entry into allocatedResources to shift freeing of resources
     // in commandExecuted() by one - we need to free the resources allocated for
     // the command before the one executed there.
@@ -241,7 +236,6 @@ public class DefaultVehicleController
       return;
     }
 
-    //去除适配器监听器
     commAdapter.getProcessModel().removePropertyChangeListener(this);
     // Reset the vehicle's position.
     updatePosition(null, null);
@@ -257,7 +251,6 @@ public class DefaultVehicleController
     initialized = false;
   }
 
-  //属性变更回调函数，使用getProcessModel发送车辆消息监听到车辆属性变更是调用
   @Override
   public void propertyChange(PropertyChangeEvent evt) {
     if (evt.getSource() != commAdapter.getProcessModel()) {
@@ -310,14 +303,13 @@ public class DefaultVehicleController
                  currentDriveOrder,
                  newOrder);
 
+      LOG.debug("{}: Setting drive order: {}", vehicle.getName(), newOrder);
       scheduler.claim(this, asResourceSequence(newOrder.getRoute().getSteps()));
 
       currentDriveOrder = newOrder;
       lastCommandExecuted = null;
       vehicleService.updateVehicleRouteProgressIndex(vehicle.getReference(),
                                                      Vehicle.ROUTE_INDEX_DEFAULT);
-      //设置驱动器当前订单
-      commAdapter.setcurrentDriveOrder(newOrder);
       createFutureCommands(newOrder, orderProperties);
 
       if (canSendNextCommand()) {
@@ -343,6 +335,7 @@ public class DefaultVehicleController
                     "The new drive order contains steps the vehicle didn't process for the current "
                     + "drive order.");
 
+      LOG.debug("{}: Updating drive order: {}", vehicle.getName(), newOrder);
       // XXX Be a bit more thoughtful of which resource to claim/unclaim
       // XXX Unclaim only resources that would have been allocated in the future...
       scheduler.unclaim(this);
@@ -351,7 +344,6 @@ public class DefaultVehicleController
 
       // Update the current drive order and future commands
       currentDriveOrder = newOrder;
-      commAdapter.setcurrentDriveOrder(newOrder);
       // There is a new drive order, so discard all the future/scheduled commands of the old one.
       discardFutureCommands();
 
@@ -372,10 +364,6 @@ public class DefaultVehicleController
         allocateForNextCommand();
       }
     }
-  }
-
-  public DriveOrder getCurrentDriveOrder() {
-    return currentDriveOrder;
   }
 
   private boolean driveOrdersContinual(DriveOrder oldOrder, DriveOrder newOrder) {
@@ -437,9 +425,6 @@ public class DefaultVehicleController
   public void clearDriveOrder() {
     synchronized (commAdapter) {
       currentDriveOrder = null;
-      //更新当前驱动订单为空
-      commAdapter.setcurrentDriveOrder(null);
-      commAdapter.abortDriveOrder();
 
       // Clear pending resource allocations. If they still arrive, we will
       // refuse them in allocationSuccessful().
@@ -458,9 +443,6 @@ public class DefaultVehicleController
         LOG.debug("{}: No drive order to be aborted", vehicle.getName());
         return;
       }
-      //更新当前驱动订单为空
-      commAdapter.setcurrentDriveOrder(null);
-      commAdapter.abortDriveOrder();
       futureCommands.clear();
     }
   }
@@ -570,9 +552,11 @@ public class DefaultVehicleController
         }
         return false;
       }
+
       pendingCommand = null;
       pendingResources = null;
 
+      LOG.debug("{}: Accepting allocated resources: {}", vehicle.getName(), resources);
       allocatedResources.add(resources);
       // Send the command to the communication adapter.
       checkState(commAdapter.enqueueCommand(command),
@@ -601,7 +585,6 @@ public class DefaultVehicleController
   }
 
   @SuppressWarnings({"unchecked", "deprecation"})
-  //处理驱动器消息类型，调用不同的处理函数，如指令发送成功或位置变更
   private void handleProcessModelEvent(PropertyChangeEvent evt) {
     eventBus.onEvent(new ProcessModelEvent(evt.getPropertyName(),
                                            commAdapter.createTransferableProcessModel()));
@@ -699,8 +682,6 @@ public class DefaultVehicleController
     // might expect. The vehicle is physically there, even if it shouldn't be.
     // The same is true for null values - if the vehicle says it's not on any
     // known position, it has to be treated as a fact.
-    //将车辆放在给定位置，而不管内核可能期望什么。车辆实际上在那儿，即使不应该在那儿。
-    // 对于空值也是如此-如果车辆说它不在任何已知位置，则必须将其视为事实。
     Point point;
     if (position == null) {
       point = null;
@@ -710,9 +691,6 @@ public class DefaultVehicleController
       // If the new position is not in the model, ignore it. (Some vehicles/drivers send 
       // intermediate positions that cannot be order destinations and thus do not exist in
       // the model.
-      //如果新位置不在模型中，请忽略它。 （某些车辆/驾驶员发送
-      // 中间位置，它们不能作为订购目的地，因此
-      // 不存在于模型中。
       if (point == null) {
         LOG.warn("{}: At unknown position {}", vehicle.getName(), position);
         return;
@@ -810,14 +788,17 @@ public class DefaultVehicleController
         String operation = isFinalMovement ? op : MovementCommand.NO_OPERATION;
         Location location = isFinalMovement ? finalDestinationLocation : null;
 
-        futureCommands.add(new MovementCommand(curStep,
-                                               operation,
-                                               location,
-                                               isFinalMovement,
-                                               finalDestinationLocation,
-                                               finalDestination,
-                                               op,
-                                               mergeProperties(orderProperties, destProperties)));
+        futureCommands.add(
+            new MovementCommandImpl(orderRoute,
+                                    curStep,
+                                    operation,
+                                    location,
+                                    isFinalMovement,
+                                    finalDestinationLocation,
+                                    finalDestination,
+                                    op,
+                                    mergeProperties(orderProperties, destProperties))
+        );
       }
     }
   }
@@ -852,9 +833,12 @@ public class DefaultVehicleController
     int sendableCommands = Math.min(commAdapter.getCommandQueueCapacity() - commandsSent.size(),
                                     futureCommands.size());
     if (sendableCommands <= 0) {
-      LOG.debug("{}: Cannot send, number of sendable commands: {}",
+      LOG.debug("{}: Cannot send, number of sendable commands: {} (commandQueueCapacity={}, commandsSent={}, futureCommandsSize={})",
                 vehicle.getName(),
-                sendableCommands);
+                sendableCommands,
+                commAdapter.getCommandQueueCapacity(),
+                commandsSent.size(),
+                futureCommands.size());
       return false;
     }
     if (!futureCommands.peek().getStep().isExecutionAllowed()) {

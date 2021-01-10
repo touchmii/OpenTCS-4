@@ -49,6 +49,11 @@ public class VehicleLabelFigure
     }
   }
 
+  @Override
+  public int getLayer() {
+    return 6;
+  }
+
   @Override  // TextFigure
   protected void drawStroke(Graphics2D g) {
   }

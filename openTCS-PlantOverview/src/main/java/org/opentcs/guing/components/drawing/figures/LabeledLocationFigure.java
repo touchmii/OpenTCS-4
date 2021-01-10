@@ -57,6 +57,11 @@ public class LabeledLocationFigure
   }
 
   @Override
+  public int getLayer() {
+    return 2;
+  }
+
+  @Override
   public LocationFigure getPresentationFigure() {
     return (LocationFigure) super.getPresentationFigure();
   }

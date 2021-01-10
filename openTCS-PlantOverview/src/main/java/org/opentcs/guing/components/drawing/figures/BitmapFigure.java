@@ -83,6 +83,11 @@ public class BitmapFigure
     }
   }
 
+  @Override
+  public int getLayer() {
+    return 1;
+  }
+
   public String getImagePath() {
     return imagePath;
   }

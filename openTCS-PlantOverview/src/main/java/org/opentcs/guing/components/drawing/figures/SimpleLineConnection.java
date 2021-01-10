@@ -61,6 +61,11 @@ public abstract class SimpleLineConnection
     initConnectionFigure();
   }
 
+  @Override
+  public int getLayer() {
+    return 20;
+  }
+
   /**
    * Wird aufgerufen, wenn das Figure gerade durch Klonen erzeugt wurde und
    * erlaubt das Durchfï¿½hren von Initialisierungen.

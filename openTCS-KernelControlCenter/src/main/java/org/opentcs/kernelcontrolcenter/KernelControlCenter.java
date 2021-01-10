@@ -52,7 +52,10 @@ import org.slf4j.LoggerFactory;
  * @author Martin Grzenia (Fraunhofer IML)
  */
 @SuppressWarnings("deprecation")
-public class KernelControlCenter extends JFrame implements Lifecycle, EventHandler {
+public class KernelControlCenter
+    extends JFrame
+    implements Lifecycle,
+               EventHandler {
 
   /**
    * This class's logger.
@@ -431,7 +434,7 @@ public class KernelControlCenter extends JFrame implements Lifecycle, EventHandl
 
         getContentPane().add(tabbedPaneMain, java.awt.BorderLayout.CENTER);
 
-        menuKernel.setText(BUNDLE.getString("kernelControlCenter.title"));
+        menuKernel.setText("KernelControlCenter");
 
         menuButtonConnect.setText(bundle.getString("kernelControlCenter.menu_kernel.menuItem_connect.text")); // NOI18N
         menuButtonConnect.addActionListener(new java.awt.event.ActionListener() {

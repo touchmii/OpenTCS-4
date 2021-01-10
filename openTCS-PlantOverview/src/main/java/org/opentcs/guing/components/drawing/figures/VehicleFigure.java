@@ -156,6 +156,11 @@ public class VehicleFigure
   }
 
   @Override
+  public int getLayer() {
+    return 5;
+  }
+
+  @Override
   public VehicleModel getModel() {
     return (VehicleModel) get(FigureConstants.MODEL);
   }

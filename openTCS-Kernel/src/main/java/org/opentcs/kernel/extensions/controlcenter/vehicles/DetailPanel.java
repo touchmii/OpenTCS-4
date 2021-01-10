@@ -12,16 +12,16 @@ import java.beans.PropertyChangeListener;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.*;
-
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import static java.util.Objects.requireNonNull;
-
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.notification.UserNotification;
 import org.opentcs.drivers.vehicle.VehicleCommAdapter;
@@ -73,10 +73,6 @@ final class DetailPanel
    */
   private VehicleCommAdapter commAdapter;
 
-  private final JFileChooser inputFileChooser = new JFileChooser(".");
-
-  private static final ResourceBundle BUNDLE
-          = ResourceBundle.getBundle("org/opentcs/kernel/controlcenter/vehicles/Bundle");
   /**
    * Creates a new instance.
    */
@@ -89,7 +85,6 @@ final class DetailPanel
     loggingTable.getSelectionModel().addListSelectionListener(new RowListener());
     // Make sure we start with an empty panel.
     detachFromVehicle();
-
   }
 
   @Override
@@ -224,8 +219,7 @@ final class DetailPanel
   }
 
   private void updateVehicleState(Vehicle.State state) {
-//    SwingUtilities.invokeLater(() -> curStateTxt.setText(state.toString()));
-    SwingUtilities.invokeLater(() -> curStateTxt.setText(BUNDLE.getString(String.format("Status_%s", state.toString()))));
+    SwingUtilities.invokeLater(() -> curStateTxt.setText(state.toString()));
   }
 
   private void updateUserNotification(UserNotification notification) {

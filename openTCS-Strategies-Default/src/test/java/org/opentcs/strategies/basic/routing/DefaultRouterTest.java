@@ -58,7 +58,7 @@ public class DefaultRouterTest {
    */
   private DefaultRouterConfiguration configuration;
 
-  private DefaultModelGraphMapper modelGraphMapper;
+  private ModelGraphMapper modelGraphMapper;
 
   @Before
   public void setUp() {
@@ -71,50 +71,49 @@ public class DefaultRouterTest {
         .findFirst().orElse(null));
     configuration = mock(DefaultRouterConfiguration.class);
     when(configuration.routeToCurrentPosition()).thenReturn(false);
-    router = spy(createRouter());
     modelGraphMapper = mock(DefaultModelGraphMapper.class);
-//    when(modelGraphMapper.)
+    router = spy(createRouter());
   }
 
-//  @Test
-//  public void shouldUseDefaultRoutingGroup() {
-//    createVehicle("Vehicle-000", -1);
-//    createVehicle("Vehicle-001", -1);
-//    createVehicle("Vehicle-002", -1);
-//    router.initialize();
-//
-//    verify(builder, times(1)).createPointRouter(any());
-//  }
+  @Test
+  public void shouldUseDefaultRoutingGroup() {
+    createVehicle("Vehicle-000", -1);
+    createVehicle("Vehicle-001", -1);
+    createVehicle("Vehicle-002", -1);
+    router.initialize();
 
-//  @Test
-//  public void shouldUseDefinedRoutingGroup() {
-//    createVehicle("Vehicle-000", 1);
-//    createVehicle("Vehicle-001", 1);
-//    createVehicle("Vehicle-002", 1);
-//    router.initialize();
-//
-//    verify(builder, times(1)).createPointRouter(any());
-//  }
+    verify(builder, times(1)).createPointRouter(any());
+  }
 
-//  @Test
-//  public void shouldUseDefaultAndSetRoutingGroups() {
-//    createVehicle("Vehicle-000", 1);
-//    createVehicle("Vehicle-001", 1);
-//    createVehicle("Vehicle-002", -1);
-//    router.initialize();
-//
-//    verify(builder, times(2)).createPointRouter(any());
-//  }
+  @Test
+  public void shouldUseDefinedRoutingGroup() {
+    createVehicle("Vehicle-000", 1);
+    createVehicle("Vehicle-001", 1);
+    createVehicle("Vehicle-002", 1);
+    router.initialize();
 
-//  @Test
-//  public void shouldUseSetRoutingGroups() {
-//    for (int x = 0; x < 15; x++) {
-//      vehicles.add(createVehicle("Vehicle-0" + x, x));
-//    }
-//    router.initialize();
-//
-//    verify(builder, times(15)).createPointRouter(any());
-//  }
+    verify(builder, times(1)).createPointRouter(any());
+  }
+
+  @Test
+  public void shouldUseDefaultAndSetRoutingGroups() {
+    createVehicle("Vehicle-000", 1);
+    createVehicle("Vehicle-001", 1);
+    createVehicle("Vehicle-002", -1);
+    router.initialize();
+
+    verify(builder, times(2)).createPointRouter(any());
+  }
+
+  @Test
+  public void shouldUseSetRoutingGroups() {
+    for (int x = 0; x < 15; x++) {
+      vehicles.add(createVehicle("Vehicle-0" + x, x));
+    }
+    router.initialize();
+
+    verify(builder, times(15)).createPointRouter(any());
+  }
 
   /**
    * Creates a vehicle with a unique id, the given name and the given routing group.

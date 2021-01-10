@@ -527,6 +527,7 @@ public class OpenTCSDrawingView
    */
   public void addBackgroundBitmap(BitmapFigure bitmapFigure) {
     bitmapFigures.add(bitmapFigure);
+//    bitmapFigures.add(bitmapFigure.transform());
     getDrawing().add(bitmapFigure);
     getDrawing().sendToBack(bitmapFigure);
   }
@@ -689,12 +690,15 @@ public class OpenTCSDrawingView
     getDrawing().setFontRenderContext(g2d.getFontRenderContext());
     try {
       getDrawing().draw(g2d);
+//      getDrawing().draw
+//      getDrawing().bringToFront(g);
     }
     catch (ConcurrentModificationException e) {
       LOG.warn("Exception from JHotDraw caught while calling DefaultDrawing.draw(), continuing.");
       // TODO What to do when it is catched?
     }
-
+//    List<Figure> figures = getDrawing().getFiguresFrontToBack();
+//    LOG.info("List figures: {}", figures);
     g2d.dispose();
   }
 

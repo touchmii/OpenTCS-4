@@ -63,6 +63,11 @@ public class LinkConnection
   }
 
   @Override
+  public int getLayer() {
+    return 10;
+  }
+
+  @Override
   public LinkModel getModel() {
     return (LinkModel) get(FigureConstants.MODEL);
   }

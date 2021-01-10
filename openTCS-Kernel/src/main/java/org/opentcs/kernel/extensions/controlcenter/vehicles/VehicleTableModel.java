@@ -210,8 +210,7 @@ final class VehicleTableModel
         return true;
       case POSITION_COLUMN:
         VehicleCommAdapter commAdapter = entries.get(rowIndex).getCommAdapter();
-        return commAdapter.isEnabled();
-//        return commAdapter instanceof SimVehicleCommAdapter && commAdapter.isEnabled();
+        return commAdapter instanceof SimVehicleCommAdapter && commAdapter.isEnabled();
       default:
         return false;
     }
@@ -248,11 +247,10 @@ final class VehicleTableModel
   private String getVehicleState(VehicleEntry entry) {
     VehicleCommAdapter commAdapter = entry.getCommAdapter();
     if (commAdapter == null) {
-//      return Vehicle.State.UNKNOWN.name();
-      return BUNDLE.getString("Status_UNKNOWN");
+      return Vehicle.State.UNKNOWN.name();
     }
     else {
-      return BUNDLE.getString(String.format("Status_%s", commAdapter.getProcessModel().getVehicleState().name()));
+      return commAdapter.getProcessModel().getVehicleState().name();
     }
   }
 

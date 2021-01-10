@@ -276,9 +276,7 @@ public class DriverGUI
         adapter.initVehiclePosition(newPoint.getName());
       }
       else {
-          VehicleCommAdapter adapter = (VehicleCommAdapter) vehicleEntry.getCommAdapter();
-          adapter.getProcessModel().setVehiclePosition(newPoint.getName());
-        LOG.info("Vehicle {}: Not a simulation adapter -> not setting initial position.",
+        LOG.debug("Vehicle {}: Not a simulation adapter -> not setting initial position.",
                   vehicleEntry.getVehicle().getName());
       }
     });

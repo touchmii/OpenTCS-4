@@ -66,6 +66,11 @@ public class LabeledPointFigure
   }
 
   @Override
+  public int getLayer() {
+    return 4;
+  }
+
+  @Override
   public PointFigure getPresentationFigure() {
     return (PointFigure) super.getPresentationFigure();
   }
