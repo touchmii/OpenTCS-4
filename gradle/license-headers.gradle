@@ -1,10 +1,9 @@
-//apply plugin: 'com.github.hierynomus.license'
+apply plugin: 'com.github.hierynomus.license'
 
-//license {
-//  header = rootProject.file('config/LICENSE')
-//  // exclude "**/*"
-//  include "**/*.java"
-//  exclude "**/package-info.java"
-////  strictCheck true
-//  strictCheck false
-//}
+license {
+  header = rootProject.file('config/LICENSE')
+  // exclude "**/*"
+  include "**/*.java"
+  exclude "**/package-info.java"
+  strictCheck true
+}

@@ -51,8 +51,7 @@ public class ModelParser {
    */
   public PlantModelCreationTO readModel(File file)
       throws IOException {
-//    String modelVersion = peekModelVersion(file);
-    String modelVersion = "0.0.2";
+    String modelVersion = peekModelVersion(file);
 
     LOG.debug("File '{}' contains a model version '{}'.", file.getAbsolutePath(), modelVersion);
 

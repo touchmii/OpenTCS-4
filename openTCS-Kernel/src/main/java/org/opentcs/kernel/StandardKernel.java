@@ -76,7 +76,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author Stefan Walter (Fraunhofer IML)
  */
-final class StandardKernel implements LocalKernel,Runnable {
+final class StandardKernel
+    implements LocalKernel,
+               Runnable {
 
   /**
    * This class's Logger.

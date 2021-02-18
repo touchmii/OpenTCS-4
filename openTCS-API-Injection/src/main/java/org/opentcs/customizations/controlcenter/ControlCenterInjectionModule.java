@@ -18,7 +18,8 @@ import org.opentcs.drivers.vehicle.management.VehicleCommAdapterPanelFactory;
  *
  * @author Martin Grzenia (Fraunhofer IML)
  */
-public abstract class ControlCenterInjectionModule  extends ConfigurableInjectionModule {
+public abstract class ControlCenterInjectionModule
+    extends ConfigurableInjectionModule {
 
   /**
    * Returns a multibinder that can be used to register {@link ControlCenterPanel} implementations
