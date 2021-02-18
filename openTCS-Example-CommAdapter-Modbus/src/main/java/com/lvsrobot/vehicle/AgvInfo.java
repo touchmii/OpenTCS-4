@@ -71,7 +71,8 @@ public class AgvInfo {
      * @param double orientation
      */
     public void setVehicleOrientation(double orientation) { this.vehicle_orientation = orientation; }
-    public double getVehicleOrientation() { return this.vehicle_orientation > 270.0 ? this.vehicle_orientation-270 : this.vehicle_orientation+90; }
+//    public double getVehicleOrientation() { return this.vehicle_orientation > 270.0 ? this.vehicle_orientation-270 : this.vehicle_orientation+90; }
+    public double getVehicleOrientation() { return this.vehicle_orientation; }
     public int getPosition() {
         return currentPositionID;
     }
