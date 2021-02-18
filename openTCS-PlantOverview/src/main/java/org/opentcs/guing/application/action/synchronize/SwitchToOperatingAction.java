@@ -60,17 +60,17 @@ public class SwitchToOperatingAction
   @Override
   public void actionPerformed(ActionEvent e) {
     LOG.info("Switch to OprationMode");
-    String test = PasswordPanel.showDialog ("\u8BF7\u8F93\u5165\u64CD\u4F5C\u5458\u5BC6\u7801");
-    if(!test.equals("1234")) {
+//    String test = PasswordPanel.showDialog ("\u8BF7\u8F93\u5165\u64CD\u4F5C\u5458\u5BC6\u7801");
+//    if(!test.equals("1234")) {
 
 //      setEnabled(false);
 //      super.setSelected(false);
-      JOptionPane.showMessageDialog(null, "\u5BC6\u7801\u8F93\u5165\u9519\u8BEF!");
-      view.switchPlantOverviewState(OperationMode.MODELLING);
+//      JOptionPane.showMessageDialog(null, "\u5BC6\u7801\u8F93\u5165\u9519\u8BEF!");
+//      view.switchPlantOverviewState(OperationMode.MODELLING);
 //      String a;
-    } else {
+//    } else {
 
       view.switchPlantOverviewState(OperationMode.OPERATING);
-    }
+//    }
   }
 }
