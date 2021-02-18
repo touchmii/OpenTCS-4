@@ -51,16 +51,20 @@ public class ConfigRoute {
         path[3] = Integer.parseInt(new String(steps.get(0).getSourcePoint().getName()));
         path[4] = (int)steps.get(0).getSourcePoint().getPosition().getX()/10;
         path[5] = (int)steps.get(0).getSourcePoint().getPosition().getY()/10;
-        path[6] = 365;
+//        path[6] = 365;
+        path[6] = (int)steps.get(0).getSourcePoint().getVehicleOrientationAngle();
         for(int i = 0; i < steps.size(); i++) {
             Route.Step point = steps.get(i);
             path[i*4+7] = Integer.parseInt(new String(point.getDestinationPoint().getName()));
             path[i*4+8] = (int)point.getDestinationPoint().getPosition().getX()/10;
             path[i*4+9] = (int)point.getDestinationPoint().getPosition().getY()/10;
             path[i*4+10] = 365;
-            if (path[1] != 0 && i == (steps.size()-1)) {
-                path[i * 4 + 10] = (int)point.getDestinationPoint().getVehicleOrientationAngle();
-            }
+//            if (path[1] != 0 && i == (steps.size()-1)) {
+            int angle = (int)point.getDestinationPoint().getVehicleOrientationAngle();
+//            if (angle !=  ) {
+//                path[i * 4 + 10] = (int)point.getDestinationPoint().getVehicleOrientationAngle();
+                path[i * 4 + 10] = angle;
+//            }
         }
 
         switch (path[1]) {

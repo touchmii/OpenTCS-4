@@ -59,12 +59,12 @@ public class PersistInKernelAction
     LOG.info("Persist Model to Kernel");
 //    System.out.println("Persist Model to Kernel");
 //    String text =
-    String test = PasswordPanel.showDialog ("\u8BF7\u8F93\u5165\u7BA1\u7406\u5BC6\u7801");
-    if (test.equals("1234")) {
+//    String test = PasswordPanel.showDialog ("\u8BF7\u8F93\u5165\u7BA1\u7406\u5BC6\u7801");
+//    if (test.equals("1234")) {
 
       openTCSView.persistModel();
-    } else {
-      JOptionPane.showMessageDialog(null, "\u5BC6\u7801\u8F93\u5165\u9519\u8BEF!");
-    }
+//    } else {
+//      JOptionPane.showMessageDialog(null, "\u5BC6\u7801\u8F93\u5165\u9519\u8BEF!");
+//    }
   }
 }
