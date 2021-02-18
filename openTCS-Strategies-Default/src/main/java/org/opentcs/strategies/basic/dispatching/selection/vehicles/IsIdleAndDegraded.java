@@ -1,6 +1,6 @@
 /**
  * Copyright (c) The openTCS Authors.
- * <p>
+ *
  * This program is free software and subject to the MIT license. (For details,
  * see the licensing information (LICENSE.txt) you should have received with
  * this copy of the software.)
@@ -10,7 +10,6 @@ package org.opentcs.strategies.basic.dispatching.selection.vehicles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-
 import org.opentcs.data.model.Vehicle;
 import org.opentcs.strategies.basic.dispatching.selection.RechargeVehicleSelectionFilter;
 
@@ -19,19 +18,20 @@ import org.opentcs.strategies.basic.dispatching.selection.RechargeVehicleSelecti
  *
  * @author Martin Grzenia (Fraunhofer IML)
  */
-public class IsIdleAndDegraded implements RechargeVehicleSelectionFilter {
+public class IsIdleAndDegraded
+    implements RechargeVehicleSelectionFilter {
 
-    @Override
-    public Collection<String> apply(Vehicle vehicle) {
-        return idleAndDegraded(vehicle) ? new ArrayList<>() : Arrays.asList(getClass().getName());
-    }
+  @Override
+  public Collection<String> apply(Vehicle vehicle) {
+    return idleAndDegraded(vehicle) ? new ArrayList<>() : Arrays.asList(getClass().getName());
+  }
 
-    private boolean idleAndDegraded(Vehicle vehicle) {
-        return vehicle.getIntegrationLevel() == Vehicle.IntegrationLevel.TO_BE_UTILIZED
-                && vehicle.hasProcState(Vehicle.ProcState.IDLE)
-                && vehicle.hasState(Vehicle.State.IDLE)
-                && vehicle.getCurrentPosition() != null
-                && vehicle.getOrderSequence() == null
-                && vehicle.isEnergyLevelDegraded();
-    }
+  private boolean idleAndDegraded(Vehicle vehicle) {
+    return vehicle.getIntegrationLevel() == Vehicle.IntegrationLevel.TO_BE_UTILIZED
+        && vehicle.hasProcState(Vehicle.ProcState.IDLE)
+        && vehicle.hasState(Vehicle.State.IDLE)
+        && vehicle.getCurrentPosition() != null
+        && vehicle.getOrderSequence() == null
+        && vehicle.isEnergyLevelDegraded();
+  }
 }

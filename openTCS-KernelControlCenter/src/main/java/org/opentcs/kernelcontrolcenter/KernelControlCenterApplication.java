@@ -24,7 +24,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Martin Grzenia (Fraunhofer IML)
  */
-public class KernelControlCenterApplication  implements KernelClientApplication {
+public class KernelControlCenterApplication
+    implements KernelClientApplication {
 
   /**
    * This class' logger.

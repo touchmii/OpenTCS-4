@@ -1,6 +1,6 @@
 /**
  * Copyright (c) The openTCS Authors.
- * <p>
+ *
  * This program is free software and subject to the MIT license. (For details,
  * see the licensing information (LICENSE.txt) you should have received with
  * this copy of the software.)
@@ -15,12 +15,13 @@ import spark.Service;
  *
  * @author Stefan Walter (Fraunhofer IML)
  */
-public interface RequestHandler extends Lifecycle {
+public interface RequestHandler
+    extends Lifecycle {
 
-    /**
-     * Registers the handler's routes with the given service.
-     *
-     * @param service The service to register the routes with.
-     */
-    void addRoutes(Service service);
+  /**
+   * Registers the handler's routes with the given service.
+   *
+   * @param service The service to register the routes with.
+   */
+  void addRoutes(Service service);
 }

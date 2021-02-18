@@ -15,7 +15,7 @@ import javax.swing.*;
 
 import static javax.swing.Action.ACCELERATOR_KEY;
 import static javax.swing.Action.MNEMONIC_KEY;
-
+import javax.swing.KeyStroke;
 import org.opentcs.guing.application.OpenTCSView;
 import org.opentcs.guing.application.OperationMode;
 import static org.opentcs.guing.util.I18nPlantOverview.MENU_PATH;

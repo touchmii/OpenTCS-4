@@ -53,10 +53,12 @@ public class RunKernel {
    * @throws Exception If there was a problem starting the kernel.
    */
   @SuppressWarnings("deprecation")
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args)
+      throws Exception {
     System.setSecurityManager(new SecurityManager());
     Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionLogger(false));
-    System.setProperty(org.opentcs.util.configuration.Configuration.PROPKEY_IMPL_CLASS,  org.opentcs.util.configuration.XMLConfiguration.class.getName());
+    System.setProperty(org.opentcs.util.configuration.Configuration.PROPKEY_IMPL_CLASS,
+                       org.opentcs.util.configuration.XMLConfiguration.class.getName());
 
     Environment.logSystemInfo();
 

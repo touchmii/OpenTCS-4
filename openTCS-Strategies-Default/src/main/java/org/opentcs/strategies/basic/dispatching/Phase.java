@@ -1,6 +1,6 @@
 /**
  * Copyright (c) The openTCS Authors.
- * <p>
+ *
  * This program is free software and subject to the MIT license. (For details,
  * see the licensing information (LICENSE.txt) you should have received with
  * this copy of the software.)
@@ -14,6 +14,8 @@ import org.opentcs.components.Lifecycle;
  *
  * @author Stefan Walter (Fraunhofer IML)
  */
-public interface Phase extends Runnable, Lifecycle {
+public interface Phase
+    extends Runnable,
+            Lifecycle {
 
 }

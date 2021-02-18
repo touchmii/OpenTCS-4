@@ -51,7 +51,8 @@ public class RunKernelControlCenter {
   public static void main(final String[] args) {
     System.setSecurityManager(new SecurityManager());
     Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionLogger(false));
-    System.setProperty(org.opentcs.util.configuration.Configuration.PROPKEY_IMPL_CLASS,org.opentcs.util.configuration.XMLConfiguration.class.getName());
+    System.setProperty(org.opentcs.util.configuration.Configuration.PROPKEY_IMPL_CLASS,
+                       org.opentcs.util.configuration.XMLConfiguration.class.getName());
 
     Environment.logSystemInfo();
 
@@ -67,9 +68,11 @@ public class RunKernelControlCenter {
    */
   private static Module customConfigurationModule() {
     ConfigurationBindingProvider bindingProvider = configurationBindingProvider();
-    ConfigurableInjectionModule kernelControlCenterInjectionModule = new DefaultKernelControlCenterInjectionModule();
+    ConfigurableInjectionModule kernelControlCenterInjectionModule
+        = new DefaultKernelControlCenterInjectionModule();
     kernelControlCenterInjectionModule.setConfigBindingProvider(bindingProvider);
-    return Modules.override(kernelControlCenterInjectionModule) .with(findRegisteredModules(bindingProvider));
+    return Modules.override(kernelControlCenterInjectionModule)
+        .with(findRegisteredModules(bindingProvider));
   }
 
   /**
