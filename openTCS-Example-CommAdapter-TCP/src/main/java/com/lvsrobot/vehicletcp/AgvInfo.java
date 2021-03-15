@@ -52,16 +52,16 @@ public class AgvInfo {
     public void setAngle(int i) {
         switch (i) {
             case 1:
-                angle = 270;
+                angle = 180;
                 break;
             case 2:
-                angle = 0;
+                angle = 270;
                 break;
             case 3:
-                angle = 90;
+                angle = 0;
                 break;
             case 4:
-                angle = 180;
+                angle = 90;
                 break;
             default:
                 angle = -1;
