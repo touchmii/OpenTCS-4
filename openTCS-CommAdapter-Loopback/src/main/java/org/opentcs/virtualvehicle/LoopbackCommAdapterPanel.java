@@ -421,7 +421,7 @@ public class LoopbackCommAdapterPanel
     gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
     vehiclePropsPanel.add(maxFwdVeloTxt, gridBagConstraints);
 
-    maxFwdVeloUnitLbl.setText("mmM/s");
+    maxFwdVeloUnitLbl.setText("mm/s");
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
     gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
@@ -863,7 +863,7 @@ public class LoopbackCommAdapterPanel
 
     appendixTxt.setEditable(false);
     appendixTxt.setColumns(10);
-    appendixTxt.setText("XYZZ");
+    appendixTxt.setText("XYZ");
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.weightx = 1.0;
     gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);

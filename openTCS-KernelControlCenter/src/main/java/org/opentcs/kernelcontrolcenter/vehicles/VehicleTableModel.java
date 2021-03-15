@@ -17,7 +17,9 @@ import java.util.ResourceBundle;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import org.opentcs.components.kernel.services.VehicleService;
+import org.opentcs.drivers.vehicle.VehicleCommAdapter;
 import org.opentcs.drivers.vehicle.VehicleCommAdapterDescription;
+import org.opentcs.drivers.vehicle.VehicleProcessModel;
 import org.opentcs.drivers.vehicle.management.AttachmentInformation;
 import org.opentcs.drivers.vehicle.management.VehicleProcessModelTO;
 import static org.opentcs.kernelcontrolcenter.I18nKernelControlCenter.BUNDLE_PATH;
@@ -228,9 +230,11 @@ public class VehicleTableModel
       case ENABLED_COLUMN:
         return true;
       case POSITION_COLUMN:
-        LocalVehicleEntry entry = entries.get(rowIndex);
-        return entry.getAttachedCommAdapterDescription().isSimVehicleCommAdapter()
-            && entry.getProcessModel().isCommAdapterEnabled();
+//        LocalVehicleEntry entry = entries.get(rowIndex);
+//        return entry.getAttachedCommAdapterDescription().isSimVehicleCommAdapter()
+//            && entry.getProcessModel().isCommAdapterEnabled();
+        return entries.get(rowIndex).getProcessModel().isCommAdapterEnabled();
+//        return commAdapter.isEnabled();
       default:
         return false;
     }

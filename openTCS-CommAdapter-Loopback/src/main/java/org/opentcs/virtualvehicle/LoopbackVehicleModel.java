@@ -17,7 +17,9 @@ import org.opentcs.drivers.vehicle.VehicleProcessModel;
  *
  * @author Stefan Walter (Fraunhofer IML)
  */
-public class LoopbackVehicleModel extends VehicleProcessModel implements VelocityListener {
+public class LoopbackVehicleModel
+    extends VehicleProcessModel
+    implements VelocityListener {
 
   /**
    * Indicates whether this communication adapter is in single step mode or not (i.e. in automatic

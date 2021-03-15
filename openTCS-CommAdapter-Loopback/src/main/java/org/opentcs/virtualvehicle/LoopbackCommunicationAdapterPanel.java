@@ -1221,7 +1221,7 @@ private void chkBoxEnableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     StringBuilder text = new StringBuilder("");
     text.append("X: ").append(xS).append("\n")
         .append("Y: ").append(yS).append("\n")
-        .append("ZZ: ").append(zS);
+        .append("Z: ").append(zS);
     precisePosTextArea.setText(text.toString());
   }
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -35,6 +35,9 @@ target/
 /.gradle/4.10.3/
 /.gradle/buildOutputCleanup/
 /.gradle/vcs-1/
+*/bin/*
+.DS_Store
+*/venv/*
 /Simulation/build/
 /openTCS-Strategies-Default/build/
 /openTCS-PlantOverview-Themes-Default/build/

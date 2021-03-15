@@ -434,7 +434,7 @@ public class KernelControlCenter
 
         getContentPane().add(tabbedPaneMain, java.awt.BorderLayout.CENTER);
 
-        menuKernel.setText("KernelControlCenter");
+        menuKernel.setText(BUNDLE.getString("kernelControlCenter.title"));
 
         menuButtonConnect.setText(bundle.getString("kernelControlCenter.menu_kernel.menuItem_connect.text")); // NOI18N
         menuButtonConnect.addActionListener(new java.awt.event.ActionListener() {

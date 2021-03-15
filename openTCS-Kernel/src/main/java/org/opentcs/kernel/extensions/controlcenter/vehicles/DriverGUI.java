@@ -7,6 +7,12 @@
  */
 package org.opentcs.kernel.extensions.controlcenter.vehicles;
 
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.*;
+import org.opentcs.components.kernel.*;
 import static com.google.common.base.Preconditions.checkState;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -276,7 +282,9 @@ public class DriverGUI
         adapter.initVehiclePosition(newPoint.getName());
       }
       else {
-        LOG.debug("Vehicle {}: Not a simulation adapter -> not setting initial position.",
+        VehicleCommAdapter adapter = (VehicleCommAdapter) vehicleEntry.getCommAdapter();
+        adapter.getProcessModel().setVehiclePosition(newPoint.getName());
+        LOG.info("Vehicle {}: Not a simulation adapter -> not setting initial position.",
                   vehicleEntry.getVehicle().getName());
       }
     });
@@ -370,110 +378,113 @@ public class DriverGUI
   @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        ResourceBundle bundle = ResourceBundle.getBundle("org.opentcs.kernel.controlcenter.vehicles.Bundle");
+        listDisplayPanel = new JPanel();
+        jScrollPane1 = new JScrollPane();
+        vehicleTable = new JTable();
+        vehicleDetailPanel = new JPanel();
+        vehicleListPopupMenu = new JPopupMenu();
+        driverMenu = new JMenu();
+        noDriversMenuItem = new JMenuItem();
+        jSeparator1 = new JSeparator();
+        enableAllMenuItem = new JMenuItem();
+        enableAllSelectedMenuItem = new JMenuItem();
+        jSeparator4 = new JSeparator();
+        disableAllMenuItem = new JMenuItem();
+        disableAllSelectedMenuItem = new JMenuItem();
 
-        vehicleListPopupMenu = new javax.swing.JPopupMenu();
-        driverMenu = new javax.swing.JMenu();
-        noDriversMenuItem = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JSeparator();
-        enableAllMenuItem = new javax.swing.JMenuItem();
-        enableAllSelectedMenuItem = new javax.swing.JMenuItem();
-        jSeparator4 = new javax.swing.JSeparator();
-        disableAllMenuItem = new javax.swing.JMenuItem();
-        disableAllSelectedMenuItem = new javax.swing.JMenuItem();
-        listDisplayPanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        vehicleTable = new javax.swing.JTable();
-        vehicleDetailPanel = new javax.swing.JPanel();
+        //======== this ========
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
-        vehicleListPopupMenu.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
-            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+        //======== listDisplayPanel ========
+        {
+            listDisplayPanel.setBorder(new TitledBorder("Vehicles in model"));
+            listDisplayPanel.setMaximumSize(new Dimension(464, 2147483647));
+            listDisplayPanel.setMinimumSize(new Dimension(464, 425));
+            listDisplayPanel.setLayout(new BorderLayout());
+
+            //======== jScrollPane1 ========
+            {
+
+                //---- vehicleTable ----
+                vehicleTable.setModel(new VehicleTableModel());
+                vehicleTable.setComponentPopupMenu(vehicleListPopupMenu);
+                vehicleTable.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        vehicleTableMouseClicked(e);
+                    }
+                });
+                jScrollPane1.setViewportView(vehicleTable);
             }
-            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
-            }
-            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
-                vehicleListPopupMenuPopupMenuWillBecomeVisible(evt);
-            }
-        });
-
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("org/opentcs/kernel/controlcenter/vehicles/Bundle"); // NOI18N
-        driverMenu.setText(bundle.getString("Driver")); // NOI18N
-        driverMenu.addMenuListener(new javax.swing.event.MenuListener() {
-            public void menuCanceled(javax.swing.event.MenuEvent evt) {
-            }
-            public void menuDeselected(javax.swing.event.MenuEvent evt) {
-            }
-            public void menuSelected(javax.swing.event.MenuEvent evt) {
-                driverMenuMenuSelected(evt);
-            }
-        });
-
-        noDriversMenuItem.setText("No drivers available.");
-        noDriversMenuItem.setEnabled(false);
-        driverMenu.add(noDriversMenuItem);
-
-        vehicleListPopupMenu.add(driverMenu);
-        vehicleListPopupMenu.add(jSeparator1);
-
-        enableAllMenuItem.setText(bundle.getString("EnableAll")); // NOI18N
-        enableAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                enableAllMenuItemActionPerformed(evt);
-            }
-        });
-        vehicleListPopupMenu.add(enableAllMenuItem);
-
-        enableAllSelectedMenuItem.setText(bundle.getString("EnableSelected")); // NOI18N
-        enableAllSelectedMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                enableAllSelectedMenuItemActionPerformed(evt);
-            }
-        });
-        vehicleListPopupMenu.add(enableAllSelectedMenuItem);
-        vehicleListPopupMenu.add(jSeparator4);
-
-        disableAllMenuItem.setText(bundle.getString("DisableAll")); // NOI18N
-        disableAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                disableAllMenuItemActionPerformed(evt);
-            }
-        });
-        vehicleListPopupMenu.add(disableAllMenuItem);
-
-        disableAllSelectedMenuItem.setText(bundle.getString("DisableSelected")); // NOI18N
-        disableAllSelectedMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                disableAllSelectedMenuItemActionPerformed(evt);
-            }
-        });
-        vehicleListPopupMenu.add(disableAllSelectedMenuItem);
-
-        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.X_AXIS));
-
-        listDisplayPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("ModelView"))); // NOI18N
-        listDisplayPanel.setMaximumSize(new java.awt.Dimension(464, 2147483647));
-        listDisplayPanel.setMinimumSize(new java.awt.Dimension(464, 425));
-        listDisplayPanel.setLayout(new java.awt.BorderLayout());
-
-        vehicleTable.setModel(new VehicleTableModel());
-        vehicleTable.setComponentPopupMenu(vehicleListPopupMenu);
-        vehicleTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                vehicleTableMouseClicked(evt);
-            }
-        });
-        jScrollPane1.setViewportView(vehicleTable);
-
-        listDisplayPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
-
+            listDisplayPanel.add(jScrollPane1, BorderLayout.CENTER);
+        }
         add(listDisplayPanel);
 
-        vehicleDetailPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("DetailView"))); // NOI18N
-        vehicleDetailPanel.setPreferredSize(new java.awt.Dimension(800, 23));
-        vehicleDetailPanel.setLayout(new java.awt.BorderLayout());
+        //======== vehicleDetailPanel ========
+        {
+            vehicleDetailPanel.setBorder(new TitledBorder("Vehicle details"));
+            vehicleDetailPanel.setPreferredSize(new Dimension(800, 23));
+            vehicleDetailPanel.setLayout(new BorderLayout());
+        }
         add(vehicleDetailPanel);
-        vehicleDetailPanel.getAccessibleContext().setAccessibleName(bundle.getString("DetailView")); // NOI18N
 
-        getAccessibleContext().setAccessibleName(bundle.getString("driverGUI")); // NOI18N
+        //======== vehicleListPopupMenu ========
+        {
+            vehicleListPopupMenu.addPopupMenuListener(new PopupMenuListener() {
+                @Override
+                public void popupMenuCanceled(PopupMenuEvent e) {}
+                @Override
+                public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
+                @Override
+                public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                    vehicleListPopupMenuPopupMenuWillBecomeVisible(e);
+                }
+            });
+
+            //======== driverMenu ========
+            {
+                driverMenu.setText(bundle.getString("Driver"));
+                driverMenu.addMenuListener(new MenuListener() {
+                    @Override
+                    public void menuCanceled(MenuEvent e) {}
+                    @Override
+                    public void menuDeselected(MenuEvent e) {}
+                    @Override
+                    public void menuSelected(MenuEvent e) {
+                        driverMenuMenuSelected(e);
+                    }
+                });
+
+                //---- noDriversMenuItem ----
+                noDriversMenuItem.setText("No drivers available.");
+                noDriversMenuItem.setEnabled(false);
+                driverMenu.add(noDriversMenuItem);
+            }
+            vehicleListPopupMenu.add(driverMenu);
+            vehicleListPopupMenu.add(jSeparator1);
+
+            //---- enableAllMenuItem ----
+            enableAllMenuItem.setText(bundle.getString("EnableAll"));
+            enableAllMenuItem.addActionListener(e -> enableAllMenuItemActionPerformed(e));
+            vehicleListPopupMenu.add(enableAllMenuItem);
+
+            //---- enableAllSelectedMenuItem ----
+            enableAllSelectedMenuItem.setText(bundle.getString("EnableSelected"));
+            enableAllSelectedMenuItem.addActionListener(e -> enableAllSelectedMenuItemActionPerformed(e));
+            vehicleListPopupMenu.add(enableAllSelectedMenuItem);
+            vehicleListPopupMenu.add(jSeparator4);
+
+            //---- disableAllMenuItem ----
+            disableAllMenuItem.setText(bundle.getString("DisableAll"));
+            disableAllMenuItem.addActionListener(e -> disableAllMenuItemActionPerformed(e));
+            vehicleListPopupMenu.add(disableAllMenuItem);
+
+            //---- disableAllSelectedMenuItem ----
+            disableAllSelectedMenuItem.setText(bundle.getString("DisableSelected"));
+            disableAllSelectedMenuItem.addActionListener(e -> disableAllSelectedMenuItemActionPerformed(e));
+            vehicleListPopupMenu.add(disableAllSelectedMenuItem);
+        }
     }// </editor-fold>//GEN-END:initComponents
 
   private void driverMenuMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_driverMenuMenuSelected
@@ -513,19 +524,19 @@ public class DriverGUI
   }//GEN-LAST:event_vehicleTableMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem disableAllMenuItem;
-    private javax.swing.JMenuItem disableAllSelectedMenuItem;
-    private javax.swing.JMenu driverMenu;
-    private javax.swing.JMenuItem enableAllMenuItem;
-    private javax.swing.JMenuItem enableAllSelectedMenuItem;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator4;
-    private javax.swing.JPanel listDisplayPanel;
-    private javax.swing.JMenuItem noDriversMenuItem;
-    private javax.swing.JPanel vehicleDetailPanel;
-    private javax.swing.JPopupMenu vehicleListPopupMenu;
-    private javax.swing.JTable vehicleTable;
+    private JPanel listDisplayPanel;
+    private JScrollPane jScrollPane1;
+    private JTable vehicleTable;
+    private JPanel vehicleDetailPanel;
+    private JPopupMenu vehicleListPopupMenu;
+    private JMenu driverMenu;
+    private JMenuItem noDriversMenuItem;
+    private JSeparator jSeparator1;
+    private JMenuItem enableAllMenuItem;
+    private JMenuItem enableAllSelectedMenuItem;
+    private JSeparator jSeparator4;
+    private JMenuItem disableAllMenuItem;
+    private JMenuItem disableAllSelectedMenuItem;
     // End of variables declaration//GEN-END:variables
   // CHECKSTYLE:ON
 

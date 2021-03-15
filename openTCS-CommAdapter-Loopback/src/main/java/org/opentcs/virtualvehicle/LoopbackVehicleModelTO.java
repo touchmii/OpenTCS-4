@@ -14,7 +14,8 @@ import org.opentcs.drivers.vehicle.management.VehicleProcessModelTO;
  *
  * @author Martin Grzenia (Fraunhofer IML)
  */
-public class LoopbackVehicleModelTO extends VehicleProcessModelTO {
+public class LoopbackVehicleModelTO
+    extends VehicleProcessModelTO {
 
   /**
    * Whether this communication adapter is in single step mode or not (i.e. in automatic mode).

@@ -1,0 +1,88 @@
+JFDML JFormDesigner: "7.0.3.0.337" Java: "11.0.6" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.bundlePackage": "org.opentcs.kernel.controlcenter.vehicles"
+	"i18n.bundleName": "Bundle"
+	"i18n.autoExternalize": false
+	"i18n.keyPrefix": "DriverGUI"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "org.opentcs.components.kernel.ControlCenterPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
+			"axis": 0
+		} ) {
+			name: "this"
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+				name: "listDisplayPanel"
+				"border": new javax.swing.border.TitledBorder( "Vehicles in model" )
+				"maximumSize": new java.awt.Dimension( 464, 2147483647 )
+				"minimumSize": new java.awt.Dimension( 464, 425 )
+				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+					name: "jScrollPane1"
+					add( new FormComponent( "javax.swing.JTable" ) {
+						name: "vehicleTable"
+						"componentPopupMenu": new FormReference( "vehicleListPopupMenu" )
+						auxiliary() {
+							"JavaCodeGenerator.preInitCode": "${field}.setModel(new VehicleTableModel());"
+						}
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "vehicleTableMouseClicked", true ) )
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "Center"
+				} )
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+				name: "vehicleDetailPanel"
+				"border": new javax.swing.border.TitledBorder( "Vehicle details" )
+				"preferredSize": new java.awt.Dimension( 800, 23 )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 1123, 664 )
+		} )
+		add( new FormContainer( "javax.swing.JPopupMenu", new FormLayoutManager( class javax.swing.JPopupMenu ) ) {
+			name: "vehicleListPopupMenu"
+			auxiliary() {
+				"JavaCodeGenerator.variableModifiers": 2
+			}
+			addEvent( new FormEvent( "javax.swing.event.PopupMenuListener", "popupMenuWillBecomeVisible", "vehicleListPopupMenuPopupMenuWillBecomeVisible", true ) )
+			add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+				name: "driverMenu"
+				"text": new FormMessage( null, "Driver" )
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 2
+				}
+				addEvent( new FormEvent( "javax.swing.event.MenuListener", "menuSelected", "driverMenuMenuSelected", true ) )
+				add( new FormComponent( "javax.swing.JMenuItem" ) {
+					name: "noDriversMenuItem"
+					"text": "No drivers available."
+					"enabled": false
+				} )
+			} )
+			add( new FormComponent( "javax.swing.JSeparator" ) {
+				name: "jSeparator1"
+			} )
+			add( new FormComponent( "javax.swing.JMenuItem" ) {
+				name: "enableAllMenuItem"
+				"text": new FormMessage( null, "EnableAll" )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "enableAllMenuItemActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JMenuItem" ) {
+				name: "enableAllSelectedMenuItem"
+				"text": new FormMessage( null, "EnableSelected" )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "enableAllSelectedMenuItemActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JSeparator" ) {
+				name: "jSeparator4"
+			} )
+			add( new FormComponent( "javax.swing.JMenuItem" ) {
+				name: "disableAllMenuItem"
+				"text": new FormMessage( null, "DisableAll" )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "disableAllMenuItemActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JMenuItem" ) {
+				name: "disableAllSelectedMenuItem"
+				"text": new FormMessage( null, "DisableSelected" )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "disableAllSelectedMenuItemActionPerformed", true ) )
+			} )
+		} )
+	}
+}

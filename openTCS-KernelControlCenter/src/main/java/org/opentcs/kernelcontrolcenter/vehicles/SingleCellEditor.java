@@ -13,11 +13,13 @@ import java.awt.event.MouseEvent;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.CellEditorListener;
 import javax.swing.table.TableCellEditor;
+import static org.opentcs.kernelcontrolcenter.I18nKernelControlCenter.BUNDLE_PATH;
 
 /**
  * A cell editor for maintaining different editors in one column.
@@ -43,6 +45,8 @@ final class SingleCellEditor
    * The table associated with the editors.
    */
   private final JTable table;
+
+  private final ResourceBundle BUNDLE = ResourceBundle.getBundle(BUNDLE_PATH);
 
   /**
    * Constructs a SingleCellEditor.
@@ -135,6 +139,6 @@ final class SingleCellEditor
     if (editor == null) {
       editor = defaultEditor;
     }
-    table.changeSelection(row, table.getColumn("Adapter").getModelIndex(), false, false);
+    table.changeSelection(row, table.getColumn(BUNDLE.getString("vehicleTableModel.column_adapter.headerText")).getModelIndex(), false, false);
   }
 }

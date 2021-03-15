@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -43,7 +44,10 @@ final class SingleCellEditor
    */
   private final JTable table;
 
-  /**
+  private final ResourceBundle BUNDLE = ResourceBundle.getBundle("org/opentcs/kernel/controlcenter/vehicles/Bundle");
+
+
+    /**
    * Constructs a SingleCellEditor.
    * 
    * @param table The JTable associated
@@ -134,6 +138,6 @@ final class SingleCellEditor
     if (editor == null) {
       editor = defaultEditor;
     }
-    table.changeSelection(row, table.getColumn("Adapter").getModelIndex(), false, false);
+    table.changeSelection(row, table.getColumn(BUNDLE.getString("Adapter")).getModelIndex(), false, false);
   }
 }
