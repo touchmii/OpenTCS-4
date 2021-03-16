@@ -4,8 +4,8 @@ public class AgvInfo {
     private int position;
     private int direction;
     private int speed;
-    private int electric;
     private int exception;
+    private int battery;
     private int status;
     private double angle;
 
@@ -25,12 +25,12 @@ public class AgvInfo {
         this.speed = speed;
     }
 
-    public int getElectric() {
-        return electric;
+    public int getBattery() {
+        return battery;
     }
 
-    public void setElectric(int electric) {
-        this.electric = electric;
+    public void setBattery(int battery_) {
+        this.battery = (int)(battery_*1.66);
     }
 
     public int getException() {

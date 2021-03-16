@@ -7,13 +7,16 @@
  */
 package org.opentcs.kernel.extensions.controlcenter;
 
+import java.awt.*;
 import java.awt.EventQueue;
+import java.awt.event.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import javax.swing.*;
 import static java.util.Objects.requireNonNull;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -334,123 +337,126 @@ public class KernelControlCenter
   @SuppressWarnings("unchecked")
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
-    java.awt.GridBagConstraints gridBagConstraints;
+      ResourceBundle bundle = ResourceBundle.getBundle("org.opentcs.kernel.controlcenter.Bundle");
+      menuBarMain = new JMenuBar();
+      menuKernel = new JMenu();
+      menuKernelMode = new JMenu();
+      menuButtonModelling = new JRadioButtonMenuItem();
+      menuButtonOperating = new JRadioButtonMenuItem();
+      newModelMenuItem = new JMenuItem();
+      menuButtonExit = new JMenuItem();
+      menuHelp = new JMenu();
+      menuAbout = new JMenuItem();
+      tabbedPaneMain = new JTabbedPane();
+      loggingPanel = new JPanel();
+      loggingScrollPane = new JScrollPane();
+      loggingTextArea = new JTextArea();
+      loggingPropertyPanel = new JPanel();
+      autoScrollCheckBox = new JCheckBox();
 
-    buttonGroupKernelMode = new javax.swing.ButtonGroup();
-    tabbedPaneMain = new javax.swing.JTabbedPane();
-    loggingPanel = new javax.swing.JPanel();
-    loggingScrollPane = new javax.swing.JScrollPane();
-    loggingTextArea = new javax.swing.JTextArea();
-    loggingPropertyPanel = new javax.swing.JPanel();
-    autoScrollCheckBox = new javax.swing.JCheckBox();
-    menuBarMain = new javax.swing.JMenuBar();
-    menuKernel = new javax.swing.JMenu();
-    menuKernelMode = new javax.swing.JMenu();
-    menuButtonModelling = new javax.swing.JRadioButtonMenuItem();
-    menuButtonOperating = new javax.swing.JRadioButtonMenuItem();
-    newModelMenuItem = new javax.swing.JMenuItem();
-    jSeparator1 = new javax.swing.JPopupMenu.Separator();
-    menuButtonExit = new javax.swing.JMenuItem();
-    menuHelp = new javax.swing.JMenu();
-    menuAbout = new javax.swing.JMenuItem();
+      //======== this ========
+      this.setTitle(BUNDLE.getString(TITLE_BASE));
+      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+      setMinimumSize(new Dimension(1200, 750));
+      addWindowListener(new WindowAdapter() {
+          @Override
+          public void windowClosing(WindowEvent e) {
+              formWindowClosing(e);
+          }
+      });
+      Container contentPane = getContentPane();
+      contentPane.setLayout(new BorderLayout());
 
-    setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-    setTitle(BUNDLE.getString(TITLE_BASE));
-    setMinimumSize(new java.awt.Dimension(1200, 750));
-    addWindowListener(new java.awt.event.WindowAdapter() {
-      public void windowClosing(java.awt.event.WindowEvent evt) {
-        formWindowClosing(evt);
+      //======== menuBarMain ========
+      {
+
+          //======== menuKernel ========
+          {
+              menuKernel.setText("Kernel");
+
+              //======== menuKernelMode ========
+              {
+                  menuKernelMode.setText(bundle.getString("Mode"));
+
+                  //---- menuButtonModelling ----
+                  menuButtonModelling.setSelected(true);
+                  menuButtonModelling.setText(bundle.getString("KernelModeModelling"));
+                  menuButtonModelling.addActionListener(e -> menuButtonModellingActionPerformed(e));
+                  menuKernelMode.add(menuButtonModelling);
+
+                  //---- menuButtonOperating ----
+                  menuButtonOperating.setText(bundle.getString("KernelModeOperating"));
+                  menuButtonOperating.addActionListener(e -> menuButtonOperatingActionPerformed(e));
+                  menuKernelMode.add(menuButtonOperating);
+              }
+              menuKernel.add(menuKernelMode);
+
+              //---- newModelMenuItem ----
+              newModelMenuItem.setText(bundle.getString("NewModel"));
+              newModelMenuItem.addActionListener(e -> newModelMenuItemActionPerformed(e));
+              menuKernel.add(newModelMenuItem);
+              menuKernel.addSeparator();
+
+              //---- menuButtonExit ----
+              menuButtonExit.setText(bundle.getString("Exit"));
+              menuButtonExit.addActionListener(e -> menuButtonExitActionPerformed(e));
+              menuKernel.add(menuButtonExit);
+          }
+          menuBarMain.add(menuKernel);
+
+          //======== menuHelp ========
+          {
+              menuHelp.setText(bundle.getString("Help"));
+
+              //---- menuAbout ----
+              menuAbout.setText(bundle.getString("AboutOpenTCS"));
+              menuAbout.addActionListener(e -> menuAboutActionPerformed(e));
+              menuHelp.add(menuAbout);
+          }
+          menuBarMain.add(menuHelp);
       }
-    });
+      setJMenuBar(menuBarMain);
 
-    loggingPanel.setLayout(new java.awt.BorderLayout());
+      //======== tabbedPaneMain ========
+      {
 
-    loggingTextArea.setEditable(false);
-    loggingScrollPane.setViewportView(loggingTextArea);
+          //======== loggingPanel ========
+          {
+              loggingPanel.setLayout(new BorderLayout());
 
-    loggingPanel.add(loggingScrollPane, java.awt.BorderLayout.CENTER);
+              //======== loggingScrollPane ========
+              {
 
-    loggingPropertyPanel.setLayout(new java.awt.GridBagLayout());
+                  //---- loggingTextArea ----
+                  loggingTextArea.setEditable(false);
+                  loggingScrollPane.setViewportView(loggingTextArea);
+              }
+              loggingPanel.add(loggingScrollPane, BorderLayout.CENTER);
 
-    autoScrollCheckBox.setSelected(true);
-    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("org/opentcs/kernel/controlcenter/Bundle"); // NOI18N
-    autoScrollCheckBox.setText(bundle.getString("AutoScroll")); // NOI18N
-    autoScrollCheckBox.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        autoScrollCheckBoxActionPerformed(evt);
+              //======== loggingPropertyPanel ========
+              {
+                  loggingPropertyPanel.setLayout(new GridBagLayout());
+
+                  //---- autoScrollCheckBox ----
+                  autoScrollCheckBox.setSelected(true);
+                  autoScrollCheckBox.setText(bundle.getString("AutoScroll"));
+                  autoScrollCheckBox.addActionListener(e -> autoScrollCheckBoxActionPerformed(e));
+                  loggingPropertyPanel.add(autoScrollCheckBox, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0,
+                      GridBagConstraints.WEST, GridBagConstraints.NONE,
+                      new Insets(0, 0, 0, 0), 0, 0));
+              }
+              loggingPanel.add(loggingPropertyPanel, BorderLayout.PAGE_START);
+          }
+          tabbedPaneMain.addTab(bundle.getString("Logging"), loggingPanel);
       }
-    });
-    gridBagConstraints = new java.awt.GridBagConstraints();
-    gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-    gridBagConstraints.weightx = 1.0;
-    loggingPropertyPanel.add(autoScrollCheckBox, gridBagConstraints);
+      contentPane.add(tabbedPaneMain, BorderLayout.CENTER);
+      setSize(1208, 782);
+      setLocationRelativeTo(null);
 
-    loggingPanel.add(loggingPropertyPanel, java.awt.BorderLayout.PAGE_START);
-
-    tabbedPaneMain.addTab(bundle.getString("Logging"), loggingPanel); // NOI18N
-
-    getContentPane().add(tabbedPaneMain, java.awt.BorderLayout.CENTER);
-
-    menuKernel.setText("Kernel");
-
-    menuKernelMode.setText(bundle.getString("Mode")); // NOI18N
-
-    buttonGroupKernelMode.add(menuButtonModelling);
-    menuButtonModelling.setSelected(true);
-    menuButtonModelling.setText(bundle.getString("KernelModeModelling")); // NOI18N
-    menuButtonModelling.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        menuButtonModellingActionPerformed(evt);
-      }
-    });
-    menuKernelMode.add(menuButtonModelling);
-
-    buttonGroupKernelMode.add(menuButtonOperating);
-    menuButtonOperating.setText(bundle.getString("KernelModeOperating")); // NOI18N
-    menuButtonOperating.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        menuButtonOperatingActionPerformed(evt);
-      }
-    });
-    menuKernelMode.add(menuButtonOperating);
-
-    menuKernel.add(menuKernelMode);
-
-    newModelMenuItem.setText(bundle.getString("NewModel")); // NOI18N
-    newModelMenuItem.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        newModelMenuItemActionPerformed(evt);
-      }
-    });
-    menuKernel.add(newModelMenuItem);
-    menuKernel.add(jSeparator1);
-
-    menuButtonExit.setText(bundle.getString("Exit")); // NOI18N
-    menuButtonExit.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        menuButtonExitActionPerformed(evt);
-      }
-    });
-    menuKernel.add(menuButtonExit);
-
-    menuBarMain.add(menuKernel);
-
-    menuHelp.setText(bundle.getString("Help")); // NOI18N
-
-    menuAbout.setText(bundle.getString("AboutOpenTCS")); // NOI18N
-    menuAbout.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        menuAboutActionPerformed(evt);
-      }
-    });
-    menuHelp.add(menuAbout);
-
-    menuBarMain.add(menuHelp);
-
-    setJMenuBar(menuBarMain);
-
-    setSize(new java.awt.Dimension(1208, 782));
-    setLocationRelativeTo(null);
+      //---- buttonGroupKernelMode ----
+      ButtonGroup buttonGroupKernelMode = new ButtonGroup();
+      buttonGroupKernelMode.add(menuButtonModelling);
+      buttonGroupKernelMode.add(menuButtonOperating);
   }// </editor-fold>//GEN-END:initComponents
 
   private void menuButtonExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuButtonExitActionPerformed
@@ -506,23 +512,21 @@ public class KernelControlCenter
     }//GEN-LAST:event_newModelMenuItemActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JCheckBox autoScrollCheckBox;
-  private javax.swing.ButtonGroup buttonGroupKernelMode;
-  private javax.swing.JPopupMenu.Separator jSeparator1;
-  private javax.swing.JPanel loggingPanel;
-  private javax.swing.JPanel loggingPropertyPanel;
-  private javax.swing.JScrollPane loggingScrollPane;
-  private javax.swing.JTextArea loggingTextArea;
-  private javax.swing.JMenuItem menuAbout;
-  private javax.swing.JMenuBar menuBarMain;
-  private javax.swing.JMenuItem menuButtonExit;
-  private javax.swing.JRadioButtonMenuItem menuButtonModelling;
-  private javax.swing.JRadioButtonMenuItem menuButtonOperating;
-  private javax.swing.JMenu menuHelp;
-  private javax.swing.JMenu menuKernel;
-  private javax.swing.JMenu menuKernelMode;
-  private javax.swing.JMenuItem newModelMenuItem;
-  private javax.swing.JTabbedPane tabbedPaneMain;
+  private JMenuBar menuBarMain;
+  private JMenu menuKernel;
+  private JMenu menuKernelMode;
+  private JRadioButtonMenuItem menuButtonModelling;
+  private JRadioButtonMenuItem menuButtonOperating;
+  private JMenuItem newModelMenuItem;
+  private JMenuItem menuButtonExit;
+  private JMenu menuHelp;
+  private JMenuItem menuAbout;
+  private JTabbedPane tabbedPaneMain;
+  private JPanel loggingPanel;
+  private JScrollPane loggingScrollPane;
+  private JTextArea loggingTextArea;
+  private JPanel loggingPropertyPanel;
+  private JCheckBox autoScrollCheckBox;
   // End of variables declaration//GEN-END:variables
   // CHECKSTYLE:ON
 }

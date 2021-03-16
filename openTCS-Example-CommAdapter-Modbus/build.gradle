@@ -16,7 +16,7 @@ dependencies {
     compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
     compileOnly group: 'commons-codec', name: 'commons-codec', version: '1.10', classifier: 'sources'
     implementation 'com.intelligt.modbus:jlibmodbus:1.2.9.7'
-    implementation 'uk.co.caprica:vlcj:4.5.2'
+//    implementation 'uk.co.caprica:vlcj:4.5.2'
 }
 
 task release {

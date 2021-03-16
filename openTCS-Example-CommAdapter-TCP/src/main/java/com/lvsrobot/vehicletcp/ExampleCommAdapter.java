@@ -10,7 +10,6 @@ import org.opentcs.data.model.Triple;
 import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.model.Vehicle.Orientation;
 import org.opentcs.data.notification.UserNotification;
-import org.opentcs.data.order.DriveOrder;
 import org.opentcs.data.order.Route.Step;
 import org.opentcs.drivers.vehicle.AdapterCommand;
 import org.opentcs.drivers.vehicle.BasicVehicleCommAdapter;
@@ -23,7 +22,6 @@ import org.opentcs.util.ExplainedBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
-import sun.font.TrueTypeFont;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -31,7 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -105,6 +102,8 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
     private Point previousPoint;
     private String previousID;
 
+    private static AgvInfo agvInfo_callback = null;
+
     private MovementCommand currentCommand;
 
     private MovementCommand previousCommand;
@@ -154,6 +153,8 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
             return;
         }
         agv = new AgvTelegramNew(getProcessModel().getIp(), getProcessModel().getPort());
+//        agv.Connect();
+        agv.getAgvInfo();
 
 
 
@@ -167,9 +168,9 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
         simThread.start();
         super.enable();
 //        getProcessModel().setVehiclePosition("4");
-        String init_point = getInitialPosition();
-        getProcessModel().setVehiclePosition(init_point);
-        getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("adapter init finish, vehicle current point: {}", init_point).getMessage(), UserNotification.Level.INFORMATIONAL));
+//        String init_point = getInitialPosition();
+//        getProcessModel().setVehiclePosition(init_point);
+//        getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("adapter init finish, vehicle current point: {}", init_point).getMessage(), UserNotification.Level.INFORMATIONAL));
     }
 
     @Override
@@ -177,7 +178,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
         if (!isEnabled()) {
             return;
         }
-//        agv.disConnecte();
+        agv.Terminal();
         currentDriveOrder = null;
         sendDriveOrder = null;
         currentPoint = null;
@@ -306,19 +307,19 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 
     @Override
     protected synchronized void connectVehicle() {
-//        this.agv.;
+        this.agv.Connect();
     }
 
     @Override
     protected synchronized void disconnectVehicle() {
 
-//        this.agv.disConnecte();
+        this.agv.disConnect();
     }
 
     @Override
     protected synchronized boolean isVehicleConnected() {
-        return true;
-//        return this.agv.isConnected();
+//        return true;
+        return this.agv.isConnected();
 
     }
 
@@ -371,6 +372,11 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
         agv.abortPath();
    }
 
+
+   public static void callback(AgvInfo agvInfo) {
+        agvInfo_callback = agvInfo;
+   }
+
     private class VehicleSimulationTask extends CyclicTask {
         private int simAdvanceTime;
 
@@ -391,6 +397,9 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 
         double previous_angle;
 
+        String currentPoint;
+        int currentStatus;
+
         String ppp = null;
 
         @Override
@@ -398,23 +407,23 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
             try {
                 //获取状态  位置  速度  方向等
                 AgvInfo agvInfo = agv.getAgvInfo();
-                if (agvInfo == null) {
-                    Thread.sleep(500);
-                    return;
-                }
-                String currentPoint = String.valueOf(agvInfo.getPosition());
-                int currentStatus = agvInfo.getStatus();
-//                int[] currentPosition = agvInfo.getCurrentPosition();
-//                Triple precisePosition = new Triple((long)currentPosition[0], (long)currentPosition[1], 0);
-//                previous_precise = current_precise;
-//                current_precise = agvInfo.getPrecisePosition();
-//                currentID = v
-                previous_angle = current_angle;
-                current_angle = agvInfo.getAngle();
+                if (agvInfo_callback != null) {
+//                    Thread.sleep(500);
+//                    return;
+                    currentPoint = String.valueOf(agvInfo_callback.getPosition());
+                    currentStatus = agvInfo_callback.getStatus();
+    //                int[] currentPosition = agvInfo.getCurrentPosition();
+    //                Triple precisePosition = new Triple((long)currentPosition[0], (long)currentPosition[1], 0);
+    //                previous_precise = current_precise;
+    //                current_precise = agvInfo.getPrecisePosition();
+    //                currentID = v
+                    previous_angle = current_angle;
+                    current_angle = agvInfo_callback.getAngle();
 
-                getProcessModel().setVehiclePosition(String.valueOf(agvInfo.getPosition()));
-                getProcessModel().setVehicleOrientationAngle(agvInfo.getAngle());
-                getProcessModel().setVehicleEnergyLevel(agvInfo.getElectric());
+                    getProcessModel().setVehiclePosition(String.valueOf(agvInfo_callback.getPosition()));
+                    getProcessModel().setVehicleOrientationAngle(agvInfo_callback.getAngle());
+                    getProcessModel().setVehicleEnergyLevel(agvInfo_callback.getBattery());
+                }
 //                LOG.info("xxxx");
 //                if(agvInfo.getLoadStatus() == 1) {
 //                    loadState = LoadState.FULL;
@@ -462,10 +471,10 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                     if (sendDriveOrder != getcurrentDriveOrder() && getProcessModel().getVehicleState().equals(Vehicle.State.IDLE)) {
 
                         configRoute.setRoute(getcurrentDriveOrder());
-                        configRoute.setAngle(agvInfo.getAngle());
+                        configRoute.setAngle(agvInfo_callback.getAngle());
                         byte[] path = configRoute.getPath();
                         Thread.sleep(500);
-                        if (agv.sendPath(path) != true) {
+                        if (!agv.sendPath(path)) {
                             return;
                         }
                         sendDriveOrder = getcurrentDriveOrder();

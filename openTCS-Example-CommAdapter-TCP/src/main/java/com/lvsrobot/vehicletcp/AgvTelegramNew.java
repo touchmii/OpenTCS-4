@@ -1,97 +1,121 @@
 package com.lvsrobot.vehicletcp;
 
+import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.bytes.ByteArrayDecoder;
+import io.netty.handler.codec.bytes.ByteArrayEncoder;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.opentcs.data.model.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import javax.swing.border.MatteBorder;
 
 public class AgvTelegramNew {
-
     private static final Logger LOG = LoggerFactory.getLogger(AgvTelegramNew.class);
-    private SocketUtils socket;
     AgvInfo agvInfo = new AgvInfo();
+
+    static final int RECONNECT_DELAY = 5;
+    static final int READ_TIMEOUT = 0;
+    static final int WRITE_TIMEOUT = 0;
+    static final int IDLE_TIMEOUT = 50;
+    static String remote_ip = null;
+    static int remote_port = 0;
+    static ChannelFuture f = null;
+    EventLoopGroup group = null;
+    private static final UptimeClientHandler handler = new UptimeClientHandler();
+    private static Bootstrap bs = null;
     public AgvTelegramNew(String ip, int port) {
-        socket = new SocketUtils(ip, port);
+        remote_ip = ip;
+        remote_port = port;
+        group = new NioEventLoopGroup();
+        bs = new Bootstrap();
+        bs.group(group)
+                .channel(NioSocketChannel.class)
+                .remoteAddress(ip, port)
+                .handler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel(SocketChannel ch) throws Exception {
+                        ch.pipeline().addLast(new ByteArrayEncoder());
+                        ch.pipeline().addLast(new ByteToMsgDecoder());
+                        ch.pipeline().addLast(new ByteArrayDecoder());
+                        ch.pipeline().addLast(new IdleStateHandler(READ_TIMEOUT, WRITE_TIMEOUT, IDLE_TIMEOUT), handler);
+                    }
+                });
+        f = bs.connect();
+
     }
 
-    /**
-     * byte转无符号int
-     *
-     * @param data
-     * @return
-     */
-    private static Integer byteToUnsignedInt(byte data) {
-        return data & 0xff;
-    }
-
-    public AgvInfo getAgvInfo() {
-        byte[] sendBytes = {0, 1, 2, 1, (byte)253};
-//        sendBytes[0] = 'a';
-//        sendBytes[1] = 0;
-//        sendBytes[2] = 0;
-//        sendBytes[3] = 0;
-//        sendBytes[4] = 0;
-//        sendBytes[5] = 0;
-//        sendBytes[6] = 0;
-//        sendBytes[7] = 0;
-        byte[] retBytes = socket.send(sendBytes);
-        if (retBytes == null)
-            return null;
-        if (retBytes.length < 18) {
-            return null;
+    public boolean isConnected() {
+        if (f == null) {
+            return false;
+        } else {
+            return f.channel().isActive();
         }
-//        AgvInfo agvInfo = new AgvInfo();
-        agvInfo.setPosition(byteToUnsignedInt(retBytes[6]) << 8 | byteToUnsignedInt(retBytes[7]));
-        agvInfo.setSpeed(byteToUnsignedInt(retBytes[8]));
-        agvInfo.setAngle(byteToUnsignedInt(retBytes[9]));
-        agvInfo.setElectric(byteToUnsignedInt(retBytes[11]));
-//        agvInfo.setException(byteToUnsignedInt(retBytes[5]));
-        agvInfo.setStatus(byteToUnsignedInt(retBytes[12]));
+    }
+    public void Connect() {
+//        if(!this.isConnected()) {
+//            f = bs.connect();
+//        }
+    }
+    public void disConnect() {
+        if(this.isConnected()) {
+            handler.disConnect();
+        }
+    }
+
+    public void Terminal() {
+        try {
+
+            f.channel().closeFuture();
+            f = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        group.shutdownGracefully();
+    }
+
+    public static void connect() {
+        bs.connect().addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) throws Exception {
+                if (future.cause() != null) {
+                    handler.startTime = -1;
+//                    handler.println("Failed to connect");
+                    LOG.error("Failed to connect: {} by: {}", remote_ip,future.cause());
+                } else {
+                    f = future;
+                }
+            }
+        });
+    }
+
+    public synchronized AgvInfo getAgvInfo() {
+        this.Connect();
+        byte[] query = {0, 1, 2, 1, (byte)253};
+        f.channel().writeAndFlush(query);
         return agvInfo;
     }
-
-    public boolean sendWork(String finalOperation) {
+    public synchronized boolean sendPath(byte[] path) {
+        this.Connect();
+        f.channel().writeAndFlush(path);
+        LOG.info("send path: {}", ByteBufUtil.hexDump(path));
         return true;
     }
-    public boolean sendPath(byte[] path) {
-        byte[] retBytes = socket.send(path);
-        LOG.info(Arrays.toString(retBytes));
-//        if (retBytes == null || retBytes.length != 18) {
-//            return false;
-//        }
+
+    public synchronized boolean abortPath() {
+        this.Connect();
+        byte[] abort_path = {0, 1, 6, 0, 2, 0, 0};
+        f.channel().writeAndFlush(abort_path);
         return true;
     }
-    public boolean sendPath(int sour, int dest, int director) {
-//        byte[] sendBytes = new byte[9];
-        byte [] sendBytes = {0, 1, 12, 0, 12, 0, 0, 1, 1};
-        byte[] sendBytes2 = new byte[8];
-        sendBytes2[0] = (byte) (sour >> 8);
-        sendBytes[1] = (byte) (sour & 0xFF);
-        sendBytes[2] = (byte)director;
-        sendBytes[3] = 1;
-        sendBytes[4] = (byte) (dest >> 8);
-        sendBytes[6] = (byte) (dest & 0xFF);
-        sendBytes[7] = 0;
-        sendBytes[8] = 0;
-//        byte[18] sendBytes3 =
-
-        byte[] retBytes = socket.send(sendBytes);
-        if (retBytes == null)
-            return false;
-        if (retBytes.length != 18) {
-            return false;
-        }
-        return true;
-    }
-    public static byte[] unitByteArray(byte[] byte1,byte[] byte2){
-        byte[] unitByte = new byte[byte1.length + byte2.length];
-        System.arraycopy(byte1, 0, unitByte, 0, byte1.length);
-        System.arraycopy(byte2, 0, unitByte, byte1.length, byte2.length);
-        return unitByte;
-    }
-
-    public void abortPath() {}
 
     public void pausePath() {
     }
@@ -103,5 +127,8 @@ public class AgvTelegramNew {
     }
 
     public void forkAction(Triple vehiclePrecisePosition, int i, int parseInt) {
+    }
+
+    public void sendWork(String operation) {
     }
 }

@@ -1,6 +1,14 @@
 package com.lvsrobot.vehicletcp;
 
+import org.opentcs.data.model.Triple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
+
 public class AgvTelegram {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AgvTelegram.class);
     private SocketUtils socket;
     AgvInfo agvInfo = new AgvInfo();
     public AgvTelegram(String ip, int port) {
@@ -37,7 +45,7 @@ public class AgvTelegram {
         agvInfo.setPosition(byteToUnsignedInt(retBytes[6]) << 8 | byteToUnsignedInt(retBytes[7]));
         agvInfo.setSpeed(byteToUnsignedInt(retBytes[8]));
         agvInfo.setAngle(byteToUnsignedInt(retBytes[9]));
-        agvInfo.setElectric(byteToUnsignedInt(retBytes[11]));
+        agvInfo.setBattery(byteToUnsignedInt(retBytes[11]));
 //        agvInfo.setException(byteToUnsignedInt(retBytes[5]));
         agvInfo.setStatus(byteToUnsignedInt(retBytes[12]));
         return agvInfo;
@@ -46,7 +54,14 @@ public class AgvTelegram {
     public boolean sendWork(String finalOperation) {
         return true;
     }
-
+    public boolean sendPath(byte[] path) {
+        byte[] retBytes = socket.send(path);
+        LOG.info(Arrays.toString(retBytes));
+//        if (retBytes == null || retBytes.length != 18) {
+//            return false;
+//        }
+        return true;
+    }
     public boolean sendPath(int sour, int dest, int director) {
 //        byte[] sendBytes = new byte[9];
         byte [] sendBytes = {0, 1, 12, 0, 12, 0, 0, 1, 1};
@@ -64,7 +79,7 @@ public class AgvTelegram {
         byte[] retBytes = socket.send(sendBytes);
         if (retBytes == null)
             return false;
-        if (retBytes.length != 8) {
+        if (retBytes.length != 18) {
             return false;
         }
         return true;
@@ -74,5 +89,19 @@ public class AgvTelegram {
         System.arraycopy(byte1, 0, unitByte, 0, byte1.length);
         System.arraycopy(byte2, 0, unitByte, byte1.length, byte2.length);
         return unitByte;
+    }
+
+    public void abortPath() {}
+
+    public void pausePath() {
+    }
+
+    public void resumePath() {
+    }
+
+    public void resetAlarm() {
+    }
+
+    public void forkAction(Triple vehiclePrecisePosition, int i, int parseInt) {
     }
 }

@@ -15,10 +15,11 @@ dependencies {
     compileOnly group: 'commons-codec', name: 'commons-codec', version: '1.10', classifier: 'sources'
 
 //    implementation 'com.littlegreens.netty.client:nettyclientlib:1.0.5'
-//    implementation 'org.nd4j:nd4j:1.0.0-beta7'
-    // https://mvnrepository.com/artifact/org.nd4j/nd4j-api
-    compile group: 'org.nd4j', name: 'nd4j-api', version: '1.0.0-beta7'
+    // https://mvnrepository.com/artifact/io.reactivex/rxnetty-tcp
+//    runtimeOnly group: 'io.reactivex', name: 'rxnetty-tcp', version: '0.5.3'
 
+
+    implementation 'io.netty:netty-all:4.1.60.Final'
 }
 
 task release {
