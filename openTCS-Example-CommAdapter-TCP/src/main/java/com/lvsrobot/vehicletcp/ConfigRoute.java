@@ -22,6 +22,8 @@ public class ConfigRoute {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigRoute.class);
 
+    private String debug_path = new String("robot path ");
+
     //    public ConfigRoute() {
 //
 //    }
@@ -40,9 +42,12 @@ public class ConfigRoute {
      * 格式{id1,dir,id2,dir,id3,dir,action}
       * @return
      */
+    public String getDebugPath() {
+        return debug_path;
+    }
     public byte[] getPath() {
         byte[] path = new byte[steps.size()*4+14];
-        String debug_path = new String("robot path ");
+//        String debug_path = new String("robot path ");
 //        switch (driveorder.getDestination().getOperation()) {
 //            case "MOVE":
 //                path[1] = 0;
@@ -82,8 +87,8 @@ public class ConfigRoute {
         path[7] = 0x01;
         path[8] = 0x01;
 //        if (steps.size() > )
-        int td = 1000;
-        int td2 = -1000;
+        int td = 800;
+        int td2 = -800;
         Triple point0 = new Triple();
         Triple point1 = new Triple();
         Triple point2 = new Triple();

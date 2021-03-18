@@ -2,6 +2,7 @@ package com.lvsrobot.vehicletcp;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.assistedinject.Assisted;
+import org.apache.commons.codec.binary.StringUtils;
 import org.opentcs.components.kernel.services.TCSObjectService;
 import org.opentcs.components.kernel.services.TransportOrderService;
 import org.opentcs.customizations.kernel.KernelExecutor;
@@ -112,6 +113,8 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 
     private final TCSObjectService objectService;
 
+    private int operate_point = 0;
+
 //    private
 
 //    private  sendDriverOrder;
@@ -127,7 +130,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
     @Inject
     public ExampleCommAdapter(@Assisted Vehicle vehicle, ExampleAdapterComponentsFactory componentsFactory, @KernelExecutor ExecutorService kernelExecutor, TransportOrderService orderService, @Nonnull TCSObjectService objectService) {
         //父类BasicVehicleCommAdapter实例需要的参数
-        super(new ExampleProcessModel(vehicle), 30, 20, "Charge");
+        super(new ExampleProcessModel(vehicle), 30, 30, "Charge");
         this.componentsFactory = requireNonNull(componentsFactory, "componentsFactory");
         this.vehicle = requireNonNull(vehicle, "vehicle");
         this.kernelExecutor = requireNonNull(kernelExecutor, "kernelExecutor");
@@ -190,6 +193,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 //        this.setcurrentDriveOrder(null);
         vehicleSimulationTask.terminate();
         vehicleSimulationTask = null;
+        operate_point = 0;
         getProcessModel().getVelocityController().removeVelocityListener(getProcessModel());
         super.disable();
     }
@@ -223,7 +227,18 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
     @Override
     public void execute(AdapterCommand command) {
         PublishEventCommand publishCommand = (PublishEventCommand) command;
-        switch (publishCommand.getEventAppendix().toString()) {
+        String command_str = publishCommand.getEventAppendix().toString();
+        try {
+            operate_point = Integer.parseInt(command_str);
+            LOG.info("Operate action in Point: {}", operate_point);
+//            getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("Operate confirm in Point: {}", operate_point), UserNotification.Level.INFORMATIONAL));
+            getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("forkUnload int point: {}", operate_point).getMessage(), UserNotification.Level.INFORMATIONAL));
+
+            return;
+        } catch (NumberFormatException e) {
+//            LOG.info("");
+        }
+        switch (command_str) {
             case "pausePath":
                 agv.pausePath();
                 getProcessModel().publishUserNotification(new UserNotification("send pause path command to vehicle", UserNotification.Level.INFORMATIONAL));
@@ -370,6 +385,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
    public void abortDriveOrder() {
         LOG.info("abort path");
         agv.abortPath();
+        getSentQueue().clear();
    }
 
 
@@ -398,9 +414,14 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
         double previous_angle;
 
         String currentPoint;
+        int currentPoint_int;
         int currentStatus;
+        double currentAngle;
 
         String ppp = null;
+
+        private String wait_point = "";
+        private String wait_oprate = "";
 
         @Override
         protected void runActualTask() {
@@ -411,18 +432,45 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 //                    Thread.sleep(500);
 //                    return;
                     currentPoint = String.valueOf(agvInfo_callback.getPosition());
+                    currentPoint_int = agvInfo_callback.getPosition();
                     currentStatus = agvInfo_callback.getStatus();
+                    currentAngle = agvInfo_callback.getAngle();
     //                int[] currentPosition = agvInfo.getCurrentPosition();
     //                Triple precisePosition = new Triple((long)currentPosition[0], (long)currentPosition[1], 0);
     //                previous_precise = current_precise;
     //                current_precise = agvInfo.getPrecisePosition();
     //                currentID = v
-                    previous_angle = current_angle;
-                    current_angle = agvInfo_callback.getAngle();
+//                    previous_angle = current_angle;
+//                    current_angle = agvInfo_callback.getAngle();
 
-                    getProcessModel().setVehiclePosition(String.valueOf(agvInfo_callback.getPosition()));
-                    getProcessModel().setVehicleOrientationAngle(agvInfo_callback.getAngle());
+//                    LOG.info("BiZhang dis : {}", agvInfo_callback.getBizhang());
+                    if(currentPoint_int == 522 && currentAngle == 0 && agvInfo_callback.getBizhang() > 10) {
+                        agv.radarDis(10, 35, 15);
+                        agv.radarDis(10, 35, 15);
+                        LOG.warn("关避障 522");
+                    } else if(currentPoint_int == 121 && currentAngle == 270 && agvInfo_callback.getBizhang() > 10) {
+                        agv.radarDis(10, 35, 15);
+                        agv.radarDis(10, 35, 15);
+                        LOG.warn("关避障 121");
+                    } else if((currentPoint_int == 129 || currentPoint_int == 169 || currentPoint_int == 806 || currentPoint_int == 808) && currentAngle == 270 && agvInfo_callback.getBizhang() > 10) {
+                        agv.radarDis(10, 35, 15);
+                        agv.radarDis(10, 35, 15);
+                        LOG.warn("关避障 出X号工位");
+                    } else if((currentPoint_int == 543 || currentPoint_int == 701 || currentPoint_int == 716 || currentPoint_int == 826) && currentAngle == 270 && agvInfo_callback.getBizhang() < 20) {
+                        agv.radarDis(70, 35, 15);
+                        agv.radarDis(70, 35, 15);
+                        LOG.warn("开避障 出X号工位");
+                    }
+                    else if (currentPoint_int != 121 && currentPoint_int != 522 && currentPoint_int != 129 && currentPoint_int != 169 && currentPoint_int != 806 && currentPoint_int != 808 && currentPoint_int != 207 && agvInfo_callback.getBizhang() < 20) {
+                        agv.radarDis(70, 35, 15);
+                        agv.radarDis(70, 35, 15);
+                        LOG.warn("开避障 所有点位");
+                    }
+
+                    getProcessModel().setVehiclePosition(currentPoint);
+                    getProcessModel().setVehicleOrientationAngle(currentAngle);
                     getProcessModel().setVehicleEnergyLevel(agvInfo_callback.getBattery());
+                    agvInfo_callback = null;
                 }
 //                LOG.info("xxxx");
 //                if(agvInfo.getLoadStatus() == 1) {
@@ -439,7 +487,19 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 //                getProcessModel().setVehiclePosition(currentPoint);
 
                 if (currentStatus == 0) {
-                    getProcessModel().setVehicleState(Vehicle.State.IDLE);
+                    if (wait_point.equals("")) {
+
+                        getProcessModel().setVehicleState(Vehicle.State.IDLE);
+                    } else {
+//                        assert agvInfo_callback != null;
+                        if (String.valueOf(operate_point).equals(wait_point) && currentPoint.equals(wait_point)) {
+                            operate_point = 0;
+                            wait_point = "";
+                            getProcessModel().setVehicleState(Vehicle.State.IDLE);
+                        } else if (operate_point > 0) {
+                            operate_point = 0;
+                        }
+                    }
                 } else if (currentStatus == 1) {
                     getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
                 }
@@ -468,24 +528,29 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                     // If we were told to move somewhere, simulate the journey.
 //                    LOG.info("Processing MovementCommand...");
 //                    final Route.Step curStep = curCommand.getStep();
-                    if (sendDriveOrder != getcurrentDriveOrder() && getProcessModel().getVehicleState().equals(Vehicle.State.IDLE)) {
+                    if (sendDriveOrder != getcurrentDriveOrder() && getProcessModel().getVehicleState() == Vehicle.State.IDLE) {
 
                         configRoute.setRoute(getcurrentDriveOrder());
-                        configRoute.setAngle(agvInfo_callback.getAngle());
+                        configRoute.setAngle(currentAngle);
                         byte[] path = configRoute.getPath();
+                        String debugPath = configRoute.getDebugPath();
                         Thread.sleep(500);
                         if (!agv.sendPath(path)) {
                             return;
                         }
                         sendDriveOrder = getcurrentDriveOrder();
-                        LOG.info("send path to vehicle : {}", path);
+                        LOG.info("send path to vehicle : {}", debugPath);
 //                        MessageFormatter.format(format, arg).getMessage()
 //                        UserNotification notif = new UserNotification(MessageFormatter.format("send path to vehicle: {}", path).getMessage(), UserNotification.Level.INFORMATIONAL);
-                        getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("send path to vehicle: {}", path).getMessage(), UserNotification.Level.INFORMATIONAL));
+                        getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("send path to vehicle: {}", debugPath).getMessage(), UserNotification.Level.INFORMATIONAL));
                         pathStartPosition = sendDriveOrder.getRoute().getSteps().get(0).getSourcePoint();
                         pathStartID = sendDriveOrder.getRoute().getSteps().get(0).getSourcePoint().getName();
                         getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
-//                        ppp = sendDriveOrder.getRoute().getSteps().get(0).getDestinationPoint().getName();
+                        if(getcurrentDriveOrder().getDestination().getOperation().equals("LOAD") || getcurrentDriveOrder().getDestination().getOperation().equals("UNLOAD")) {
+                            wait_point = getcurrentDriveOrder().getRoute().getFinalDestinationPoint().getName();
+                            LOG.warn("XXX wait_point: {} ", wait_point);
+                        }
+                        ppp = getcurrentDriveOrder().getRoute().getSteps().get(0).getSourcePoint().getName();
 
 //                        agv.sendPath()
                     }
@@ -503,17 +568,17 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 //                        currentPoint = p;
 //                        if( currentPoint == p)
 //                        getProcessModel().setVehiclePosition(p.getName());
-                        if (getSentQueue().size() == 0) {
-                            if (getProcessModel().getVehicleState() == Vehicle.State.IDLE) {
+                        if (getSentQueue().isEmpty()) {
+//                            if (getProcessModel().getVehicleState() == Vehicle.State.IDLE) {
                                 MovementCommand sentCmd = getSentQueue().poll();
                                 getProcessModel().commandExecuted(curCommand);
                                 getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("reach to end point: {}", currentPoint).getMessage(), UserNotification.Level.INFORMATIONAL));
 
                                 currentCommand = null;
                                 curCommand = null;
-                                getProcessModel().setVehicleState(Vehicle.State.IDLE);
+//                                getProcessModel().setVehicleState(Vehicle.State.IDLE);
                                 ppp = null;
-                            }
+//                            }
                             Thread.sleep(500);
                         } else {
 //                            currentPoint ==
@@ -523,6 +588,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 
                             currentCommand = null;
                             curCommand = null;
+
                         }
                     }
                     // Simulate the movement.

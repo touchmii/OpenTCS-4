@@ -110,6 +110,31 @@ public class AgvTelegramNew {
         return true;
     }
 
+    public synchronized boolean radarDis(int distance, int width, int length) {
+        this.Connect();
+        byte[] radarCommand = {0, 1, 4, 0, 3, (byte)distance, (byte)width, (byte)length, 0};
+        byte check = 0;
+        for(int i=0; i<8;i++) {
+            check = (byte) (check ^ radarCommand[i]);
+        }
+        radarCommand[8] = (byte) ~ check;
+        try {
+
+            Thread.sleep(200);//毫秒
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        f.channel().writeAndFlush(radarCommand);
+        LOG.info("send radar command: {}", ByteBufUtil.hexDump(radarCommand));
+        try {
+
+            Thread.sleep(200);//毫秒
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
     public synchronized boolean abortPath() {
         this.Connect();
         byte[] abort_path = {0, 1, 6, 0, 2, 0, 0};

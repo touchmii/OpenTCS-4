@@ -310,6 +310,7 @@ public class DefaultVehicleController
               currentDriveOrder,
               newOrder);
 
+      LOG.debug("{}: Setting drive order: {}", vehicle.getName(), newOrder);
       scheduler.claim(this, asResourceSequence(newOrder.getRoute().getSteps()));
 
       currentDriveOrder = newOrder;
@@ -343,6 +344,7 @@ public class DefaultVehicleController
               "The new drive order contains steps the vehicle didn't process for the current "
                       + "drive order.");
 
+      LOG.debug("{}: Updating drive order: {}", vehicle.getName(), newOrder);
       // XXX Be a bit more thoughtful of which resource to claim/unclaim
       // XXX Unclaim only resources that would have been allocated in the future...
       scheduler.unclaim(this);
@@ -573,6 +575,7 @@ public class DefaultVehicleController
       pendingCommand = null;
       pendingResources = null;
 
+      LOG.debug("{}: Accepting allocated resources: {}", vehicle.getName(), resources);
       allocatedResources.add(resources);
       // Send the command to the communication adapter.
       checkState(commAdapter.enqueueCommand(command),

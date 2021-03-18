@@ -7,19 +7,13 @@
  */
 package org.opentcs.kernel.extensions.controlcenter.vehicles;
 
-import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import javax.swing.*;
-import javax.swing.table.*;
+
 import static java.util.Objects.requireNonNull;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -300,226 +294,211 @@ final class DetailPanel
    */
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
-      ResourceBundle bundle = ResourceBundle.getBundle("org.opentcs.kernel.controlcenter.vehicles.Bundle");
-      tabbedPane = new JTabbedPane();
-      overviewTabPanel = new JPanel();
-      headPanel = new JPanel();
-      statusPanel = new JPanel();
-      adapterStatusPanel = new JPanel();
-      chkBoxEnable = new JCheckBox();
-      statusFiguresPanel = new JPanel();
-      curPosLbl = new JLabel();
-      curPosTxt = new JTextField();
-      curStateLbl = new JLabel();
-      curStateTxt = new JTextField();
-      fillingLbl = new JLabel();
-      logoPanel = new JPanel();
-      logoLbl = new JLabel();
-      logPanel = new JPanel();
-      logTableScrollPane = new JScrollPane();
-      loggingTable = new JTable();
-      logTextScrollPane = new JScrollPane();
-      loggingTextArea = new JTextArea();
-      logPopupMenu = new JPopupMenu();
-      clearMenuItem = new JMenuItem();
-      loggingTablePopupMenu = new JPopupMenu();
-      filterMenu = new JMenu();
-      everythingCheckBoxMenuItem = new JCheckBoxMenuItem();
-      warningsCheckBoxMenuItem = new JCheckBoxMenuItem();
-      errorsCheckBoxMenuItem = new JCheckBoxMenuItem();
-      noVehiclePanel = new JPanel();
-      noVehicleLabel = new JLabel();
+    java.awt.GridBagConstraints gridBagConstraints;
 
-      //======== this ========
-      setBorder(new TitledBorder("<User Code>"));
-      setLayout(new BorderLayout());
+    logPopupMenu = new javax.swing.JPopupMenu();
+    clearMenuItem = new javax.swing.JMenuItem();
+    loggingTablePopupMenu = new javax.swing.JPopupMenu();
+    filterMenu = new javax.swing.JMenu();
+    everythingCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+    warningsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+    errorsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+    noVehiclePanel = new javax.swing.JPanel();
+    noVehicleLabel = new javax.swing.JLabel();
+    tabbedPane = new javax.swing.JTabbedPane();
+    overviewTabPanel = new javax.swing.JPanel();
+    headPanel = new javax.swing.JPanel();
+    statusPanel = new javax.swing.JPanel();
+    adapterStatusPanel = new javax.swing.JPanel();
+    chkBoxEnable = new javax.swing.JCheckBox();
+    statusFiguresPanel = new javax.swing.JPanel();
+    curPosLbl = new javax.swing.JLabel();
+    curPosTxt = new javax.swing.JTextField();
+    curStateLbl = new javax.swing.JLabel();
+    curStateTxt = new javax.swing.JTextField();
+    fillingLbl = new javax.swing.JLabel();
+    logoPanel = new javax.swing.JPanel();
+    logoLbl = new javax.swing.JLabel();
+    logPanel = new javax.swing.JPanel();
+    logTableScrollPane = new javax.swing.JScrollPane();
+    loggingTable = new javax.swing.JTable();
+    logTextScrollPane = new javax.swing.JScrollPane();
+    loggingTextArea = new javax.swing.JTextArea();
 
-      //======== tabbedPane ========
-      {
-          tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-
-          //======== overviewTabPanel ========
-          {
-              overviewTabPanel.setLayout(new GridBagLayout());
-
-              //======== headPanel ========
-              {
-                  headPanel.setLayout(new BorderLayout());
-
-                  //======== statusPanel ========
-                  {
-                      statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
-
-                      //======== adapterStatusPanel ========
-                      {
-                          adapterStatusPanel.setBorder(new TitledBorder("Adapter status"));
-                          adapterStatusPanel.setLayout(new BorderLayout());
-
-                          //---- chkBoxEnable ----
-                          chkBoxEnable.setText(bundle.getString("EnableAdapter"));
-                          chkBoxEnable.setEnabled(false);
-                          chkBoxEnable.addActionListener(e -> chkBoxEnableActionPerformed(e));
-                          adapterStatusPanel.add(chkBoxEnable, BorderLayout.CENTER);
-                      }
-                      statusPanel.add(adapterStatusPanel);
-
-                      //======== statusFiguresPanel ========
-                      {
-                          statusFiguresPanel.setBorder(new TitledBorder("Vehicle status"));
-                          statusFiguresPanel.setLayout(new GridBagLayout());
-
-                          //---- curPosLbl ----
-                          curPosLbl.setText(bundle.getString("CurrentPosition"));
-                          statusFiguresPanel.add(curPosLbl, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-                              GridBagConstraints.EAST, GridBagConstraints.NONE,
-                              new Insets(0, 3, 0, 0), 0, 0));
-
-                          //---- curPosTxt ----
-                          curPosTxt.setEditable(false);
-                          curPosTxt.setColumns(9);
-                          curPosTxt.setHorizontalAlignment(SwingConstants.RIGHT);
-                          curPosTxt.setText("Point-0001");
-                          statusFiguresPanel.add(curPosTxt, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-                              GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                              new Insets(0, 3, 0, 0), 0, 0));
-
-                          //---- curStateLbl ----
-                          curStateLbl.setText(bundle.getString("CurrentState"));
-                          statusFiguresPanel.add(curStateLbl, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-                              GridBagConstraints.EAST, GridBagConstraints.NONE,
-                              new Insets(3, 3, 0, 0), 0, 0));
-
-                          //---- curStateTxt ----
-                          curStateTxt.setText(Vehicle.State.UNKNOWN.name());
-                          curStateTxt.setEditable(false);
-                          curStateTxt.setColumns(9);
-                          curStateTxt.setHorizontalAlignment(SwingConstants.RIGHT);
-                          statusFiguresPanel.add(curStateTxt, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
-                              GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                              new Insets(3, 3, 0, 0), 0, 0));
-                          statusFiguresPanel.add(fillingLbl, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0,
-                              GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                              new Insets(0, 0, 0, 0), 0, 0));
-                      }
-                      statusPanel.add(statusFiguresPanel);
-                  }
-                  headPanel.add(statusPanel, BorderLayout.WEST);
-
-                  //======== logoPanel ========
-                  {
-                      logoPanel.setBackground(Color.white);
-                      logoPanel.setLayout(new BorderLayout());
-
-                      //---- logoLbl ----
-                      logoLbl.setHorizontalAlignment(SwingConstants.CENTER);
-                      logoLbl.setIcon(new ImageIcon(getClass().getResource("/org/opentcs/kernel/controlcenter/res/logos/opentcs_logo.gif")));
-                      logoPanel.add(logoLbl, BorderLayout.CENTER);
-                  }
-                  headPanel.add(logoPanel, BorderLayout.CENTER);
-              }
-              overviewTabPanel.add(headPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-                  GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-                  new Insets(0, 0, 0, 0), 0, 0));
-
-              //======== logPanel ========
-              {
-                  logPanel.setBorder(new TitledBorder("Messages"));
-                  logPanel.setPreferredSize(new Dimension(468, 200));
-                  logPanel.setLayout(new BorderLayout());
-
-                  //======== logTableScrollPane ========
-                  {
-                      logTableScrollPane.setComponentPopupMenu(loggingTablePopupMenu);
-
-                      //---- loggingTable ----
-                      loggingTable.setModel(new DefaultTableModel(
-                          new Object[][] {
-                          },
-                          new String[] {
-                              "Time stamp", "Message"
-                          }
-                      ) {
-                          boolean[] columnEditable = new boolean[] {
-                              false, false
-                          };
-                          @Override
-                          public boolean isCellEditable(int rowIndex, int columnIndex) {
-                              return columnEditable[columnIndex];
-                          }
-                      });
-                      loggingTable.setComponentPopupMenu(loggingTablePopupMenu);
-                      loggingTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                      logTableScrollPane.setViewportView(loggingTable);
-                  }
-                  logPanel.add(logTableScrollPane, BorderLayout.CENTER);
-
-                  //======== logTextScrollPane ========
-                  {
-
-                      //---- loggingTextArea ----
-                      loggingTextArea.setEditable(false);
-                      loggingTextArea.setColumns(20);
-                      loggingTextArea.setFont(new Font("Courier New", Font.PLAIN, 12));
-                      loggingTextArea.setLineWrap(true);
-                      loggingTextArea.setRows(3);
-                      loggingTextArea.setComponentPopupMenu(logPopupMenu);
-                      logTextScrollPane.setViewportView(loggingTextArea);
-                  }
-                  logPanel.add(logTextScrollPane, BorderLayout.SOUTH);
-              }
-              overviewTabPanel.add(logPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0,
-                  GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                  new Insets(0, 0, 0, 0), 0, 0));
-          }
-          tabbedPane.addTab(bundle.getString("GeneralStatus"), overviewTabPanel);
+    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("org/opentcs/kernel/controlcenter/vehicles/Bundle"); // NOI18N
+    clearMenuItem.setText(bundle.getString("ClearLogMessageText")); // NOI18N
+    clearMenuItem.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        clearMenuItemActionPerformed(evt);
       }
-      add(tabbedPane, BorderLayout.CENTER);
+    });
+    logPopupMenu.add(clearMenuItem);
 
-      //======== logPopupMenu ========
-      {
+    filterMenu.setText(bundle.getString("FilterMessages")); // NOI18N
+    filterMenu.setActionCommand(" message filtering");
 
-          //---- clearMenuItem ----
-          clearMenuItem.setText(bundle.getString("ClearLogMessageText"));
-          clearMenuItem.addActionListener(e -> clearMenuItemActionPerformed(e));
-          logPopupMenu.add(clearMenuItem);
+    everythingCheckBoxMenuItem.setText(bundle.getString("FilterMessagesShowAll")); // NOI18N
+    everythingCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        everythingCheckBoxMenuItemActionPerformed(evt);
       }
+    });
+    filterMenu.add(everythingCheckBoxMenuItem);
 
-      //======== loggingTablePopupMenu ========
-      {
-
-          //======== filterMenu ========
-          {
-              filterMenu.setText(bundle.getString("FilterMessages"));
-              filterMenu.setActionCommand(" message filtering");
-
-              //---- everythingCheckBoxMenuItem ----
-              everythingCheckBoxMenuItem.setText(bundle.getString("FilterMessagesShowAll"));
-              everythingCheckBoxMenuItem.addActionListener(e -> everythingCheckBoxMenuItemActionPerformed(e));
-              filterMenu.add(everythingCheckBoxMenuItem);
-
-              //---- warningsCheckBoxMenuItem ----
-              warningsCheckBoxMenuItem.setText(bundle.getString("FilterMessagesShowErrorsAndWarnings"));
-              warningsCheckBoxMenuItem.addActionListener(e -> warningsCheckBoxMenuItemActionPerformed(e));
-              filterMenu.add(warningsCheckBoxMenuItem);
-
-              //---- errorsCheckBoxMenuItem ----
-              errorsCheckBoxMenuItem.setText(bundle.getString("FilterMessagesShowErrors"));
-              errorsCheckBoxMenuItem.addActionListener(e -> errorsCheckBoxMenuItemActionPerformed(e));
-              filterMenu.add(errorsCheckBoxMenuItem);
-          }
-          loggingTablePopupMenu.add(filterMenu);
+    warningsCheckBoxMenuItem.setText(bundle.getString("FilterMessagesShowErrorsAndWarnings")); // NOI18N
+    warningsCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        warningsCheckBoxMenuItemActionPerformed(evt);
       }
+    });
+    filterMenu.add(warningsCheckBoxMenuItem);
 
-      //======== noVehiclePanel ========
-      {
-          noVehiclePanel.setLayout(new BorderLayout());
-
-          //---- noVehicleLabel ----
-          noVehicleLabel.setFont(noVehicleLabel.getFont().deriveFont(noVehicleLabel.getFont().getSize() + 3f));
-          noVehicleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-          noVehicleLabel.setText(bundle.getString("NoVehicleAttached"));
-          noVehiclePanel.add(noVehicleLabel, BorderLayout.CENTER);
+    errorsCheckBoxMenuItem.setText(bundle.getString("FilterMessagesShowErrors")); // NOI18N
+    errorsCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        errorsCheckBoxMenuItemActionPerformed(evt);
       }
+    });
+    filterMenu.add(errorsCheckBoxMenuItem);
+
+    loggingTablePopupMenu.add(filterMenu);
+
+    noVehiclePanel.setLayout(new java.awt.BorderLayout());
+
+    noVehicleLabel.setFont(noVehicleLabel.getFont().deriveFont(noVehicleLabel.getFont().getSize()+3f));
+    noVehicleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+    noVehicleLabel.setText(bundle.getString("NoVehicleAttached")); // NOI18N
+    noVehiclePanel.add(noVehicleLabel, java.awt.BorderLayout.CENTER);
+
+    setBorder(javax.swing.BorderFactory.createTitledBorder(DEFAULT_BORDER_TITLE));
+    setLayout(new java.awt.BorderLayout());
+
+    tabbedPane.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+
+    overviewTabPanel.setLayout(new java.awt.GridBagLayout());
+
+    headPanel.setLayout(new java.awt.BorderLayout());
+
+    statusPanel.setLayout(new javax.swing.BoxLayout(statusPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+    adapterStatusPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("AdapterStatus"))); // NOI18N
+    adapterStatusPanel.setLayout(new java.awt.BorderLayout());
+
+    chkBoxEnable.setText(bundle.getString("EnableAdapter")); // NOI18N
+    chkBoxEnable.setEnabled(false);
+    chkBoxEnable.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        chkBoxEnableActionPerformed(evt);
+      }
+    });
+    adapterStatusPanel.add(chkBoxEnable, java.awt.BorderLayout.CENTER);
+
+    statusPanel.add(adapterStatusPanel);
+
+    statusFiguresPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("VehicleStatus"))); // NOI18N
+    statusFiguresPanel.setLayout(new java.awt.GridBagLayout());
+
+    curPosLbl.setText(bundle.getString("CurrentPosition")); // NOI18N
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+    gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+    statusFiguresPanel.add(curPosLbl, gridBagConstraints);
+
+    curPosTxt.setEditable(false);
+    curPosTxt.setColumns(9);
+    curPosTxt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+    curPosTxt.setText("Point-0001");
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+    statusFiguresPanel.add(curPosTxt, gridBagConstraints);
+
+    curStateLbl.setText(bundle.getString("CurrentState")); // NOI18N
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 1;
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+    gridBagConstraints.insets = new java.awt.Insets(3, 3, 0, 0);
+    statusFiguresPanel.add(curStateLbl, gridBagConstraints);
+
+    curStateTxt.setEditable(false);
+    curStateTxt.setColumns(9);
+    curStateTxt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+    curStateTxt.setText(Vehicle.State.UNKNOWN.name());
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 1;
+    gridBagConstraints.gridy = 1;
+    gridBagConstraints.insets = new java.awt.Insets(3, 3, 0, 0);
+    statusFiguresPanel.add(curStateTxt, gridBagConstraints);
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.weightx = 1.0;
+    statusFiguresPanel.add(fillingLbl, gridBagConstraints);
+
+    statusPanel.add(statusFiguresPanel);
+
+    headPanel.add(statusPanel, java.awt.BorderLayout.WEST);
+
+    logoPanel.setBackground(new java.awt.Color(255, 255, 255));
+    logoPanel.setLayout(new java.awt.BorderLayout());
+
+    logoLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+    logoLbl.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/opentcs/kernel/controlcenter/res/logos/opentcs_logo.gif"))); // NOI18N
+    logoPanel.add(logoLbl, java.awt.BorderLayout.CENTER);
+
+    headPanel.add(logoPanel, java.awt.BorderLayout.CENTER);
+
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+    overviewTabPanel.add(headPanel, gridBagConstraints);
+
+    logPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("Messages"))); // NOI18N
+    logPanel.setPreferredSize(new java.awt.Dimension(468, 200));
+    logPanel.setLayout(new java.awt.BorderLayout());
+
+    logTableScrollPane.setComponentPopupMenu(loggingTablePopupMenu);
+
+    loggingTable.setModel(new javax.swing.table.DefaultTableModel(
+      new Object [][] {
+
+      },
+      new String [] {
+        "Time stamp", "Message"
+      }
+    ) {
+      boolean[] canEdit = new boolean [] {
+        false, false
+      };
+
+      public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return canEdit [columnIndex];
+      }
+    });
+    loggingTable.setComponentPopupMenu(loggingTablePopupMenu);
+    loggingTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+    logTableScrollPane.setViewportView(loggingTable);
+
+    logPanel.add(logTableScrollPane, java.awt.BorderLayout.CENTER);
+
+    loggingTextArea.setEditable(false);
+    loggingTextArea.setColumns(20);
+    loggingTextArea.setFont(new java.awt.Font("Courier New", 0, 12)); // NOI18N
+    loggingTextArea.setLineWrap(true);
+    loggingTextArea.setRows(3);
+    loggingTextArea.setComponentPopupMenu(logPopupMenu);
+    logTextScrollPane.setViewportView(loggingTextArea);
+
+    logPanel.add(logTextScrollPane, java.awt.BorderLayout.SOUTH);
+
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 1;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+    gridBagConstraints.weightx = 1.0;
+    gridBagConstraints.weighty = 1.0;
+    overviewTabPanel.add(logPanel, gridBagConstraints);
+
+    tabbedPane.addTab(bundle.getString("GeneralStatus"), overviewTabPanel); // NOI18N
+
+    add(tabbedPane, java.awt.BorderLayout.CENTER);
   }// </editor-fold>//GEN-END:initComponents
 
   private void warningsCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_warningsCheckBoxMenuItemActionPerformed
@@ -559,34 +538,34 @@ final class DetailPanel
     }
   }//GEN-LAST:event_chkBoxEnableActionPerformed
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private JTabbedPane tabbedPane;
-  private JPanel overviewTabPanel;
-  private JPanel headPanel;
-  private JPanel statusPanel;
-  private JPanel adapterStatusPanel;
-  private JCheckBox chkBoxEnable;
-  private JPanel statusFiguresPanel;
-  private JLabel curPosLbl;
-  private JTextField curPosTxt;
-  private JLabel curStateLbl;
-  private JTextField curStateTxt;
-  private JLabel fillingLbl;
-  private JPanel logoPanel;
-  private JLabel logoLbl;
-  private JPanel logPanel;
-  private JScrollPane logTableScrollPane;
-  private JTable loggingTable;
-  private JScrollPane logTextScrollPane;
-  private JTextArea loggingTextArea;
-  private JPopupMenu logPopupMenu;
-  private JMenuItem clearMenuItem;
-  private JPopupMenu loggingTablePopupMenu;
-  private JMenu filterMenu;
-  private JCheckBoxMenuItem everythingCheckBoxMenuItem;
-  private JCheckBoxMenuItem warningsCheckBoxMenuItem;
-  private JCheckBoxMenuItem errorsCheckBoxMenuItem;
-  private JPanel noVehiclePanel;
-  private JLabel noVehicleLabel;
+  private javax.swing.JPanel adapterStatusPanel;
+  private javax.swing.JCheckBox chkBoxEnable;
+  private javax.swing.JMenuItem clearMenuItem;
+  private javax.swing.JLabel curPosLbl;
+  private javax.swing.JTextField curPosTxt;
+  private javax.swing.JLabel curStateLbl;
+  private javax.swing.JTextField curStateTxt;
+  private javax.swing.JCheckBoxMenuItem errorsCheckBoxMenuItem;
+  private javax.swing.JCheckBoxMenuItem everythingCheckBoxMenuItem;
+  private javax.swing.JLabel fillingLbl;
+  private javax.swing.JMenu filterMenu;
+  private javax.swing.JPanel headPanel;
+  private javax.swing.JPanel logPanel;
+  private javax.swing.JPopupMenu logPopupMenu;
+  private javax.swing.JScrollPane logTableScrollPane;
+  private javax.swing.JScrollPane logTextScrollPane;
+  private javax.swing.JTable loggingTable;
+  private javax.swing.JPopupMenu loggingTablePopupMenu;
+  private javax.swing.JTextArea loggingTextArea;
+  private javax.swing.JLabel logoLbl;
+  private javax.swing.JPanel logoPanel;
+  private javax.swing.JLabel noVehicleLabel;
+  private javax.swing.JPanel noVehiclePanel;
+  private javax.swing.JPanel overviewTabPanel;
+  private javax.swing.JPanel statusFiguresPanel;
+  private javax.swing.JPanel statusPanel;
+  private javax.swing.JTabbedPane tabbedPane;
+  private javax.swing.JCheckBoxMenuItem warningsCheckBoxMenuItem;
   // End of variables declaration//GEN-END:variables
   // CHECKSTYLE:ON
 

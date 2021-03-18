@@ -8,6 +8,7 @@
 package org.opentcs.kernel.extensions.servicewebapi.v1.order;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static java.util.Objects.requireNonNull;
@@ -261,9 +262,9 @@ public class OrderHandler {
 //    return order.getDeadline() == null ? Instant.MAX : order.getDeadline();
     if (order.getDeadline() == null) {
 //      return Instant.MAX;
-      return Instant.ofEpochSecond(21556889864403199L);
+      return Instant.now().minus(60, ChronoUnit.MINUTES);
     } else {
-      return order.getDeadline() == Instant.MIN ? Instant.now() : order.getDeadline();
+      return order.getDeadline() == Instant.MIN ? Instant.now().minus(10, ChronoUnit.MINUTES) : order.getDeadline();
     }
   }
 
