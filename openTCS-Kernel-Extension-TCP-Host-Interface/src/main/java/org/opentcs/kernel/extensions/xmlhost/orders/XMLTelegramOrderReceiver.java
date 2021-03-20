@@ -22,9 +22,9 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.Charset;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+
 import static java.util.Objects.requireNonNull;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -288,7 +288,12 @@ public class XMLTelegramOrderReceiver
         socket.setSoTimeout(configuration.ordersIdleTimeout());
         TCSOrderSet orderSet = receiveOrder(socket.getInputStream());
         TCSResponseSet responseSet = processOrderSet(orderSet);
-        sendResponse(responseSet, socket.getOutputStream());
+        if (orderSet.getOrders().get(0).getId().contains("00")) {
+          String response = "XYAGV";
+          socket.getOutputStream().write(response.getBytes());
+        } else {
+          sendResponse(responseSet, socket.getOutputStream());
+        }
       }
       catch (Exception exc) {
         LOG.warn("Unexpected exception, aborting communication", exc);
@@ -299,7 +304,30 @@ public class XMLTelegramOrderReceiver
         throws IOException, IllegalStateException {
       Reader reader = new BufferedReader(new InputStreamReader(inputStream,
                                                                Charset.forName("UTF-8")));
+//      LOG.debug()
       String telegram = readTelegram(reader);
+      if (telegram.contains("Oorder-")) {
+        String[] telegramList = telegram.split("-");
+        TCSOrderSet orderSet1 = new TCSOrderSet();
+        List<TCSOrder> orders = new LinkedList<>();
+        Transport transport = new Transport();
+        transport.setDeadline(Date.from(Instant.now().minus(60, ChronoUnit.MINUTES)));
+        List<Destination> destinations = new LinkedList<>();
+        Destination location_a = new Destination();
+        Destination location_b = new Destination();
+        location_a.setLocationName(String.format("Location-%s", telegramList[2]));
+        location_a.setOperation("LOAD");
+        location_b.setLocationName(String.format("Location-%s", telegramList[3]));
+        location_b.setOperation("UNLOAD");
+        destinations.add(location_a);
+        destinations.add(location_b);
+        transport.setDestinations(destinations);
+        transport.setId("00001");
+        orders.add(transport);
+        orderSet1.setOrders(orders);
+//        LOG.info("")
+        return orderSet1;
+      }
       TCSOrderSet orderSet = TCSOrderSet.fromXml(new StringReader(telegram));
       LOG.debug("Constructed order set");
       return orderSet;
@@ -319,6 +347,14 @@ public class XMLTelegramOrderReceiver
       StringBuilder telegram = new StringBuilder();
       char[] buffer = new char[IN_BUF_SIZE];
       int bytesRead = reader.read(buffer);
+      if (bytesRead == 21 && buffer[8] == 31) {
+        int order_id = buffer[12] | ((buffer[11] & 0xff) << 8);
+        int localtion_a = buffer[16] | ((buffer[15] & 0xff) << 8);
+        int localtion_b = buffer[20] | ((buffer[19] & 0xff) << 8);
+        String xx = String.format("Oorder-%s-%s-%s", order_id, localtion_a, localtion_b);
+        LOG.info("Socket Order: {}", xx);
+        return xx;
+      }
       int totalBytesRead = 0;
       boolean foundEndOfTelegram = false;
       // Read from socket while we haven't encountered the end of telegram
