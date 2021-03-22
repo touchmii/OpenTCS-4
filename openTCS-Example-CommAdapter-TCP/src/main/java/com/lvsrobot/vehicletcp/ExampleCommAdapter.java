@@ -416,7 +416,11 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
         String currentPoint;
         int currentPoint_int;
         int currentStatus;
+        int currentCharge;
         double currentAngle;
+        long chargeTime = 0;
+
+        String action = "";
 
         String ppp = null;
 
@@ -435,6 +439,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                     currentPoint_int = agvInfo_callback.getPosition();
                     currentStatus = agvInfo_callback.getStatus();
                     currentAngle = agvInfo_callback.getAngle();
+                    currentCharge = agvInfo_callback.getCharge();
     //                int[] currentPosition = agvInfo.getCurrentPosition();
     //                Triple precisePosition = new Triple((long)currentPosition[0], (long)currentPosition[1], 0);
     //                previous_precise = current_precise;
@@ -452,6 +457,10 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                         agv.radarDis(10, 35, 15);
                         agv.radarDis(10, 35, 15);
                         LOG.warn("关避障 121");
+                    } else if(currentPoint_int == 806 && currentAngle == 180 && agvInfo_callback.getBizhang() > 10) {
+                        agv.radarDis(10, 35, 15);
+                        agv.radarDis(10, 35, 15);
+                        LOG.warn("关避障 充电点");
                     } else if((currentPoint_int == 129 || currentPoint_int == 169 || currentPoint_int == 806 || currentPoint_int == 808) && currentAngle == 270 && agvInfo_callback.getBizhang() > 10) {
                         agv.radarDis(10, 35, 15);
                         agv.radarDis(10, 35, 15);
@@ -496,6 +505,20 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                             operate_point = 0;
                             wait_point = "";
                             getProcessModel().setVehicleState(Vehicle.State.IDLE);
+                        } else if (currentPoint.equals(wait_point) && action.equals("CHARGE")) {
+                            if (currentCharge == 0) {
+                                Thread.sleep(200);
+                                agv.charge();
+                                Thread.sleep(200);
+                                agv.charge();
+                                chargeTime = System.currentTimeMillis();
+                                getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("charge in point : {}", currentPoint).getMessage(), UserNotification.Level.INFORMATIONAL));
+                            } else if (currentCharge == 1 && (System.currentTimeMillis() - chargeTime) > 180000) {
+                                wait_point = "";
+                                action = "";
+                                getProcessModel().setVehicleState(Vehicle.State.IDLE);
+                                getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("charge time : {} minutes", 3).getMessage(), UserNotification.Level.INFORMATIONAL));
+                            }
                         } else if (operate_point > 0) {
                             operate_point = 0;
                         }
@@ -546,23 +569,14 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                         pathStartPosition = sendDriveOrder.getRoute().getSteps().get(0).getSourcePoint();
                         pathStartID = sendDriveOrder.getRoute().getSteps().get(0).getSourcePoint().getName();
                         getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
-                        if(getcurrentDriveOrder().getDestination().getOperation().equals("LOAD") || getcurrentDriveOrder().getDestination().getOperation().equals("UNLOAD")) {
+                        if(getcurrentDriveOrder().getDestination().getOperation().equals("LOAD") || getcurrentDriveOrder().getDestination().getOperation().equals("UNLOAD") || getcurrentDriveOrder().getDestination().getOperation().equals("CHARGE")) {
                             wait_point = getcurrentDriveOrder().getRoute().getFinalDestinationPoint().getName();
-                            LOG.warn("XXX wait_point: {} ", wait_point);
+                            action = "CHARGE";
+                            LOG.warn("XXX wait_point: {} action: {}", wait_point, getcurrentDriveOrder().getDestination().getOperation());
                         }
                         ppp = getcurrentDriveOrder().getRoute().getSteps().get(0).getSourcePoint().getName();
 
-//                        agv.sendPath()
                     }
-//                    Point p = getProcessModel().get;
-//                    String p = String.valueOf(agvInfo.getPosition());
-//                    if (getSentQueue().size() != 0) {
-////                        p = approachPosition(sendDriveOrder, agvInfo.getPrecisePosition(), 300, 300);
-//                        p = approachPosition(sendDriveOrder, agvInfo.getCurrentPosition(), 300, 300);
-//                    } else {
-////                        p = approachPosition(sendDriveOrder, agvInfo.getPrecisePosition(), 300, 100);
-//                        p = approachPosition(sendDriveOrder, agvInfo.getCurrentPosition(), 300, 100);
-//                    }
                     if (currentPoint.equals(currentCommand.getStep().getDestinationPoint().getName()) && !currentPoint.equals(ppp)) {
                         ppp = currentPoint;
 //                        currentPoint = p;
@@ -591,37 +605,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 
                         }
                     }
-                    // Simulate the movement.
-//                    simulateMovement(curStep);
-//                    if
 
-
-                    // Simulate processing of an operation.
-//                    if (!curCommand.isWithoutOperation()) {
-//                        simulateOperation(curCommand.getOperation());
-//                    }
-//                    LOG.debug("Processed MovementCommand.");
-//                    if (!isTerminated()) {
-//                        // Set the vehicle's state back to IDLE, but only if there aren't
-//                        // any more movements to be processed.
-//                        if (getSentQueue().size() <= 1 && getCommandQueue().isEmpty()) {
-//                            getProcessModel().setVehicleState(Vehicle.State.IDLE);
-//                        }
-//                        // Update GUI.
-//                        synchronized (ExampleCommAdapter.this) {
-//                            MovementCommand sentCmd = getSentQueue().poll();
-//                            // If the command queue was cleared in the meantime, the kernel
-//                            // might be surprised to hear we executed a command we shouldn't
-//                            // have, so we only peek() at the beginning of this method and
-//                            // poll() here. If sentCmd is null, the queue was probably cleared
-//                            // and we shouldn't report anything back.
-//                            if (sentCmd != null && sentCmd.equals(curCommand)) {
-//                                // Let the vehicle manager know we've finished this command.
-//                                getProcessModel().commandExecuted(curCommand);
-//                                ExampleCommAdapter.this.notify();
-//                            }
-//                        }
-//                    }
                 }
                 Thread.sleep(200);
             } catch (Exception ex) {

@@ -69,6 +69,7 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
 //        agvInfo.setException(byteToUnsignedInt(retBytes[5]));
         agvInfo.setStatus(byteToUnsignedInt(retBytes[12]));
         agvInfo.setBizhang(byteToUnsignedInt(retBytes[13]));
+        agvInfo.setCharge(byteToUnsignedInt(retBytes[16]));
         ExampleCommAdapter.callback(agvInfo);
     }
 //    @Override

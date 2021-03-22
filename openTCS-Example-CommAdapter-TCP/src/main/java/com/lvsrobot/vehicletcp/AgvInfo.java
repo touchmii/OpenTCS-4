@@ -9,6 +9,7 @@ public class AgvInfo {
     private int status;
     private double angle;
     private int bizhang;
+    private int charge;
 
     public int getPosition() {
         return position;
@@ -53,6 +54,10 @@ public class AgvInfo {
     public void setBizhang(int _bizhang) { this.bizhang = _bizhang;}
 
     public int getBizhang() {return this.bizhang;}
+
+    public void setCharge(int _charge) { this.charge = _charge;}
+
+    public int getCharge() {return this.charge;}
 
     public void setAngle(int i) {
         switch (i) {

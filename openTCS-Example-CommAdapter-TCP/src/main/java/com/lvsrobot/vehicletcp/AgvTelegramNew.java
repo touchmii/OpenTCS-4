@@ -142,6 +142,17 @@ public class AgvTelegramNew {
         return true;
     }
 
+    public void charge() {
+        this.Connect();
+        byte[] charge = {0, 1, 3, 0, 2, 2, 0, (byte)253};
+        f.channel().writeAndFlush(charge);
+    }
+    public void discharge() {
+        this.Connect();
+        byte[] discharge = {0, 1, 3, 0, 2, 2, 0, (byte)252};
+        f.channel().writeAndFlush(discharge);
+    }
+
     public void pausePath() {
     }
 

@@ -33,8 +33,10 @@ public class ConfigRoute {
 //        driveorder.getRoute().getSteps().get(0).getPath().getLength()
         steps = route.getSteps();
         init = 1;
+        debug_path = "robot path";
     }
     public void setAngle(double _angle) {
+        debug_path += String.format("angle %s ,", _angle);
         current_angle = _angle;
     }
 
@@ -131,9 +133,9 @@ public class ConfigRoute {
             int turn_time = 1;
             if (i == 0 &&
                     // 先竖后竖，回到原点
-                    ((Math.abs(A1) < td && Math.abs(B1) < td && A2 + B2 < td) ||
-                    // 先竖后横，回到原地
-                    (Math.abs(A2) < td && Math.abs(B2) < td && A1 + B1 < td))) {
+                    ((Math.abs(A1) < td/4 && Math.abs(B1) < td/4 && Math.abs(A2 + B2) < td) ||
+                    // 先竖后横，回到原点
+                    (Math.abs(A2) < td/4 && Math.abs(B2) < td/4 && Math.abs(A1 + B1) < td))) {
                 //需要掉头 0x07
                 debug_path += point1_id_str;
                 debug_path += "LD->";
@@ -216,6 +218,9 @@ public class ConfigRoute {
         }
         point2_id_str = steps.get(steps.size()-1).getDestinationPoint().getName();
         point2_id = Integer.parseInt(point2_id_str);
+        if(steps.get(steps.size()-1).getDestinationPoint().getProperty("charge") != null){
+            path[11 + (steps.size()-1) * 4] = 0x20;
+        }
 
         path[9+steps.size()*4] = (byte)(point2_id/256);
         path[10+steps.size()*4] = (byte)(point2_id%256);
@@ -223,6 +228,7 @@ public class ConfigRoute {
         byte check = 0;
         for(int i = 0; i < steps.size()*4+13; i++) {
             check = (byte) (check ^ path[i]);
+            debug_path += "BB";
         }
         path[steps.size()*4+13] = (byte) ~ check;
 
