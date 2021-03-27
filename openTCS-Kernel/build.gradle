@@ -23,15 +23,16 @@ dependencies {
   compile project(':openTCS-Kernel-Extension-RMI-Services')
   compile project(':openTCS-Kernel-Extension-Statistics')
   compile project(':openTCS-Kernel-Extension-TCP-Host-Interface')
-    compile project(':openTCS-Example-CommAdapter')
-    compile project(':openTCS-Example-CommAdapter-Modbus')
-    compile project(':openTCS-Example-CommAdapter-HTTP')
-    compile project(':openTCS-Example-CommAdapter-Qian')
-    compile project(':openTCS-Example-CommAdapter-Jbh')
-    compile project(':openTCS-Example-CommAdapter-TCP')
-    compile project(':openTCS-Example-CommAdapter-VREP')
-    compile project(':openTCS-Example-CommAdapter-Serial')
-  
+  compile project(':openTCS-Kernel-Extension-TCP-MES-Interface')
+  compile project(':openTCS-Example-CommAdapter')
+  compile project(':openTCS-Example-CommAdapter-Modbus')
+  compile project(':openTCS-Example-CommAdapter-HTTP')
+  compile project(':openTCS-Example-CommAdapter-Qian')
+  compile project(':openTCS-Example-CommAdapter-Jbh')
+  compile project(':openTCS-Example-CommAdapter-TCP')
+  compile project(':openTCS-Example-CommAdapter-VREP')
+  compile project(':openTCS-Example-CommAdapter-Serial')
+
   compile group: 'de.huxhorn.sulky', name: 'de.huxhorn.sulky.ulid', version: '8.2.0'
   compileOnly group: 'de.huxhorn.sulky', name: 'de.huxhorn.sulky.ulid', version: '8.2.0', classifier: 'sources'
   
