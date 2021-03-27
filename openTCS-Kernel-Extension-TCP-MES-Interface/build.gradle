@@ -1,0 +1,24 @@
+apply from: "${rootDir}/gradle/java-project.gradle"
+apply from: "${rootDir}/gradle/java-artifacts.gradle"
+apply from: "${rootDir}/gradle/java-codequality.gradle"
+apply from: "${rootDir}/gradle/guice-project.gradle"
+apply from: "${rootDir}/gradle/maven-publishing.gradle"
+apply from: "${rootDir}/gradle/license-headers.gradle"
+apply plugin: 'org.kordamp.gradle.stats'
+
+dependencies {
+  compile project(':openTCS-API-Injection')
+  implementation 'io.netty:netty-all:4.1.60.Final'
+
+  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.11'
+  compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.11', classifier: 'sources'
+  compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-jsonSchema', version: '2.8.11'
+  compileOnly group: 'com.fasterxml.jackson.module', name: 'jackson-module-jsonSchema', version: '2.8.11', classifier: 'sources'
+  compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.8.11'
+  compileOnly group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.8.11', classifier: 'sources'
+
+}
+
+task release {
+  dependsOn build
+}
