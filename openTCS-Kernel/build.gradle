@@ -24,6 +24,7 @@ dependencies {
   compile project(':openTCS-Kernel-Extension-Statistics')
   compile project(':openTCS-Kernel-Extension-TCP-Host-Interface')
   compile project(':openTCS-Kernel-Extension-TCP-MES-Interface')
+  compile project(':openTCS-Kernel-Extension-WebSockets-Services')
   compile project(':openTCS-Example-CommAdapter')
   compile project(':openTCS-Example-CommAdapter-Modbus')
   compile project(':openTCS-Example-CommAdapter-HTTP')

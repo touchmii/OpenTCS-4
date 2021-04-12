@@ -21,6 +21,7 @@ import org.opentcs.data.ObjectHistory;
 import org.opentcs.data.ObjectUnknownException;
 import org.opentcs.data.TCSObject;
 import org.opentcs.data.TCSObjectReference;
+import org.opentcs.data.model.Point;
 import org.opentcs.kernel.workingset.TCSObjectPool;
 
 /**
@@ -100,6 +101,15 @@ public class StandardTCSObjectService
       throws ObjectUnknownException {
     synchronized (getGlobalSyncObject()) {
       getGlobalObjectPool().setObjectProperty(ref, key, value);
+    }
+  }
+
+  @Override
+  public void updateObjectValue(TCSObject<?> obj)
+    {
+//      <E extends TCSObject<E>> E = obj;
+    synchronized (getGlobalSyncObject()) {
+       getGlobalObjectPool().replaceObjectt(obj);
     }
   }
 

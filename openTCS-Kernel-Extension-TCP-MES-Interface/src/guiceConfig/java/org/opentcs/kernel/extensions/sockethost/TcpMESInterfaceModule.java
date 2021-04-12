@@ -9,7 +9,7 @@ package org.opentcs.kernel.extensions.sockethost;
 
 import javax.inject.Singleton;
 import org.opentcs.customizations.kernel.KernelInjectionModule;
-import org.opentcs.kernel.extensions.sockethost.orders.XMLTelegramOrderReceiver;
+import org.opentcs.kernel.extensions.sockethost.orders.SocketTelegramOrderReceiver;
 import org.opentcs.kernel.extensions.sockethost.status.StatusMessageDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +47,6 @@ public class TcpMESInterfaceModule
 
     // The order interface is available only in operating mode.
     extensionsBinderOperating().addBinding()
-        .to(XMLTelegramOrderReceiver.class);
+        .to(SocketTelegramOrderReceiver.class);
   }
 }

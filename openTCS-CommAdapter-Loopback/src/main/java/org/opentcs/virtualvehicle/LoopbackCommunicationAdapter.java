@@ -20,6 +20,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.opentcs.access.LocalKernel;
@@ -47,47 +48,15 @@ import org.opentcs.virtualvehicle.VelocityController.WayEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * A {@link VehicleCommAdapter} that does not really communicate with a physical vehicle but roughly
- * simulates one.
- *
- * @author Stefan Walter (Fraunhofer IML)
- */
 public class LoopbackCommunicationAdapter extends BasicVehicleCommAdapter implements SimVehicleCommAdapter {
 
-    /**
-     * The name of the load handling device set by this adapter.
-     */
     public static final String LHD_NAME = "default";
-    /**
-     * This class's Logger.
-     */
     private static final Logger LOG = LoggerFactory.getLogger(LoopbackCommunicationAdapter.class);
-    /**
-     * An error code indicating that there's a conflict between a load operation and the vehicle's
-     * current load state.
-     */
     private static final String LOAD_OPERATION_CONFLICT = "cannotLoadWhenLoaded";
-    /**
-     * An error code indicating that there's a conflict between an unload operation and the vehicle's
-     * current load state.
-     */
     private static final String UNLOAD_OPERATION_CONFLICT = "cannotUnloadWhenNotLoaded";
-    /**
-     * The time by which to advance the velocity controller per step (in ms).
-     */
     private static final int ADVANCE_TIME = 100;
-    /**
-     * This instance's configuration.
-     */
     private final VirtualVehicleConfiguration configuration;
-    /**
-     * The adapter components factory.
-     */
     private final LoopbackAdapterComponentsFactory componentsFactory;
-    /**
-     * The kernel's executor.
-     */
     private final ExecutorService kernelExecutor;
     /**
      * The task simulating the virtual vehicle's behaviour.
@@ -152,17 +121,9 @@ public class LoopbackCommunicationAdapter extends BasicVehicleCommAdapter implem
 //        return this.kernel;
 //    }
 
-    /**
-     * Creates a new instance.
-     *
-     * @param componentsFactory The factory providing additional components for this adapter.
-     * @param configuration     This class's configuration.
-     * @param vehicle           The vehicle this adapter is associated with.
-     * @param kernelExecutor    The kernel's executor.
-     */
     @Inject
     public LoopbackCommunicationAdapter(LoopbackAdapterComponentsFactory componentsFactory, VirtualVehicleConfiguration configuration, @Assisted Vehicle vehicle, @KernelExecutor ExecutorService kernelExecutor) {
-        super(new LoopbackVehicleModel(vehicle), configuration.commandQueueCapacity(), 1, configuration.rechargeOperation());
+        super(new LoopbackVehicleModel(vehicle), configuration.commandQueueCapacity(), 30, configuration.rechargeOperation());
         this.vehicle = requireNonNull(vehicle, "vehicle");
         this.configuration = requireNonNull(configuration, "configuration");
         this.componentsFactory = requireNonNull(componentsFactory, "componentsFactory");
@@ -353,16 +314,10 @@ public class LoopbackCommunicationAdapter extends BasicVehicleCommAdapter implem
                 .setVehiclePaused(getProcessModel().isVehiclePaused());
     }
 
-    /**
-     * Triggers a step in single step mode.
-     */
     public synchronized void trigger() {
         singleStepExecutionAllowed = true;
     }
 
-    /**
-     * A task simulating a vehicle's behaviour.
-     */
     private class VehicleSimulationTask
             extends CyclicTask {
 
@@ -387,6 +342,8 @@ public class LoopbackCommunicationAdapter extends BasicVehicleCommAdapter implem
             }
             final MovementCommand curCommand;
             synchronized (LoopbackCommunicationAdapter.this) {
+//                LOG.info("Dot Excute Command: {}", getCommandQueue().stream().map(movementCommand -> movementCommand.getStep().getDestinationPoint().getName()).collect(Collectors.toList()));
+//                LOG.info("Dot Excute Command: {}", getSentQueue().stream().map(movementCommand -> movementCommand.getStep().getDestinationPoint().getName()).collect(Collectors.toList()));
                 curCommand = getSentQueue().peek();
             }
             simAdvanceTime = (int) (ADVANCE_TIME * configuration.simulationTimeFactor());
@@ -514,9 +471,6 @@ public class LoopbackCommunicationAdapter extends BasicVehicleCommAdapter implem
 //        }
 //    }
 
-    /**
-     * The vehicle's possible load states.
-     */
     private enum LoadState {
         EMPTY,
         FULL;

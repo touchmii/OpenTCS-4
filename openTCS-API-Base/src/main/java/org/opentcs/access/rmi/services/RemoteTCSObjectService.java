@@ -57,6 +57,8 @@ public interface RemoteTCSObjectService
                             String key,
                             String value)
       throws RemoteException;
+  void updateObjectValue(ClientID clientId, TCSObject<?> ojb)
+    throws RemoteException;
 
   void appendObjectHistoryEntry(ClientID clientId,
                                 TCSObjectReference<?> ref,

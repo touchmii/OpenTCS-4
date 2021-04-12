@@ -1,11 +1,11 @@
 /**
  * Copyright (c) Fraunhofer IML
  */
-package com.lvsrobot.http;
+package com.lvsrobot.vehicle;
 
 import com.google.inject.assistedinject.FactoryModuleBuilder;
-import com.lvsrobot.http.exchange.AdapterPanelComponentsFactory;
-import com.lvsrobot.http.exchange.ExampleCommAdapterPanelFactory;
+import com.lvsrobot.vehicle.exchange.AdapterPanelComponentsFactory;
+import com.lvsrobot.vehicle.exchange.ExampleCommAdapterPanelFactory;
 import org.opentcs.customizations.controlcenter.ControlCenterInjectionModule;
 
 /**
@@ -13,7 +13,7 @@ import org.opentcs.customizations.controlcenter.ControlCenterInjectionModule;
  *
  * @author Martin Grzenia (Fraunhofer IML)
  */
-public class ExampleControlCenterInjectionModule
+public class ModbusAdapterControlCenterInjectionModule
     extends ControlCenterInjectionModule {
 
   @Override

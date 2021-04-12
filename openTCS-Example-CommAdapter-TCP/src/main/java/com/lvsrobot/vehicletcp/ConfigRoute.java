@@ -220,6 +220,7 @@ public class ConfigRoute {
         point2_id = Integer.parseInt(point2_id_str);
         if(steps.get(steps.size()-1).getDestinationPoint().getProperty("charge") != null){
             path[11 + (steps.size()-1) * 4] = 0x20;
+            debug_path += "BB";
         }
 
         path[9+steps.size()*4] = (byte)(point2_id/256);
@@ -228,7 +229,6 @@ public class ConfigRoute {
         byte check = 0;
         for(int i = 0; i < steps.size()*4+13; i++) {
             check = (byte) (check ^ path[i]);
-            debug_path += "BB";
         }
         path[steps.size()*4+13] = (byte) ~ check;
 

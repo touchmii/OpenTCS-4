@@ -5,7 +5,7 @@
  * see the licensing information (LICENSE.txt) you should have received with
  * this copy of the software.)
  */
-package org.opentcs.kernel.extensions.sockethost.orders;
+package org.opentcs.kernel.extensions.websockets.orders;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -37,17 +37,17 @@ import org.opentcs.components.kernel.services.DispatcherService;
 import org.opentcs.components.kernel.services.TransportOrderService;
 import org.opentcs.data.ObjectUnknownException;
 import org.opentcs.data.order.TransportOrder;
-import org.opentcs.kernel.extensions.sockethost.SocketHostInterfaceConfiguration;
-import org.opentcs.kernel.extensions.sockethost.orders.binding.Destination;
-import org.opentcs.kernel.extensions.sockethost.orders.binding.ScriptResponse;
-import org.opentcs.kernel.extensions.sockethost.orders.binding.TCSOrder;
-import org.opentcs.kernel.extensions.sockethost.orders.binding.TCSOrderSet;
-import org.opentcs.kernel.extensions.sockethost.orders.binding.TCSResponse;
-import org.opentcs.kernel.extensions.sockethost.orders.binding.TCSResponseSet;
-import org.opentcs.kernel.extensions.sockethost.orders.binding.TCSScriptFile;
-import org.opentcs.kernel.extensions.sockethost.orders.binding.Transport;
-import org.opentcs.kernel.extensions.sockethost.orders.binding.TransportResponse;
-import org.opentcs.kernel.extensions.sockethost.orders.binding.TransportScript;
+import org.opentcs.kernel.extensions.websockets.XMLHostInterfaceConfiguration;
+import org.opentcs.kernel.extensions.websockets.orders.binding.Destination;
+import org.opentcs.kernel.extensions.websockets.orders.binding.ScriptResponse;
+import org.opentcs.kernel.extensions.websockets.orders.binding.TCSOrder;
+import org.opentcs.kernel.extensions.websockets.orders.binding.TCSOrderSet;
+import org.opentcs.kernel.extensions.websockets.orders.binding.TCSResponse;
+import org.opentcs.kernel.extensions.websockets.orders.binding.TCSResponseSet;
+import org.opentcs.kernel.extensions.websockets.orders.binding.TCSScriptFile;
+import org.opentcs.kernel.extensions.websockets.orders.binding.Transport;
+import org.opentcs.kernel.extensions.websockets.orders.binding.TransportResponse;
+import org.opentcs.kernel.extensions.websockets.orders.binding.TransportScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +92,7 @@ public class XMLTelegramOrderReceiver
   /**
    * This class's configuration.
    */
-  private final SocketHostInterfaceConfiguration configuration;
+  private final XMLHostInterfaceConfiguration configuration;
   /**
    * A script file manager to help us with script files.
    */
@@ -122,7 +122,7 @@ public class XMLTelegramOrderReceiver
   public XMLTelegramOrderReceiver(TransportOrderService transportOrderService,
                                   DispatcherService dispatcherService,
                                   ScriptFileManager scriptFileManager,
-                                  SocketHostInterfaceConfiguration configuration) {
+                                  XMLHostInterfaceConfiguration configuration) {
     this.transportOrderService = requireNonNull(transportOrderService, "transportOrderService");
     this.dispatcherService = requireNonNull(dispatcherService, "dispatcherService");
     this.scriptFileManager = requireNonNull(scriptFileManager, "scriptFileManager");
@@ -219,7 +219,7 @@ public class XMLTelegramOrderReceiver
     public void run() {
       // Set up the listening socket.
       try {
-        serverSocket = new ServerSocket(configuration.ordersServerPort());
+        serverSocket = new ServerSocket(configuration.ordersServerPort()+1);
       }
       catch (IOException exc) {
         throw new IllegalStateException(
@@ -289,8 +289,7 @@ public class XMLTelegramOrderReceiver
         TCSOrderSet orderSet = receiveOrder(socket.getInputStream());
         TCSResponseSet responseSet = processOrderSet(orderSet);
         if (orderSet.getOrders().get(0).getId().contains("00")) {
-          TransportResponse transportResponse = (TransportResponse) responseSet.getResponses().get(0);
-          String response = String.format("XYAGV%s", transportResponse.isExecutionSuccessful());
+          String response = "XYAGV";
           socket.getOutputStream().write(response.getBytes());
         } else {
           sendResponse(responseSet, socket.getOutputStream());
@@ -323,7 +322,7 @@ public class XMLTelegramOrderReceiver
         destinations.add(location_a);
         destinations.add(location_b);
         transport.setDestinations(destinations);
-        transport.setId(String.valueOf(telegramList[1]));
+        transport.setId("00001");
         orders.add(transport);
         orderSet1.setOrders(orders);
 //        LOG.info("")
@@ -425,20 +424,18 @@ public class XMLTelegramOrderReceiver
       // Create a response for this order.
       TransportResponse response = new TransportResponse();
       response.setId(transport.getId());
-      Map transportproperties = new HashMap<String, String>();
-      transportproperties.put("id", transport.getId());
 
-      TransportOrderCreationTO transportOrderCreationTO = new TransportOrderCreationTO("TOrder-",
+      try {
+        TransportOrder order = transportOrderService.createTransportOrder(
+            new TransportOrderCreationTO("TOrder-",
                                          createDestinations(transport.getDestinations()))
                 .withIncompleteName(true)
                 .withDeadline(transport.getDeadline() == null
                     ? Instant.MAX
                     : transport.getDeadline().toInstant())
                 .withIntendedVehicleName(transport.getIntendedVehicle())
-                .withDependencyNames(new HashSet<>(transport.getDependencies()));
-      transportOrderCreationTO.setProperty("id", transport.getId());
-      try {
-        TransportOrder order = transportOrderService.createTransportOrder(transportOrderCreationTO);
+                .withDependencyNames(new HashSet<>(transport.getDependencies()))
+        );
 
         dispatcherService.dispatch();
 

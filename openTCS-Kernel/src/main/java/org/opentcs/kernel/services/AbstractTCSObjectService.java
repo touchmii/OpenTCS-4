@@ -76,6 +76,12 @@ public abstract class AbstractTCSObjectService
   }
 
   @Override
+  public void updateObjectValue(TCSObject<?> obj)
+          throws ObjectUnknownException, CredentialsException {
+    getObjectService().updateObjectValue(obj);
+  }
+
+  @Override
   public void appendObjectHistoryEntry(TCSObjectReference<?> ref, ObjectHistory.Entry entry)
       throws ObjectUnknownException, KernelRuntimeException {
     getObjectService().appendObjectHistoryEntry(ref, entry);

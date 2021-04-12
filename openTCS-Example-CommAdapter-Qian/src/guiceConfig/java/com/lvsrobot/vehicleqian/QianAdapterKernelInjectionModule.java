@@ -1,16 +1,16 @@
 /**
  * Copyright (c) Fraunhofer IML
  */
-package com.lvsrobot.serial;
+package com.lvsrobot.vehicleqian;
 
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import org.opentcs.customizations.kernel.KernelInjectionModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExampleKernelInjectionModule extends KernelInjectionModule {
+public class QianAdapterKernelInjectionModule extends KernelInjectionModule {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ExampleKernelInjectionModule.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QianAdapterKernelInjectionModule.class);
 
     @Override
     protected void configure() {

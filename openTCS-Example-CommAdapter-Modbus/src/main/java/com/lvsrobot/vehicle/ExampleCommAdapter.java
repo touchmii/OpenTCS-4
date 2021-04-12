@@ -13,8 +13,11 @@ import static java.util.Objects.requireNonNull;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
+import org.opentcs.components.kernel.services.TCSObjectService;
+import org.opentcs.components.kernel.services.TransportOrderService;
 import org.opentcs.customizations.kernel.KernelExecutor;
 import org.opentcs.data.model.Point;
 import org.opentcs.data.model.Triple;
@@ -108,6 +111,10 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 
     private MovementCommand previousCommand;
 
+    private final TransportOrderService orderService;
+
+    private final TCSObjectService objectService;
+
 //    private
 
 //    private  sendDriverOrder;
@@ -121,12 +128,14 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
      * ProcessModel，此处将自己实现的类关联在以前，可以让内核调用到。
      */
     @Inject
-    public ExampleCommAdapter(@Assisted Vehicle vehicle, ExampleAdapterComponentsFactory componentsFactory, @KernelExecutor ExecutorService kernelExecutor) {
+    public ExampleCommAdapter(@Assisted Vehicle vehicle, ExampleAdapterComponentsFactory componentsFactory, @KernelExecutor ExecutorService kernelExecutor, TransportOrderService orderService, @Nonnull TCSObjectService objectService) {
         //父类BasicVehicleCommAdapter实例需要的参数
         super(new ExampleProcessModel(vehicle), 30, 20, "Charge");
         this.componentsFactory = requireNonNull(componentsFactory, "componentsFactory");
         this.vehicle = requireNonNull(vehicle, "vehicle");
         this.kernelExecutor = requireNonNull(kernelExecutor, "kernelExecutor");
+        this.orderService = requireNonNull(orderService, "orderService");
+        this.objectService = requireNonNull(objectService, "objectService");
     }
 
 
@@ -342,6 +351,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
         getProcessModel().setVehicleState(Vehicle.State.IDLE);
 //        Triple precisePosition = new Triple((long)currentPosition[0], (long)currentPosition[1], 0);
         List<Point> PointList = getPointLists().stream().filter(point -> Math.abs(point.getPosition().getX() - precisePosition.getX()) < 500).filter(point -> Math.abs(point.getPosition().getY() - precisePosition.getY()) < 500).collect(Collectors.toList());
+//        List<Point> PointList = objectService.fetchObjects(Point.class).stream().filter(point -> Math.abs(point.getPosition().getX() - precisePosition.getX()) < 500).filter(point -> Math.abs(point.getPosition().getY() - precisePosition.getY()) < 500).collect(Collectors.toList());
 
         switch( PointList.size() ) {
             case 0:

@@ -1,16 +1,16 @@
 /**
  * Copyright (c) Fraunhofer IML
  */
-package com.lvsrobot.vrep;
+package com.lvsrobot.vehiclejbh;
 
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import org.opentcs.customizations.kernel.KernelInjectionModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExampleKernelInjectionModule extends KernelInjectionModule {
+public class JbhAdapterKernelInjectionModule extends KernelInjectionModule {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ExampleKernelInjectionModule.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JbhAdapterKernelInjectionModule.class);
 
     @Override
     protected void configure() {
