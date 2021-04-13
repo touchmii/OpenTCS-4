@@ -29,12 +29,14 @@ import org.jhotdraw.draw.event.ToolListener;
 import org.jhotdraw.draw.tool.CreationTool;
 import org.jhotdraw.draw.tool.Tool;
 import org.jhotdraw.gui.JPopupButton;
+import org.opentcs.access.SharedKernelServicePortalProvider;
 import org.opentcs.guing.application.OperationMode;
 import org.opentcs.guing.application.action.actions.CreateBlockAction;
 import org.opentcs.guing.application.action.actions.CreateGroupAction;
 import org.opentcs.guing.application.action.actions.CreateLocationTypeAction;
 import org.opentcs.guing.application.action.actions.CreateTransportOrderAction;
 import org.opentcs.guing.application.action.actions.CreateVehicleAction;
+import org.opentcs.guing.application.action.draw.ChangePointAction;
 import org.opentcs.guing.application.action.draw.DefaultPathSelectedAction;
 import org.opentcs.guing.application.action.draw.DefaultPointSelectedAction;
 import org.opentcs.guing.application.action.draw.SelectSameAction;
@@ -156,24 +158,28 @@ public class ToolBarManager
    */
   private final JToggleButton buttonPauseAllVehicles;
 
+  private final SharedKernelServicePortalProvider portalProvider;
+
   /**
    * Creates a new instance.
-   *
-   * @param actionMap The action map to be used
+   *  @param actionMap The action map to be used
    * @param crsObjFactory A factory for course objects
    * @param editor The drawing editor
    * @param selectionToolFactory The selection tool factory
+   * @param SharedKernelServicePortalProvider The Kernel portal provider
    */
   @Inject
   public ToolBarManager(ViewActionMap actionMap,
                         CourseObjectFactory crsObjFactory,
                         OpenTCSDrawingEditor editor,
-                        SelectionToolFactory selectionToolFactory) {
+                        SelectionToolFactory selectionToolFactory, SharedKernelServicePortalProvider portalProvider) {
     requireNonNull(actionMap, "actionMap");
     requireNonNull(crsObjFactory, "crsObjFactory");
     requireNonNull(editor, "editor");
+    requireNonNull(portalProvider, "portalProvider");
     this.selectionToolFactory = requireNonNull(selectionToolFactory,
                                                "selectionToolFactory");
+    this.portalProvider = portalProvider;
 
     ResourceBundleUtil labels = ResourceBundleUtil.getBundle(I18nPlantOverview.TOOLBAR_PATH);
 
@@ -365,6 +371,7 @@ public class ToolBarManager
     LinkedList<Action> drawingActions = new LinkedList<>();
     // Drawing Actions
     drawingActions.add(new SelectSameAction(editor));
+    drawingActions.add(new ChangePointAction(editor, portalProvider));
 
     MultipleSelectionTool selectionTool
         = selectionToolFactory.createMultipleSelectionTool(drawingActions, new LinkedList<>());
