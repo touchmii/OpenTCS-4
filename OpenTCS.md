@@ -301,3 +301,118 @@ private void commandExecuted(MovementCommand executedCommand) {
                               TransportOrder.State newState)
       throws ObjectUnknownException;     
 ```
+
+如何监听内核事件
+
+```
+
+@ApplicationEventBus EventSource eventSource
+
+implicitDispatchTrigger = new ImplicitDispatchTrigger(this);
+eventSource.subscribe(implicitDispatchTrigger);
+
+/**
+ * A handler for events emitted by an {@link EventSource}.
+ *
+ * @author Stefan Walter (Fraunhofer IML)
+ */
+public interface EventHandler {
+
+  /**
+   * Processes the event object.
+   *
+   * @param event The event object.
+   */
+  void onEvent(Object event);
+}
+```
+
+实现EventHandler接口，重写onEvent方法，再注入EventSource，使用EventSource订阅EventHandler接口的实现类。
+当产生事件时会调用onEven方法，判断event事件的类型即可。
+
+例子,此例子为tcp状态接口，端口号默认为44444，连接后不会自动端口，有新的事件都会发给客户端。
+```
+创建一个继承EventHandler接口的类ConnectionHandler，重写onEvent方法
+
+/**
+ * The task handling client connections.
+ */
+class ConnectionHandler
+    implements Runnable,
+               EventHandler {
+      /**
+       * The source of status events.
+       */
+      private final EventSource eventSource;
+
+    /**
+       * Creates a new ConnectionHandler.
+       *
+       * @param clientSocket The socket for communication with the client.
+       * @param evtSource The source of the status events with which the handler
+       * is supposed to register.
+       */
+      ConnectionHandler(Socket clientSocket,
+                        EventSource evtSource,
+                        String messageSeparator) {
+        this.socket = requireNonNull(clientSocket, "clientSocket");
+        this.eventSource = requireNonNull(evtSource, "evtSource");
+        this.messageSeparator = requireNonNull(messageSeparator, "messageSeparator");
+        checkArgument(clientSocket.isConnected(), "clientSocket is not connected");
+      }
+
+    /**
+       * Adds an event to this handler's queue.
+       *
+       * @param event The event to be processed.
+       */
+      @Override
+      public void onEvent(Object event) {
+        requireNonNull(event, "event");
+        if (event instanceof TCSObjectEvent) {
+          commands.offer(new ConnectionCommand.ProcessObjectEvent((TCSObjectEvent) event));
+        }
+      }
+    
+
+}
+
+使用，使用eventSource订阅ConnectionHandler实例，即可监听event事件
+ConnectionHandler newHandler = new ConnectionHandler(clientSocket);
+eventSource.subscribe(newHandler);
+
+```
+
+那么这个方法时怎么找到的呢，首先我并不清楚tcp状态接口的机制，以为是轮训式的查询获取状态。所以我把目光锁定在了订单服务的类上面，
+猜测，订单状态改变，或车辆被分配订单肯定会有事件之类的方法调用。否则不同的类要想知道订单和车辆状态发生了什么变化则很难实现，只能走通信的方式。
+在tranportorder tool里面有个分配订单给车辆的方法中有调用emitObjectEvent方法，猜猜此方法的作用就是发送事情，必定有相应的接收事件方法。一路忘上找，发现了
+EventHandle接口，在查找此接口的实现发现在各处都有，基本可以判定就是通过它实现事件的监听。果不其然在tcp的状态接口中找到了简单的应用。
+```
+public TransportOrder setTransportOrderProcessingVehicle(
+      TCSObjectReference<TransportOrder> orderRef,
+      TCSObjectReference<Vehicle> vehicleRef)
+      throws ObjectUnknownException {
+    LOG.debug("method entry");
+    TransportOrder order = objectPool.getObject(TransportOrder.class, orderRef);
+    TransportOrder previousState = order.clone();
+    if (vehicleRef == null) {
+      order = objectPool.replaceObject(order.withProcessingVehicle(null));
+    }
+    else {
+      Vehicle vehicle = objectPool.getObject(Vehicle.class, vehicleRef);
+      order = objectPool.replaceObject(order.withProcessingVehicle(vehicle.getReference()));
+    }
+    objectPool.emitObjectEvent(order.clone(),
+                               previousState,
+                               TCSObjectEvent.Type.OBJECT_MODIFIED);
+    return order;
+  }
+```
+
+### 如何保存订单
+
+当提交一个订单时，内核通过TransportOrderPool（TCSObjectPool）来储存订单，当订单被分配到具体车辆时则会添加到OrderReservationPool（strategies里）。我们应该要保存的订单是内核中未分配给车辆和执行完成的订单，
+
+如需要实时保存可以写一个内核扩展，类似http服务扩展那样，监听订单的变化，将结果写入到数据库中。内核启动时读取数据库中的订单再写入到内核中。
+如保存在文本文件中则可以使用json的格式在内核关闭时统一写入文件中，但是这样需要清空之前的纪录才可保证不会出现重复但不同状态的订单。
+综上使用sqlite保存订单记录是不错的方式，后期如有需要跟换其它数据库也比较方便。

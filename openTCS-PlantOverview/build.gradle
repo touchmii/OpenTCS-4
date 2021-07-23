@@ -32,6 +32,9 @@ dependencies {
   compileOnly group: 'org.opentcs.thirdparty.dockingframes', name: 'docking-frames-core', version: '1.1.2p11', classifier: 'sources'
   
   runtime group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.21'
+//  implementation 'com.formdev:flatlaf:1.1.2'
+  compile files("${rootDir}/lib/flatlaf-1.1.2.jar")
+  compile files("${rootDir}/lib/swingexplorer-core-1.7.0.jar")
 }
 
 compileJava {

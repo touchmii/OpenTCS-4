@@ -8,14 +8,8 @@
  */
 package org.opentcs.guing;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.google.inject.TypeLiteral;
-import java.io.File;
-import java.util.List;
-import java.util.Locale;
-import javax.inject.Singleton;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import org.opentcs.access.KernelServicePortal;
 import org.opentcs.access.SslParameterSet;
 import org.opentcs.access.rmi.KernelServicePortalBuilder;
@@ -41,6 +35,12 @@ import org.opentcs.util.ClassMatcher;
 import org.opentcs.util.gui.dialog.ConnectionParamSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Singleton;
+import javax.swing.*;
+import java.io.File;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A Guice module for the openTCS plant overview application.
@@ -145,10 +145,12 @@ public class DefaultPlantOverviewInjectionModule
     Locale.setDefault(Locale.forLanguageTag(configuration.locale()));
 
     try {
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+      UIManager.setLookAndFeel( new FlatDarkLaf());
     }
-    catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-               | UnsupportedLookAndFeelException ex) {
+//    catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+//               | UnsupportedLookAndFeelException ex) {
+      catch( Exception ex ) {
       LOG.warn("Could not set look-and-feel", ex);
     }
     // Show tooltips for 30 seconds (Default: 4 sec)
