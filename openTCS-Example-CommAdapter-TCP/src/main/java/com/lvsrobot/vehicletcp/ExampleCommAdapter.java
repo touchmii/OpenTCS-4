@@ -132,7 +132,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
     @Inject
     public ExampleCommAdapter(@Assisted Vehicle vehicle, ExampleAdapterComponentsFactory componentsFactory, @KernelExecutor ExecutorService kernelExecutor, TransportOrderService orderService, @Nonnull TCSObjectService objectService) {
         //父类BasicVehicleCommAdapter实例需要的参数
-        super(new ExampleProcessModel(vehicle), 30, 30, "Charge");
+        super(new ExampleProcessModel(vehicle), 30, 30, "CHARGE");
         this.componentsFactory = requireNonNull(componentsFactory, "componentsFactory");
         this.vehicle = requireNonNull(vehicle, "vehicle");
         this.kernelExecutor = requireNonNull(kernelExecutor, "kernelExecutor");
@@ -386,7 +386,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
    @Override
    public void abortDriveOrder() {
         LOG.info("abort path");
-        agv.abortPath();
+        //agv.abortPath();
         getSentQueue().clear();
    }
 
@@ -516,11 +516,11 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                                 agv.charge();
                                 chargeTime = System.currentTimeMillis();
                                 getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("charge in point : {}", currentPoint).getMessage(), UserNotification.Level.INFORMATIONAL));
-                            } else if (currentCharge == 1 && (System.currentTimeMillis() - chargeTime) > 180000) {
+                            } else if (currentCharge == 1 && (System.currentTimeMillis() - chargeTime) > 600000) {
                                 wait_point = "";
                                 action = "";
                                 getProcessModel().setVehicleState(Vehicle.State.IDLE);
-                                getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("charge time : {} minutes", 3).getMessage(), UserNotification.Level.INFORMATIONAL));
+                                getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("charge time : {} minutes", 10).getMessage(), UserNotification.Level.INFORMATIONAL));
                             }
                         } else if (operate_point > 0) {
                             operate_point = 0;
@@ -556,6 +556,15 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 //                    final Route.Step curStep = curCommand.getStep();
                     if (sendDriveOrder != getcurrentDriveOrder() && getProcessModel().getVehicleState() == Vehicle.State.IDLE) {
 
+                        if (currentCharge == 1) {
+                            Thread.sleep(200);
+                            agv.discharge();
+                            Thread.sleep(200);
+                            agv.discharge();
+                            Thread.sleep(1000);
+                            getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("DisCharge in point : {}", currentPoint).getMessage(), UserNotification.Level.INFORMATIONAL));
+                        }
+                        
                         configRoute.setRoute(getcurrentDriveOrder());
                         configRoute.setAngle(currentAngle);
                         byte[] path = configRoute.getPath();
@@ -563,6 +572,11 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                         Thread.sleep(500);
                         if (!agv.sendPath(path)) {
                             return;
+                        }
+                        if (currentCharge == 1) {
+                            Thread.sleep(200);
+                            agv.sendPath(path);
+                            LOG.info("send path again");
                         }
                         sendDriveOrder = getcurrentDriveOrder();
                         LOG.info("send path to vehicle : {}", debugPath);
@@ -581,9 +595,13 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 
                     }
                     if (!currentPoint.equals(ppp)) {
-                         ppp = currentPoint;
-                         if (currentPoint.equals(currentCommand.getStep().getDestinationPoint().getName())) {
-    //                            currentPoint ==
+
+                        ppp = currentPoint;
+//                        currentPoint = p;
+//                        if( currentPoint == p)
+//                        getProcessModel().setVehiclePosition(p.getName());
+                        if (currentPoint.equals(currentCommand.getStep().getDestinationPoint().getName())) {
+//                            currentPoint ==
                             MovementCommand sentCmd = getSentQueue().poll();
                             getProcessModel().commandExecuted(curCommand);
                             if (currentPoint.equals(currentDriveOrder.getDestination().getDestination().getName())) {
@@ -596,24 +614,21 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                             curCommand = null;
 
                         } else {
-                             List<String> remainCommand = getSentQueue().stream().map(movementCommand -> movementCommand.getStep().getDestinationPoint().getName()).collect(Collectors.toList());
-                             if (remainCommand.contains(currentPoint)) {
-//                                 for (int i=0; i < remainCommand.indexOf(currentPoint); i++) {
-//                                     curCommand = getSentQueue().peek();
-//                                     MovementCommand sentCmd = getSentQueue().poll();
-//                                     getProcessModel().commandExecuted(curCommand);
-//                                 }
-                                 while (!curCommand.getStep().getDestinationPoint().getName().equals(currentPoint)) {
-                                     MovementCommand sentCmd = getSentQueue().poll();
-                                     getProcessModel().commandExecuted(curCommand);
-                                     curCommand = getSentQueue().peek();
-                                 }
-                                 MovementCommand sentCmd = getSentQueue().poll();
-                                 getProcessModel().commandExecuted(curCommand);
-                                 currentCommand = null;
-                                 curCommand = null;
-                             }
-                         }
+                            List<String> remainCommand = getSentQueue().stream().map(movementCommand -> movementCommand.getStep().getDestinationPoint().getName()).collect(Collectors.toList());
+                            if (remainCommand.contains(currentPoint)) {
+                                while(!curCommand.getStep().getDestinationPoint().getName().equals(currentPoint)) {
+                                    MovementCommand sentCmd = getSentQueue().poll();
+                                    getProcessModel().commandExecuted(curCommand);
+                                    getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("miss to point: {}", curCommand.getStep().getDestinationPoint().getName()).getMessage(), UserNotification.Level.INFORMATIONAL));
+                                    curCommand = getSentQueue().peek();
+                                }
+                                MovementCommand sentCmd = getSentQueue().poll();
+                                getProcessModel().commandExecuted(curCommand);
+                                currentCommand = null;
+                                curCommand = null;
+
+                            }
+                        }
                     }
 
                 }
