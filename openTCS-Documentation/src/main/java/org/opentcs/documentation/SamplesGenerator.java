@@ -24,17 +24,17 @@ import org.opentcs.data.model.Triple;
 import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.order.DriveOrder;
 import org.opentcs.data.order.TransportOrder;
-import org.opentcs.kernel.extensions.xmlhost.orders.binding.Destination;
-import org.opentcs.kernel.extensions.xmlhost.orders.binding.Property;
-import org.opentcs.kernel.extensions.xmlhost.orders.binding.ScriptResponse;
-import org.opentcs.kernel.extensions.xmlhost.orders.binding.TCSOrderSet;
-import org.opentcs.kernel.extensions.xmlhost.orders.binding.TCSResponseSet;
-import org.opentcs.kernel.extensions.xmlhost.orders.binding.Transport;
-import org.opentcs.kernel.extensions.xmlhost.orders.binding.TransportResponse;
-import org.opentcs.kernel.extensions.xmlhost.orders.binding.TransportScript;
-import org.opentcs.kernel.extensions.xmlhost.status.binding.OrderStatusMessage;
-import org.opentcs.kernel.extensions.xmlhost.status.binding.TCSStatusMessageSet;
-import org.opentcs.kernel.extensions.xmlhost.status.binding.VehicleStatusMessage;
+import org.opentcs.kernel.extensions.websockets.orders.binding.Destination;
+import org.opentcs.kernel.extensions.websockets.orders.binding.Property;
+import org.opentcs.kernel.extensions.websockets.orders.binding.ScriptResponse;
+import org.opentcs.kernel.extensions.websockets.orders.binding.TCSOrderSet;
+import org.opentcs.kernel.extensions.websockets.orders.binding.TCSResponseSet;
+import org.opentcs.kernel.extensions.websockets.orders.binding.Transport;
+import org.opentcs.kernel.extensions.websockets.orders.binding.TransportResponse;
+import org.opentcs.kernel.extensions.websockets.orders.binding.TransportScript;
+import org.opentcs.kernel.extensions.websockets.status.binding.OrderStatusMessage;
+import org.opentcs.kernel.extensions.websockets.status.binding.TCSStatusMessageSet;
+import org.opentcs.kernel.extensions.websockets.status.binding.VehicleStatusMessage;
 import org.slf4j.LoggerFactory;
 
 /**

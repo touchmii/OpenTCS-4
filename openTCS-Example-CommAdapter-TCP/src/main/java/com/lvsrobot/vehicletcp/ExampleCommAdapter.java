@@ -3,6 +3,7 @@ package com.lvsrobot.vehicletcp;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.assistedinject.Assisted;
 import org.apache.commons.codec.binary.StringUtils;
+import org.omg.PortableServer.THREAD_POLICY_ID;
 import org.opentcs.components.kernel.services.TCSObjectService;
 import org.opentcs.components.kernel.services.TransportOrderService;
 import org.opentcs.customizations.kernel.KernelExecutor;
@@ -480,6 +481,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
                     getProcessModel().setVehiclePosition(currentPoint);
                     getProcessModel().setVehicleOrientationAngle(currentAngle);
                     getProcessModel().setVehicleEnergyLevel(agvInfo_callback.getBattery());
+
                     agvInfo_callback = null;
                 }
 //                LOG.info("xxxx");
@@ -593,6 +595,7 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 
                     }
                     if (!currentPoint.equals(ppp)) {
+
                         ppp = currentPoint;
 //                        currentPoint = p;
 //                        if( currentPoint == p)
@@ -601,7 +604,11 @@ public class ExampleCommAdapter extends BasicVehicleCommAdapter {
 //                            currentPoint ==
                             MovementCommand sentCmd = getSentQueue().poll();
                             getProcessModel().commandExecuted(curCommand);
-                            getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("reach to point: {}", currentPoint).getMessage(), UserNotification.Level.INFORMATIONAL));
+                            if (currentPoint.equals(currentDriveOrder.getDestination().getDestination().getName())) {
+                                getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("reach to end point: {}", currentPoint).getMessage(), UserNotification.Level.INFORMATIONAL));
+                            } else {
+                                getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("reach to point: {}", currentPoint).getMessage(), UserNotification.Level.INFORMATIONAL));
+                            }
 
                             currentCommand = null;
                             curCommand = null;

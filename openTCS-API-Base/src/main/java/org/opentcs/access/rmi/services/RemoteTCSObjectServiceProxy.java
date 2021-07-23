@@ -95,6 +95,19 @@ abstract class RemoteTCSObjectServiceProxy<R extends RemoteTCSObjectService>
   }
 
   @Override
+  public void updateObjectValue( TCSObject<?> obj)
+    throws ObjectUnknownException, KernelRuntimeException {
+    checkServiceAvailability();
+
+    try {
+      getRemoteService().updateObjectValue(getClientId(), obj);
+    }
+    catch (RemoteException ex) {
+      throw findSuitableExceptionFor(ex);
+    }
+  }
+
+  @Override
   public void appendObjectHistoryEntry(TCSObjectReference<?> ref, ObjectHistory.Entry entry)
       throws ObjectUnknownException, KernelRuntimeException {
     checkServiceAvailability();

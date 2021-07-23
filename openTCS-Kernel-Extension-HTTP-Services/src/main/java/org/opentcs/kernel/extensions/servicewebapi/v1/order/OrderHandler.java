@@ -7,11 +7,14 @@
  */
 package org.opentcs.kernel.extensions.servicewebapi.v1.order;
 
+import java.awt.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static java.util.Objects.requireNonNull;
+
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import javax.annotation.Nonnull;
@@ -28,8 +31,10 @@ import org.opentcs.customizations.kernel.KernelExecutor;
 import org.opentcs.data.ObjectExistsException;
 import org.opentcs.data.ObjectUnknownException;
 import org.opentcs.data.TCSObjectReference;
+import org.opentcs.data.model.Triple;
 import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.order.TransportOrder;
+import org.opentcs.data.model.Point;
 import org.opentcs.drivers.vehicle.AdapterCommand;
 import org.opentcs.drivers.vehicle.VehicleCommAdapter;
 import org.opentcs.drivers.vehicle.VehicleCommAdapterEvent;
@@ -93,6 +98,18 @@ public class OrderHandler {
     this.kernelExecutor = requireNonNull(kernelExecutor, "kernelExecutor");
 //    this.callWrapper = requireNonNull(callWrapper, "callWrapper");
     this.objectService = requireNonNull(objectService, "objectService");
+  }
+
+  public String replacePoint(String name, String X, String Y) {
+    try {
+      Point point = objectService.fetchObject(Point.class,name);
+      point.setPosition(new Triple(Integer.parseInt(X), Integer.parseInt(Y), 0));
+      objectService.updateObjectValue(point);
+    } catch (Exception e) {
+      LOG.warn("Cant find Point");
+      throw new ObjectUnknownException("Cant find Point: " + name);
+    }
+    return "replace Point:" + name;
   }
 
   /***

@@ -123,6 +123,12 @@ public class V1RequestHandler
         service.get("/vehicledetailsbrief", this::handleGetVehicleDetailsBrief);
         service.post("/command/:NAME", this::handlePostCommandByVehicle);
         service.get("/mapbrief", this::handleGetMapBrief);
+        service.post("/Point", this::handleReplacePoint);
+    }
+
+    private Object handleReplacePoint(Request request, Response response) {
+        response.type(HttpConstants.CONTENT_TYPE_TEXT_PLAIN_UTF8);
+        return orderHandler.replacePoint(request.queryParams("name"), request.queryParams("X"), request.queryParams("Y"));
     }
 
     private Object handlePostCommandByVehicle(Request request, Response response) throws IllegalArgumentException, IllegalStateException {

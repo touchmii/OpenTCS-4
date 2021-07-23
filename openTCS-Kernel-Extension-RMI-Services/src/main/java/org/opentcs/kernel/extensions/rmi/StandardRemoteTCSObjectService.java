@@ -105,6 +105,17 @@ public abstract class StandardRemoteTCSObjectService
   }
 
   @Override
+  public void updateObjectValue(ClientID clientId, TCSObject<?> obj) {
+    userManager.verifyCredentials(clientId, UserPermission.MODIFY_MODEL);
+    try {
+      kernelExecutor.submit(() -> objectService.updateObjectValue(obj)).get();
+    }
+    catch (InterruptedException | ExecutionException exc) {
+      throw findSuitableExceptionFor(exc);
+    }
+  }
+
+  @Override
   public void appendObjectHistoryEntry(ClientID clientId,
                                        TCSObjectReference<?> ref,
                                        ObjectHistory.Entry entry) {

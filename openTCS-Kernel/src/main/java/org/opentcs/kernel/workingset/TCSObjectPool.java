@@ -579,4 +579,14 @@ public class TCSObjectPool {
   private int extractId(TCSObjectReference<?> ref) {
     return ref.getId();
   }
+
+  public void replaceObjectt(TCSObject<?> obj) {
+    requireNonNull(obj, "object");
+    checkArgument(objectsByName.containsKey(obj.getName()),
+            "Object named '%s' does not exist",
+            obj.getName());
+
+    objectsByName.put(obj.getName(), obj);
+//    return obj;
+  }
 }
