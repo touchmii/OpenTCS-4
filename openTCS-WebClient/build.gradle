@@ -3,9 +3,16 @@ plugins {
     id 'war'
     id 'org.akhikhl.gretty' version '2.0.0'
 }
+
+apply plugin: 'org.kordamp.gradle.stats'
+apply plugin: 'maven'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 def debugArgs = []
 if (gradle.startParameter.initScripts) {
-    def line = file(gradle.startParameter.initScripts[0]).readLines().findAll({x -> x ==~ /.*-agentlib:jdwp=.*/ })[0]
+    def line = file(gradle.startParameter.initScripts[0]).readLines().findAll({ x -> x ==~ /.*-agentlib:jdwp=.*/ })[0]
     if (line) {
         debugArgs = ((line =~ /.*'(.*)'.*/)[0][1] as String).split(' ')
     }
@@ -21,10 +28,13 @@ gretty {
     jvmArgs = ['-Dorg.eclipse.jetty.annotations.maxWait=300', *debugArgs]
 }
 
-group 'com.lvsrobot'
-version '4.17.0-SNAPSHOT'
+ext {
+    Exclude = 'some value'
+}
 
-sourceCompatibility = 1.8
+group 'com.lvsrobot'
+version '4.18.0-SNAPSHOT'
+
 
 repositories {
     mavenCentral()
@@ -36,31 +46,70 @@ dependencies {
     implementation project(':openTCS-API-Base')
     implementation project(':openTCS-Common')
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    implementation 'org.eclipse.rap:org.eclipse.rap.rwt:3.13.0'
 //    implementation 'org.openjax:jetty:9.4.6'
 //    implementation 'org.eclipse.jetty:jetty-server:9.4.6.v20170531'
 //    compile 'org.eclipse.jetty.aggregate:jetty-all:9.4.6.v20170531'
     implementation 'org.hamcrest:hamcrest-core:1.3'
     implementation 'org.eclipse.rap:org.eclipse.rap.jface:3.13.0'
     implementation 'org.eclipse.rap:org.eclipse.rap.filedialog:3.13.0'
+    // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.equinox.common
+//    implementation group: 'org.eclipse.platform', name: 'org.eclipse.equinox.common', version: '3.10.600'
     implementation 'org.eclipse.core:org.eclipse.core.commands:3.6.0'
     implementation 'org.eclipse.rap:org.eclipse.rap.nebula.widgets.grid:3.13.0'
     implementation 'org.eclipse.rap:org.eclipse.rap.nebula.jface.gridviewer:3.13.0'
-    implementation 'org.eclipse.platform:org.eclipse.core.runtime:3.18.0'
     implementation 'org.eclipse.rap:org.eclipse.rap.nebula.widgets.richtext:3.13.0'
     implementation 'org.eclipse.rap:org.eclipse.rap.jface.databinding:3.13.0'
     implementation 'org.eclipse.equinox:org.eclipse.equinox.app:1.3.100'
-    implementation 'org.eclipse.rap:org.eclipse.rap.ui:3.14.0'
-    implementation 'org.eclipse.rap:org.eclipse.rap.ui.views:3.14.0'
-    implementation 'org.eclipse.rap:org.eclipse.rap.ui.workbench:3.14.0'
+    implementation ('org.eclipse.rap:org.eclipse.rap.ui:3.14.0') {
+        exclude group: 'org.eclipse.platform', module: 'org.eclipse.core.runtime'
+    }
+    implementation ('org.eclipse.rap:org.eclipse.rap.ui.views:3.14.0') {
+        exclude group: 'org.eclipse.platform', module: 'org.eclipse.core.runtime'
+    }
+    implementation ('org.eclipse.rap:org.eclipse.rap.ui.workbench:3.14.0') {
+        exclude group: 'org.eclipse.platform', module: 'org.eclipse.core.runtime'
+    }
     // https://mvnrepository.com/artifact/org.eclipse.rap/org.eclipse.rap.rwt
-    compile group: 'org.eclipse.rap', name: 'org.eclipse.rap.rwt', version: '3.14.0'
 //    implementation 'org.eclipse.platform:org.eclipse.ui:3.118.0'
     // https://mvnrepository.com/artifact/org.eclipse.ui/org.eclipse.ui
 //    compile group: 'org.eclipse.ui', name: 'org.eclipse.ui', version: '3.5.0.I20090604-2000'
     // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.ui
 //    compile group: 'org.eclipse.platform', name: 'org.eclipse.ui', version: '3.115.0'
-    implementation 'org.eclipse.rap:org.eclipse.rap.ui.forms:3.14.0'
+    implementation ('org.eclipse.rap:org.eclipse.rap.ui.forms:3.14.0'){
+        exclude group: 'org.eclipse.platform', module: 'org.eclipse.core.runtime'
+    }    
+    implementation 'org.eclipse.rap:org.eclipse.rap.rwt:3.13.0'
+//    compile 'org.eclipse.rap:org.eclipse.rap.rwt:3.13.0'
+    // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.osgi
+    implementation group: 'org.eclipse.platform', name: 'org.eclipse.osgi', version: '3.13.300'
+    // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.equinox.common
+    implementation group: 'org.eclipse.platform', name: 'org.eclipse.equinox.common', version: '3.12.0'
+    // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.core.jobs
+    implementation group: 'org.eclipse.platform', name: 'org.eclipse.core.jobs', version: '3.10.1100'
+    // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.equinox.registry
+    implementation group: 'org.eclipse.platform', name: 'org.eclipse.equinox.registry', version: '3.8.800'
+    // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.equinox.preferences
+    implementation group: 'org.eclipse.platform', name: 'org.eclipse.equinox.preferences', version: '3.7.700'
+    // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.core.contenttype
+    implementation group: 'org.eclipse.platform', name: 'org.eclipse.core.contenttype', version: '3.6.0'
+    // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.equinox.app
+    implementation group: 'org.eclipse.platform', name: 'org.eclipse.equinox.app', version: '1.3.600'
+    // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.core.runtime
+    // implementation group: 'org.eclipse.platform', name: 'org.eclipse.core.runtime', version: '3.15.300'
+
+
+    compile files("${rootDir}/lib/org.eclipse.core.runtime-3.18.0.jar")
+    compile files("${rootDir}/lib/org.eclipse.equinox.common-3.10.600.jar")
+//    implementation('org.eclipse.platform:org.eclipse.core.runtime:3.17.100') {
+//        transitive = false
+//    }
+}
+
+configurations.all {
+    exclude group: 'org.eclipse.platform', module: 'org.eclipse.equinox.common'
+    exclude group: 'org.eclipse.platform', module: 'org.eclipse.equinox.app'
+    exclude group: 'org.eclipse.platform', module: 'org.eclipse.core.runtime'
+
 }
 
 //apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'

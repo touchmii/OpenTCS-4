@@ -1,4 +1,4 @@
-﻿package com.lvsrobot.rosbridge;
+package com.lvsrobot.rosbridge;
 
 import org.opentcs.data.model.Vehicle;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-﻿package com.lvsrobot.rosbridge;
+package com.lvsrobot.rosbridge;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.assistedinject.Assisted;

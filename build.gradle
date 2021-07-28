@@ -27,8 +27,10 @@ apply plugin: 'distribution'
 apply plugin: 'com.github.ben-manes.versions'
 
 apply from: "${rootDir}/gradle/common.gradle"
+apply plugin: 'maven'
 
 group = 'org.opentcs'
+version = '4.20.0-SNAPSHOT'
 
 subprojects {
   apply plugin: 'com.bihe0832.gradleDependenciesCheck'
@@ -71,7 +73,17 @@ task subDists {
 }
 
 task install {
-  dependsOn subprojects*.install
+  subprojects {
+    if (!it.name.hasProperty('Exclude')) {
+      dependsOn it.name
+    }
+  }
+//  subprojects {
+//    if (!it.name.startsWith('openTCS-Web')) {
+//      dependsOn it.name
+//    }
+//  }
+//  dependsOn subprojects*.install
 }
 
 installDist.dependsOn subDists

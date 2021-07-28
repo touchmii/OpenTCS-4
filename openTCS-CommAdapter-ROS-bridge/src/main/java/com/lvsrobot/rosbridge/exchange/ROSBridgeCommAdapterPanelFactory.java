@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) Fraunhofer IML
  */
 package com.lvsrobot.rosbridge.exchange;

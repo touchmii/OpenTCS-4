@@ -1,4 +1,4 @@
-﻿package com.lvsrobot.rosbridge;
+package com.lvsrobot.rosbridge;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

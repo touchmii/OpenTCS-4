@@ -133,7 +133,7 @@ public class ControlsDemo {
   private static ExampleTab[] createExampleTabs() {
     return new ExampleTab[] {
       new ButtonTab(),
-      new MyTab(),
+//      new MyTab(),
       new BrowserTab(),
       new CanvasTab(),
       new CBannerTab(),

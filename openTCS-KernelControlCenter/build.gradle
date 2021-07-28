@@ -26,7 +26,8 @@ dependencies {
   compile project(':openTCS-Example-CommAdapter-TCP')
   compile project(':openTCS-Example-CommAdapter-VREP')
   compile project(':openTCS-Example-CommAdapter-Serial')
-  
+  compile project(':openTCS-CommAdapter-ROS-Bridge')
+
   runtime group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.21'
 }
 

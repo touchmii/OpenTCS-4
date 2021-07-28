@@ -1,4 +1,4 @@
-﻿package com.lvsrobot.rosbridge;
+package com.lvsrobot.rosbridge;
 
 public interface VelocityListener {
 

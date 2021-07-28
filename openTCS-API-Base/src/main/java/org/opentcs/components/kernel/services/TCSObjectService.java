@@ -96,9 +96,16 @@ public interface TCSObjectService {
    * @throws ObjectUnknownException If the referenced object does not exist.
    * @throws KernelRuntimeException In case there is an exception executing this method.
    */
-  void updateObjectValue(TCSObject<?> obj)
-    throws ObjectUnknownException, KernelRuntimeException;
-
   void appendObjectHistoryEntry(TCSObjectReference<?> ref, ObjectHistory.Entry entry)
-      throws ObjectUnknownException, KernelRuntimeException;
+        throws ObjectUnknownException, KernelRuntimeException;
+
+  /**
+   * Update {@link TCSObject}.
+   * @param obj update TCSObject.
+   * @throws ObjectUnknownException If the Object dose not exit.
+   * @throws KernelRuntimeException In case there is an exception executing this method.
+   */
+  void updateObjectValue(TCSObject<?> obj)
+          throws ObjectUnknownException, KernelRuntimeException;
+
 }

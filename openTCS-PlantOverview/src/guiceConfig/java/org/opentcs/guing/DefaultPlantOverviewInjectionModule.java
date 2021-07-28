@@ -9,6 +9,8 @@
 package org.opentcs.guing;
 
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.extras.FlatInspector;
+import com.formdev.flatlaf.extras.FlatUIDefaultsInspector;
 import com.google.inject.TypeLiteral;
 import org.opentcs.access.KernelServicePortal;
 import org.opentcs.access.SslParameterSet;
@@ -153,6 +155,10 @@ public class DefaultPlantOverviewInjectionModule
       catch( Exception ex ) {
       LOG.warn("Could not set look-and-feel", ex);
     }
+    // install inspectors
+    FlatInspector.install( "ctrl shift alt X" );
+    FlatUIDefaultsInspector.install( "ctrl shift alt Y" );
+
     // Show tooltips for 30 seconds (Default: 4 sec)
     ToolTipManager.sharedInstance().setDismissDelay(30 * 1000);
   }
