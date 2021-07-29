@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -8,6 +7,275 @@
     <artifactId>opentcs</artifactId>
     <version>4.20.0-SNAPSHOT</version>
   </parent>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>runkernel</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <!-- <includeProjectDependencies>true</includeProjectDependencies> -->
+              <!-- <includePluginDependencies>true</includePluginDependencies> -->
+              <!-- <executableDependency>
+                <groupId>com.example.myproject</groupId>
+                <artifactId>mylib</artifactId>
+              </executableDependency> -->
+              <mainClass>org.opentcs.kernel.RunKernel</mainClass>
+              <executable>java</executable>
+              <arguments>
+                <argument>-enableassertions</argument>
+                <argument>-Dopentcs.base="."</argument>
+                <argument>-Dopentcs.home="."</argument>
+                <argument>-Dopentcs.cfg4j.reload.interval=10000</argument>
+                <argument>-Djava.util.logging.config.file=./config/logging.config</argument>
+                <argument>-Djava.security.policy=file:./config/java.policy</argument>
+                <argument>-XX:-OmitStackTraceInFastThrow</argument>
+                <!-- <argument>-enableassertions</argument> -->
+    
+                <argument>-classpath</argument>
+                <!-- automatically creates the classpath using all project dependencies,
+                     also adding the project build directory -->
+                <classpath />
+                <argument>org.opentcs.kernel.RunKernel</argument>
+                <argument>arg1</argument>
+                <argument>arg2</argument>
+              </arguments>
+    
+              <workingDirectory>${basedir}\target\install</workingDirectory>
+              <systemProperties>
+                <systemProperty>
+                  <key>java.util.logging.config.file</key>
+                  <value>'./config/logging.config'</value>
+                  <key>java.security.policy</key>
+                  <value>'file:./config/java.policy'</value>
+                  <key>opentcs.base</key>
+                  <value>'.'</value>
+                  <key>opentcs.home</key>
+                  <value>'.'</value>
+                  <key>opentcs.cfg4j.reload.interval</key>
+                  <value>10000</value>
+    
+                </systemProperty>
+              </systemProperties>
+            </configuration>
+          </execution>
+          <execution>
+            <id>shutdownkernel</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <!-- <includeProjectDependencies>true</includeProjectDependencies> -->
+              <!-- <includePluginDependencies>true</includePluginDependencies> -->
+              <!-- <executableDependency>
+                <groupId>com.example.myproject</groupId>
+                <artifactId>mylib</artifactId>
+              </executableDependency> -->
+              <mainClass>org.opentcs.kernel.ShutdownKernel</mainClass>
+              <executable>java</executable>
+              <arguments>
+                <argument>-enableassertions</argument>
+                <argument>-Dopentcs.base="."</argument>
+                <argument>-Dopentcs.home="."</argument>
+                <argument>-Dopentcs.cfg4j.reload.interval=10000</argument>
+                <argument>-Djava.util.logging.config.file=./config/logging.config</argument>
+                <argument>-Djava.security.policy=file:./config/java.policy</argument>
+                <argument>-XX:-OmitStackTraceInFastThrow</argument>
+                <!-- <argument>-enableassertions</argument> -->
+    
+                <argument>-classpath</argument>
+                <!-- automatically creates the classpath using all project dependencies,
+                     also adding the project build directory -->
+                <classpath />
+                <argument>org.opentcs.kernel.ShutdownKernel</argument>
+                <!-- <argument>arg1</argument>
+                <argument>arg2</argument> -->
+              </arguments>
+    
+              <workingDirectory>${basedir}\target\install</workingDirectory>
+              <systemProperties>
+                <systemProperty>
+                  <key>java.util.logging.config.file</key>
+                  <value>'./config/logging.config'</value>
+                  <key>java.security.policy</key>
+                  <value>'file:./config/java.policy'</value>
+                  <key>opentcs.base</key>
+                  <value>'.'</value>
+                  <key>opentcs.home</key>
+                  <value>'.'</value>
+                  <key>opentcs.cfg4j.reload.interval</key>
+                  <value>10000</value>
+    
+                </systemProperty>
+              </systemProperties>
+            </configuration>
+          </execution>
+          <execution>
+            <id>swingexplorer</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <!-- <includeProjectDependencies>true</includeProjectDependencies> -->
+              <!-- <includePluginDependencies>true</includePluginDependencies> -->
+              <!-- <executableDependency>
+                <groupId>com.example.myproject</groupId>
+                <artifactId>mylib</artifactId>
+              </executableDependency> -->
+              <mainClass>org.opentcs.kernel.RunKernelExplorer</mainClass>
+              <executable>java</executable>
+              <arguments>
+                <argument>-enableassertions</argument>
+                <argument>-Dopentcs.base="."</argument>
+                <argument>-Dopentcs.home="."</argument>
+                <argument>-Dopentcs.cfg4j.reload.interval=10000</argument>
+                <argument>-Djava.util.logging.config.file=./config/logging.config</argument>
+                <argument>-Djava.security.policy=file:./config/java.policy</argument>
+                <argument>-XX:-OmitStackTraceInFastThrow</argument>
+                <!-- <argument>-enableassertions</argument> -->
+    
+                <argument>-classpath</argument>
+                <!-- automatically creates the classpath using all project dependencies,
+                     also adding the project build directory -->
+                <classpath />
+                <argument>org.opentcs.kernel.RunKernelExplorer</argument>
+                <!-- <argument>arg1</argument>
+                <argument>arg2</argument> -->
+              </arguments>
+    
+              <workingDirectory>${basedir}\target\install</workingDirectory>
+              <systemProperties>
+                <systemProperty>
+                  <key>java.util.logging.config.file</key>
+                  <value>'./config/logging.config'</value>
+                  <key>java.security.policy</key>
+                  <value>'file:./config/java.policy'</value>
+                  <key>opentcs.base</key>
+                  <value>'.'</value>
+                  <key>opentcs.home</key>
+                  <value>'.'</value>
+                  <key>opentcs.cfg4j.reload.interval</key>
+                  <value>10000</value>
+    
+                </systemProperty>
+              </systemProperties>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <!-- <dependency>
+            <groupId>com.example.myproject</groupId>
+            <artifactId>mylib</artifactId>
+            <version>1.3.5</version>
+            <type>jar</type>
+          </dependency> -->
+        </dependencies>
+      </plugin>
+
+      <plugin>
+        <!-- 拷贝依赖包到指定目录 -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/install/lib</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-resource</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/install/</outputDirectory>
+              <resources>
+                <resource>
+                  <!-- 文件地址  使用**匹配子文件夹 -->
+                  <directory>${basedir}/src/dist</directory>
+                  <includes>
+                    <include>**/**</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>com.coderplus.maven.plugins</groupId>
+        <artifactId>copy-rename-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <fileSets>
+                <fileSet>
+                  <sourceFile>${basedir}/src/main/resources/org/opentcs/kernel/distribution/config/opentcs-kernel-defaults-baseline.properties</sourceFile>
+                  <destinationFile>${basedir}/target/install/config/opentcs-kernel-defaults-baseline.properties</destinationFile>
+                </fileSet>
+                <fileSet>
+                  <sourceFile>${basedir}/src/main/resources/opentcs-customization.properties</sourceFile>
+                  <destinationFile>${basedir}/target/install/config/opentcs-customization.properties</destinationFile>
+                </fileSet>
+              </fileSets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>${basedir}/src/main/assembly/zip.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
 
   <groupId>org.opentcs</groupId>
   <artifactId>opentcs-kernel</artifactId>
@@ -138,6 +406,56 @@
       <artifactId>de.huxhorn.sulky.ulid</artifactId>
       <version>8.2.0</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>javassist</groupId>
+      <artifactId>javassist</artifactId>
+      <version>3.12.1.GA</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.formdev</groupId>
+      <artifactId>flatlaf-extras</artifactId>
+      <version>1.4</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.formdev</groupId>
+      <artifactId>flatlaf</artifactId>
+      <version>1.4</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.formdev</groupId>
+      <artifactId>flatlaf-intellij-themes</artifactId>
+      <version>1.4</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.jgoodies</groupId>
+      <artifactId>jgoodies-forms</artifactId>
+      <version>1.9.0</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.miglayout</groupId>
+      <artifactId>miglayout-swing</artifactId>
+      <version>5.3</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.swingexplorer</groupId>
+      <artifactId>swingexplorer-core</artifactId>
+      <version>1.9.0</version>
+      <scope>system</scope>
+      <systemPath>${library.path}/../lib/swingexplorer-core-1.9.0.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.swingexplorer</groupId>
+      <artifactId>swingexplorer-agent</artifactId>
+      <version>1.9.0</version>
+      <scope>system</scope>
+      <systemPath>${library.path}/../lib/swingexplorer-agent-1.9.0.jar</systemPath>
     </dependency>
   </dependencies>
 </project>
