@@ -176,7 +176,7 @@
             <version>${hutool.version}</version>
         </dependency>
         <!-- opentcs -->
-        <dependency>
+        <!-- <dependency>
             <groupId>org.opentcs</groupId>
             <artifactId>openTCS-PlantOverview</artifactId>
             <version>${opentcs.version}</version>
@@ -190,7 +190,7 @@
             <groupId>org.opentcs</groupId>
             <artifactId>openTCS-KernelControlCenter</artifactId>
             <version>${opentcs.version}</version>
-        </dependency>
+        </dependency> -->
 
         <dependency>
             <groupId>org.slf4j</groupId>
