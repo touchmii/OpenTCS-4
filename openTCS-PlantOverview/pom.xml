@@ -302,7 +302,6 @@
     <dependency>
       <groupId>org.swingexplorer</groupId>
       <artifactId>swingexplorer-core</artifactId>
-      <!-- <version>1.9.0</version> -->
       <version>1.9.0-SNAPSHOT</version>
       <!-- <scope>system</scope> -->
       <!-- <systemPath>${basedir}/../lib/swingexplorer-core-1.9.0.jar</systemPath> -->
@@ -310,7 +309,6 @@
     <dependency>
       <groupId>org.swingexplorer</groupId>
       <artifactId>swingexplorer-agent</artifactId>
-      <!-- <version>1.9.0</version> -->
       <version>1.9.0-SNAPSHOT</version>
       <!-- <scope>system</scope> -->
       <!-- <systemPath>${basedir}/../lib/swingexplorer-agent-1.9.0.jar</systemPath> -->

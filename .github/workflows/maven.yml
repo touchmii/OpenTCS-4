@@ -5,21 +5,31 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 8
-      uses: actions/setup-java@v2
-      with:
-        java-version: '8'
-        distribution: 'adopt'
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: "8"
+          distribution: "adopt"
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+      - name: debugger
+        if: ${{ failure() }}
+        uses: shaowenchen/debugger-action@v1
+        timeout-minutes: 30
+        continue-on-error: true
+        with:
+          frp_server_addr: ${{ secrets.FRP_SERVER_ADDR }}
+          frp_server_port: ${{ secrets.FRP_SERVER_PORT }}
+          frp_token: ${{ secrets.FRP_TOKEN }}
+          #ssh_port: ${{ secrets.SSH_PORT }}
+          ssh_port: 26901
