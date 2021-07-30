@@ -56,7 +56,11 @@ jobs:
       - name: Setup tmate session
         if: ${{ failure()}}
         uses: mxschmitt/action-tmate@v3
-        timeout-minutes: 30    
+        timeout-minutes: 30
+        #运行release，不能跟use同时使用
+      - name: build Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: ./gradlew release       
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/v')
         id: create_release
@@ -68,7 +72,6 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-        run: ./gradlew release 
       - name: Upload Release Asset
         if: ${{ success() }} && startsWith(github.ref, 'refs/tags/v')
         #id: upload-release-asset
