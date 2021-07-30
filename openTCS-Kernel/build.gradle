@@ -39,6 +39,17 @@ dependencies {
   compileOnly group: 'de.huxhorn.sulky', name: 'de.huxhorn.sulky.ulid', version: '8.2.0', classifier: 'sources'
   
   runtime group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.21'
+
+  compile files("${rootDir}/lib/swingexplorer-core-1.9.0.jar")
+  compile files("${rootDir}/lib/swingexplorer-agent-1.9.0.jar")
+  implementation 'com.oliphantllc:swing-layout:1.0.3'
+  implementation 'javassist:javassist:3.12.1.GA'
+  implementation 'com.formdev:flatlaf-extras:1.4'
+  implementation 'com.formdev:flatlaf:1.4'
+  implementation 'com.formdev:flatlaf-intellij-themes:1.4'
+  implementation 'com.jgoodies:jgoodies-forms:1.9.0'
+  // https://mvnrepository.com/artifact/com.miglayout/miglayout-swing
+  implementation group: 'com.miglayout', name: 'miglayout-swing', version: '5.3'
 }
 
 distributions {

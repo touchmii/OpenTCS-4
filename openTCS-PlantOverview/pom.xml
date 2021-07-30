@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -12,6 +11,179 @@
   <groupId>org.opentcs</groupId>
   <artifactId>opentcs-plantoverview</artifactId>
   <version>${opentcs.version}</version>
+  <build>
+    <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.12.4</version>
+          <configuration>
+            <additionalClasspathElements>
+              <!-- <additionalClasspathElement>path/to/additional/resources</additionalClasspathElement> -->
+              <additionalClasspathElement>{basedir}/target/install/lib/*jar</additionalClasspathElement>
+            </additionalClasspathElements>
+          </configuration>
+        </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>runplantoverview</id>
+            <!-- <phase>generate-sources</phase>mvn -->
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <!-- <includeProjectDependencies>false</includeProjectDependencies> -->
+              <!-- <includePluginDependencies>false</includePluginDependencies> -->
+              <!-- <addOutputToClasspath>false</addOutputToClasspath> -->
+              <arguments>
+                <argument>-Dsun.java2d.d3d=false</argument>
+                <argument>-Dopentcs.base="."</argument>
+                <argument>-Dopentcs.home="."</argument>
+                <argument>-Dopentcs.cfg4j.reload.interval=10000</argument>
+                <argument>-Djava.util.logging.config.file=./config/logging.config</argument>
+                <argument>-Djava.security.policy=file:./config/java.policy</argument>
+                <argument>-XX:-OmitStackTraceInFastThrow</argument>
+                <argument>-splash:bin/splash-image.gif</argument>
+                <argument>-classpath</argument>
+                <!-- automatically creates the classpath using all project dependencies,
+                   also adding the project build directory -->
+                <classpath />
+                <argument>org.opentcs.guing.RunPlantOverview</argument>
+                <!-- <argument>arg1</argument> -->
+                <!-- <argument>arg2</argument> -->
+              </arguments>
+              <workingDirectory>${basedir}\target\install</workingDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>swingexplorer</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <arguments>
+                <argument>-Dsun.java2d.d3d=false</argument>
+                <argument>-Dopentcs.base="."</argument>
+                <argument>-Dopentcs.home="."</argument>
+                <argument>-Dopentcs.cfg4j.reload.interval=10000</argument>
+                <argument>-Djava.util.logging.config.file=./config/logging.config</argument>
+                <argument>-Djava.security.policy=file:./config/java.policy</argument>
+                <argument>-XX:-OmitStackTraceInFastThrow</argument>
+                <argument>-splash:bin/splash-image.gif</argument>
+                <argument>-classpath</argument>
+                <!-- automatically creates the classpath using all project dependencies,
+                   also adding the project build directory -->
+                <classpath />
+                <argument>org.opentcs.guing.RunPlantOverviewExplorer</argument>
+                <!-- <argument>arg1</argument>
+              <argument>arg2</argument> -->
+              </arguments>
+              <workingDirectory>${basedir}\target\install</workingDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <!-- 拷贝依赖包到指定目录 -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/install/lib</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-resource</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/install/</outputDirectory>
+              <resources>
+                <resource>
+                  <!-- 文件地址  使用**匹配子文件夹 -->
+                  <directory>${basedir}/src/dist</directory>
+                  <includes>
+                    <include>**/**</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>com.coderplus.maven.plugins</groupId>
+        <artifactId>copy-rename-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <fileSets>
+                <fileSet>
+                  <sourceFile>${basedir}/src/main/resources/org/opentcs/plantoverview/distribution/config/opentcs-plantoverview-defaults-baseline.properties</sourceFile>
+                  <destinationFile>${basedir}/target/install/config/opentcs-plantoverview-defaults-baseline.properties</destinationFile>
+                </fileSet>
+                <fileSet>
+                  <sourceFile>${basedir}/src/main/resources/opentcs-customization.properties</sourceFile>
+                  <destinationFile>${basedir}/target/install/config/opentcs-customization.properties</destinationFile>
+                </fileSet>
+              </fileSets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>${basedir}/src/main/assembly/zip.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
 
   <!-- <repositories>
     <repository>
@@ -130,16 +302,18 @@
     <dependency>
       <groupId>org.swingexplorer</groupId>
       <artifactId>swingexplorer-core</artifactId>
-      <version>1.9.0</version>
-      <scope>system</scope>
-      <systemPath>${library.path}/../lib/swingexplorer-core-1.9.0.jar</systemPath>
+      <!-- <version>1.9.0</version> -->
+      <version>1.9.0-SNAPSHOT</version>
+      <!-- <scope>system</scope> -->
+      <!-- <systemPath>${basedir}/../lib/swingexplorer-core-1.9.0.jar</systemPath> -->
     </dependency>
     <dependency>
       <groupId>org.swingexplorer</groupId>
       <artifactId>swingexplorer-agent</artifactId>
-      <version>1.9.0</version>
-      <scope>system</scope>
-      <systemPath>${library.path}/../lib/swingexplorer-agent-1.9.0.jar</systemPath>
+      <!-- <version>1.9.0</version> -->
+      <version>1.9.0-SNAPSHOT</version>
+      <!-- <scope>system</scope> -->
+      <!-- <systemPath>${basedir}/../lib/swingexplorer-agent-1.9.0.jar</systemPath> -->
     </dependency>
   </dependencies>
 </project>

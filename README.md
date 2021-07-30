@@ -2,6 +2,7 @@
 
 # openTCS4.17src
 ![Java CI with Gradle](https://github.com/touchmii/OpenTCS-4.17-Modbus/workflows/Java%20CI%20with%20Gradle/badge.svg)
+[![Java CI with Maven](https://github.com/touchmii/OpenTCS-4.17-Modbus/actions/workflows/maven.yml/badge.svg)](https://github.com/touchmii/OpenTCS-4.17-Modbus/actions/workflows/maven.yml)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/tag/touchmii/OpenTCS-4.17-Modbus)
 ![GitHub](https://img.shields.io/github/license/touchmii/OpenTCS-4.17-Modbus)
 
@@ -32,3 +33,19 @@
 长路路径运行时遇到通讯中断无法按照顺序报告走完的点，需修改DefaultVehicleController内命令执行完毕的判断规则
 
 ![](https://raw.githubusercontent.com/touchmii/uPic/master/imgSnipaste_2020-09-21_17-49-50.png)
+
+####  新增Maven支持
+
+WebClient因依赖问题暂时无法使用
+
+使用mvn package可编译项目
+运行Kernel mvn exec:exec@runkernel -f openTCS-Kernel/pom.xml
+
+使用界面调试工具 mvn exec:exec@swingexplorer -f openTCS-Kernel/pom.xml
+
+运行PlantOverview mvn exec:exec@runplantoverview -f openTCS-PlantOverview/pom.xml
+
+使用界面调试工具 mvn exec:exec@swingexplorer -f openTCS-PlantOverview/pom.xml
+
+使用maven需要安装swingexplorer core 和 agent包, 暂时不支持直接引用,使用mvn install命令来安装
+
