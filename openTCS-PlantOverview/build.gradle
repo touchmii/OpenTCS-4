@@ -35,6 +35,8 @@ dependencies {
 
   compile files("${rootDir}/lib/swingexplorer-core-1.9.0.jar")
   compile files("${rootDir}/lib/swingexplorer-agent-1.9.0.jar")
+  compile files("${rootDir}/lib/flatlaf-1.4.jar")
+  compile files("${rootDir}/lib/flatlaf-extras-1.4.jar")
   implementation 'com.oliphantllc:swing-layout:1.0.3'
   implementation 'javassist:javassist:3.12.1.GA'
   implementation 'com.formdev:flatlaf-extras:1.4'
