@@ -79,7 +79,7 @@
         <module>openTCS-Example-CommAdapter-Serial</module>
         <module>openTCS-Example-CommAdapter-TCP</module>
         <module>openTCS-Example-CommAdapter-VREP</module>
-        <module>openTCS-CommAdapter-ROS-bridge</module>
+        <module>openTCS-CommAdapter-ROS-Bridge</module>
     </modules>
     
     <build>
