@@ -29,7 +29,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew release
+        run: ./gradlew build
 
       - name: Rollback Release
         if: failure() && startsWith(github.ref, 'refs/tags/v')
@@ -53,6 +53,10 @@ jobs:
           frp_token: ${{ secrets.FRP_TOKEN }}
           #ssh_port: ${{ secrets.SSH_PORT }}
           ssh_port: 26900
+      - name: Setup tmate session
+        if: ${{ failure()}}
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 30    
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/v')
         id: create_release
@@ -64,6 +68,7 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
+        run: ./gradlew release 
       - name: Upload Release Asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v2

@@ -28,38 +28,33 @@ apply plugin: 'com.github.ben-manes.versions'
 
 apply from: "${rootDir}/gradle/common.gradle"
 apply plugin: 'maven'
+// apply plugin: 'maven-publish'
 
 group = 'org.opentcs'
 version = '4.20.0-SNAPSHOT'
-
-plugins {
-    id("maven-publish") apply false
-}
-subprojects {
-    apply plugin: "maven-publish"
-    publishing {
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/touchmii/OpenTCS-4")
-                credentials {
-                    username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
-                    password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
-                }
-            }
-        }
-        publications {
-            gpr(MavenPublication) {
-                from(components.java)
-            }
-        }
-    }
-}
 
 subprojects {
   apply plugin: 'com.bihe0832.gradleDependenciesCheck'
   GradleDependenciesCheckConfig {
     showResultType = 1
+  }
+  apply plugin: "maven-publish"
+  publishing {
+      repositories {
+          maven {
+              name = "GitHubPackages"
+              url = uri("https://maven.pkg.github.com/touchmii/OpenTCS-4")
+              credentials {
+                  username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+                  password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+              }
+          }
+      }
+      publications {
+          gpr(MavenPublication) {
+              from(components.java)
+          }
+      }
   }
 //  afterEvaluate {Project project ->
 //    project.getTasks().getByName('build').dependsOn("checkGradleDependencies")

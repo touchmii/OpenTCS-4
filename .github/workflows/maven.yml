@@ -21,7 +21,10 @@ jobs:
           java-version: "8"
           distribution: "adopt"
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn -s $GITHUB_WORKSPACE/.github/workflows/maven-settings.xml -B package --file pom.xml
+        env:
+          USER_NAME: ${{ secrets.USER_NAME}}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       - name: debugger
         if: ${{ failure() }}
         uses: shaowenchen/debugger-action@v1
@@ -33,3 +36,7 @@ jobs:
           frp_token: ${{ secrets.FRP_TOKEN }}
           #ssh_port: ${{ secrets.SSH_PORT }}
           ssh_port: 26901
+      - name: Setup tmate session
+        if: ${{ failure()}}
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 30    
