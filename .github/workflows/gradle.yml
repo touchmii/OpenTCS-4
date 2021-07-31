@@ -73,7 +73,7 @@ jobs:
           draft: false
           prerelease: false
       - name: Upload Release Asset
-        if: ${{ success() }} && startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/v')
         #id: upload-release-asset
         uses: softprops/action-gh-release@v1
         env:
