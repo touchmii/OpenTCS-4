@@ -83,7 +83,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.osgi
     implementation group: 'org.eclipse.platform', name: 'org.eclipse.osgi', version: '3.13.300'
     // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.equinox.common
-    implementation group: 'org.eclipse.platform', name: 'org.eclipse.equinox.common', version: '3.12.0'
+    // implementation group: 'org.eclipse.platform', name: 'org.eclipse.equinox.common', version: '3.10.600'
     // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.core.jobs
     implementation group: 'org.eclipse.platform', name: 'org.eclipse.core.jobs', version: '3.10.1100'
     // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.equinox.registry
@@ -95,12 +95,12 @@ dependencies {
     // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.equinox.app
     implementation group: 'org.eclipse.platform', name: 'org.eclipse.equinox.app', version: '1.3.600'
     // https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.core.runtime
-    // implementation group: 'org.eclipse.platform', name: 'org.eclipse.core.runtime', version: '3.15.300'
+    // implementation group: 'org.eclipse.platform', name: 'org.eclipse.core.runtime', version: '3.18.0'
 
 
     compile files("${rootDir}/lib/org.eclipse.core.runtime-3.18.0.jar")
     compile files("${rootDir}/lib/org.eclipse.equinox.common-3.10.600.jar")
-//    implementation('org.eclipse.platform:org.eclipse.core.runtime:3.17.100') {
+//    implementation('org.eclipse.platform:org.eclipse.core.runtime:3.18.0') {
 //        transitive = false
 //    }
 }

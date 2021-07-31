@@ -35,13 +35,13 @@
                   <!-- <searchTransitive>true</searchTransitive> -->
                   <excludes>
                     <!-- <exclude>org.eclipse.platform:org.eclipse.equinox.app:1.4.0</exclude> -->
-                    <!-- <exclude>org.eclipse.platform</exclude> -->
-                    <!-- <exclude>org.eclipse.platform:org.eclipse.equinox.common</exclude> -->
+                    <exclude>org.eclipse.platform:org.eclipse.core.runtime</exclude>
+                    <exclude>org.eclipse.platform:org.eclipse.equinox.common</exclude>
                   </excludes>
                   <includes>
                     <!-- <include>org.eclipse.platform:org.eclipse.equinox.app:1.4.0</include> -->
-                    <!-- <include>org.eclipse.platform:org.eclipse.core.runtime:3.18</include> -->
-                    <!-- <include>org.eclipse.platform:org.eclipse.equinox.common:3.13.600</include> -->
+                    <include>org.eclipse.platform:org.eclipse.core.runtime:[3.18, 4.0.0]</include>
+                    <include>org.eclipse.platform:org.eclipse.equinox.common:[3.13.600, 4.0.0]</include>
                   </includes>
                 </banTransitiveDependencies>
                 <!-- <dependencyConvergence/> -->
@@ -60,11 +60,45 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.7</version>
+          <configuration>
+              <excludes>
+                  <exclude>org.eclipse.platform:org.eclipse.core.runtime</exclude>
+                  <exclude>org.eclipse.platform:org.eclipse.equinox.common</exclude>
+              </excludes>
+          </configuration>
+      </plugin>
+
     </plugins>
   </build>
 
+  <dependencyManagement>
+    <dependencies>
+          <dependency>
+      <groupId>org.eclipse.platform</groupId>
+      <artifactId>org.eclipse.core.runtime</artifactId>
+      <version>3.18.0</version>
+      <scope>compile</scope>
+      
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.platform</groupId>
+      <artifactId>org.eclipse.equinox.common</artifactId>
+      <version>3.10.600</version>
+      <scope>compile</scope>
+      
+    </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <properties>
     <enforcer.skip>true</enforcer.skip>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
     <dependency>
@@ -538,16 +572,9 @@
       <artifactId>org.eclipse.core.runtime</artifactId>
       <version>3.18.0</version>
       <scope>compile</scope>
-      
+
     </dependency>
 
-    <dependency>
-      <groupId>org.eclipse.platform</groupId>
-      <artifactId>org.eclipse.equinox.common</artifactId>
-      <version>3.12.0</version>
-      <scope>compile</scope>
-      
-    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
@@ -556,5 +583,10 @@
       <scope>test</scope>
       
     </dependency>
+    <dependency>
+    <groupId>javax</groupId>
+    <artifactId>javaee-api</artifactId>
+    <version>8.0</version>
+</dependency>
   </dependencies>
 </project>

@@ -29,6 +29,9 @@
             <id>github</id>
             <name>GitHub OWNER Apache Maven Packages</name>
             <url>https://maven.pkg.github.com/touchmii/swingexplorer</url>
+            <!-- <snapshots>
+                <enabled>false</enabled>
+            </snapshots> -->
         </repository>
     </repositories>
 
@@ -76,7 +79,7 @@
         <module>openTCS-PlantOverview-Panel-Statistics</module>
         <module>openTCS-PlantOverview-Themes-Default</module>
         <module>openTCS-Strategies-Default</module>
-        <!-- <module>openTCS-WebClient</module> -->
+        <module>openTCS-WebClient</module>
         <module>openTCS-Example-CommAdapter</module>
         <module>openTCS-Example-CommAdapter-HTTP</module>
         <module>openTCS-Example-CommAdapter-Jbh</module>
