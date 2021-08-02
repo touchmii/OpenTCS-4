@@ -16,7 +16,7 @@ on:
 
 jobs:
   build:
-    runs-on: [ubuntu-latest, self-hosted]
+    runs-on: self-hosted
 
     steps:
       - uses: actions/checkout@v2
