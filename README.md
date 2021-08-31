@@ -10,7 +10,7 @@
 开源的交通控制系统，可用于AGV的交通管制系统
 
 #### 使用方式
-详情访问 ![OpenTCS Page](https://touchmii.github.io/OpenTCS-4/)
+详情访问 [OpenTCS Page](https://touchmii.github.io/OpenTCS-4)
 
 推荐使用IDEA,打开此项目后等待gradle加载完毕
 
