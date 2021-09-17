@@ -1,0 +1,197 @@
+/*
+ * openTCS copyright information:
+ * Copyright (c) 2013 Fraunhofer IML
+ *
+ * This program is free software and subject to the MIT license. (For details,
+ * see the licensing information (LICENSE.txt) you should have received with
+ * this copy of the software.)
+ */
+package org.opentcs.guing.application.menus.menubar;
+
+import com.formdev.flatlaf.extras.FlatUIDefaultsInspector;
+import org.opentcs.guing.application.action.ViewActionMap;
+
+import javax.inject.Inject;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+
+import static java.util.Objects.requireNonNull;
+
+public class ThemeMenu
+        extends JMenu {
+
+    private final JMenuBar menuBar;
+    private final JMenu mnuHelp;
+    private final JMenu mnuTheme;
+
+    private final JMenuItem showFlatUIInspector;
+    private final JMenuItem showFlatInspector;
+
+    private final JMenu flatThemes;
+
+    private final JMenuItem flatLight;
+    private final JMenuItem flatDark;
+    private final JMenuItem flatIntelliJ;
+    private final JMenuItem flatDarcula;
+    private final JMenuItem flatMetal;
+    private final JMenuItem flatNimbus;
+    private final JMenuItem flatWindows;
+
+    private ControlBar controlBar;
+
+    public ThemeMenu(JMenuItem showFlatUIInspector) {
+        this.showFlatUIInspector = showFlatUIInspector;
+    }
+
+    @Inject
+    public ThemeMenu(ViewActionMap actionMap) {
+
+        requireNonNull(actionMap, "actionMap");
+
+        private void initComponents() {
+            // initialize frame
+            // initialize menu
+            menuBar = new JMenuBar();
+            mnuHelp = new JMenu("Help");
+            mnuTheme = new JMenu("Theme");
+            menuBar.add(mnuHelp);
+            menuBar.add(mnuTheme);
+//            this.setJMenuBar(menuBar);
+
+//            setTitle("Swing Explorer");
+//            this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+            // initialize main panel
+//            pnlSwingExplorer = new PnlSwingExplorer();
+//            this.add(pnlSwingExplorer);
+
+//            Image appImage = Icons.appSmallImage();
+//            this.setIconImage(appImage);
+
+            // initialize menu
+            menuBar = new JMenuBar();
+            mnuHelp = new JMenu("Help");
+            mnuTheme = new JMenu("Theme");
+            menuBar.add(mnuHelp);
+            menuBar.add(mnuTheme);
+            this.setJMenuBar(menuBar);
+
+            controlBar = new ControlBar();
+            JTabbedPane jTabbedPane = new JTabbedPane();
+            controlBar.initialize(this, jTabbedPane);
+
+        }
+
+        private void initAction() {
+//            actHelpAbout = new ActHelpAbout(this);
+//            actHelp = new ActHelp();
+
+            mnuHelp.add(actHelp);
+            mnuHelp.add(actHelpAbout);
+
+            flatLight =    new JMenuItem("Flat Light");
+            flatDark =     new JMenuItem("Flat Dark");
+            flatIntelliJ = new JMenuItem("Flat IntelliJ");
+            flatDarcula =  new JMenuItem("Flat Darcula");
+            flatMetal =    new JMenuItem("Flat Metal");
+            flatNimbus =   new JMenuItem("Flat Nimbus");
+            flatWindows =  new JMenuItem("Flat Windows");
+
+            flatThemes = new JMenu("Flat Dark");
+
+            flatLight.addActionListener(e -> {
+                if (!flatThemes.getText().equals("Flat Light")) {
+                    ControlBar.selectLookAndFeel("com.formdev.flatlaf.FlatLightLaf");
+                    flatThemes.setText("Flat Light");
+                }
+            });
+            flatDark.addActionListener(e -> {
+                if (!flatThemes.getText().equals("Flat Dark")) {
+                    ControlBar.selectLookAndFeel("com.formdev.flatlaf.FlatDarkLaf");
+                    flatThemes.setText("Flat Dark");
+                }
+            });
+            flatIntelliJ.addActionListener(e -> {
+                if(!flatThemes.getText().equals("Flat IntelliJ")) {
+                    ControlBar.selectLookAndFeel("com.formdev.flatlaf.FlatIntelliJLaf");
+                    flatThemes.setText("Flat IntelliJ");
+                }
+            });
+            flatDarcula.addActionListener(e -> {
+                if(!flatThemes.getText().equals("Flat Darcula")) {
+                    ControlBar.selectLookAndFeel("com.formdev.flatlaf.FlatDarculaLaf");
+                    flatThemes.setText("Flat Darcula");
+                }
+            });
+
+            flatMetal.addActionListener(e -> {
+                if(!flatThemes.getText().equals("Flat MetaL")) {
+                    ControlBar.selectLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                    flatThemes.setText("Flat mETAL");
+                }
+            });
+            flatNimbus.addActionListener(e -> {
+                if(!flatThemes.getText().equals("Flat Nimbus")) {
+                    ControlBar.selectLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+                    flatThemes.setText("Flat Nimbus");
+                }
+            });
+            flatWindows.addActionListener(e -> {
+                if(!flatThemes.getText().equals("Flat Windows")) {
+                    ControlBar.selectLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                    flatThemes.setText("Flat Windows");
+                }
+            });
+
+
+            flatThemes.add(flatLight);
+            flatThemes.add(flatDark);
+            flatThemes.add(flatIntelliJ);
+            flatThemes.add(flatDarcula);
+            flatThemes.add(flatMetal);
+            flatThemes.add(flatNimbus);
+            flatThemes.add(flatWindows);
+
+            mnuTheme.add(flatThemes);
+
+            showFlatInspector = new JMenuItem();
+            showFlatInspector.setText("Show Inspector");
+            showFlatInspector.addActionListener(e -> showInspector(this));
+
+            showFlatUIInspector = new JMenuItem();
+            showFlatUIInspector.setText("Show UI Default Inspector");
+            showFlatUIInspector.addActionListener(e -> showUIDefaultsInspector());
+
+            mnuTheme.add(showFlatInspector);
+            mnuTheme.add(showFlatUIInspector);
+
+            addComponentListener(new ComponentAdapter() {
+                @Override
+                public void componentShown(ComponentEvent e) {
+                    // invoke refresh
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override public void run() {
+                            pnlSwingExplorer.actRefresh.actionPerformed(null);
+                        }
+                    });
+                }
+            });
+        }
+
+        private void showUIDefaultsInspector() {
+            FlatUIDefaultsInspector.show();
+        }
+
+        private void showInspector(JFrame own) {
+            JDialog inspectorKey = new JDialog(own);
+            JLabel l = new JLabel("Press Shit Ctrl Alt X to enable inspector.");
+            inspectorKey.setTitle("Help.");
+            inspectorKey.add(l);
+            inspectorKey.setSize(300, 100);
+            inspectorKey.setLocationByPlatform(true);
+            inspectorKey.setVisible(true);
+        }
+    }
+}

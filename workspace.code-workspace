@@ -1,0 +1,23 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "..\\exec-maven-plugin"
+		},
+		{
+			"path": "..\\FlatLaf"
+		},
+		{
+			"path": "..\\ReflectionUI"
+		},
+		{
+			"path": "..\\SwingTestingToolkit"
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "automatic",
+		"java.maven.downloadSources": true
+	}
+}

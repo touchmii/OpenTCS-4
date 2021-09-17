@@ -192,15 +192,15 @@ public class OpenTCSModelManager
     this.kernelPersistor = requireNonNull(kernelPersistor, "kernelPersistor");
     
     this.modelReader = requireNonNull(modelReader, "modelReader");
-    File newhomeDir = new File("/Users/touchmii/IntelliJProjects/OpenTCS-4.17/openTCS-PlantOverview/src/dist");
-    this.modelReaderFileChooser = new SynchronizedFileChooser(new File(newhomeDir, "data"));
-//    this.modelReaderFileChooser = new SynchronizedFileChooser(new File(homeDir, "data"));
+//    File newhomeDir = new File("/Users/touchmii/IntelliJProjects/OpenTCS-4.17/openTCS-PlantOverview/src/dist");
+//    this.modelReaderFileChooser = new SynchronizedFileChooser(new File(homeDir, "data"))
+    this.modelReaderFileChooser = new SynchronizedFileChooser(new File(homeDir, "data"));
     this.modelReaderFileChooser.setAcceptAllFileFilterUsed(false);
     this.modelReaderFileChooser.setFileFilter(modelReader.getDialogFileFilter());
 
     this.modelPersistor = requireNonNull(modelPersistor, "modelPersistor");
-    this.modelPersistorFileChooser = new SynchronizedFileChooser(new File(newhomeDir, "data"));
-//    this.modelPersistorFileChooser = new SynchronizedFileChooser(new File(homeDir, "data"));
+//    this.modelPersistorFileChooser = new SynchronizedFileChooser(new File(newhomeDir, "data"));
+    this.modelPersistorFileChooser = new SynchronizedFileChooser(new File(homeDir, "data"));
     this.modelPersistorFileChooser.setAcceptAllFileFilterUsed(false);
     this.modelPersistorFileChooser.setFileFilter(modelPersistor.getDialogFileFilter());
 

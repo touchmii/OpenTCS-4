@@ -33,7 +33,7 @@ public class ConfigRoute {
 //        driveorder.getRoute().getSteps().get(0).getPath().getLength()
         steps = route.getSteps();
         init = 1;
-        debug_path = "robot path";
+        debug_path = "robot path ";
     }
     public void setAngle(double _angle) {
         debug_path += String.format("angle %s ,", _angle);
@@ -50,23 +50,7 @@ public class ConfigRoute {
     public byte[] getPath() {
         byte[] path = new byte[steps.size()*4+14];
 //        String debug_path = new String("robot path ");
-//        switch (driveorder.getDestination().getOperation()) {
-//            case "MOVE":
-//                path[1] = 0;
-//                break;
-//            case "LOAD":
-//                path[1] = 1;
-////                path[path.length-5] = path[path.length-1];
-//                break;
-//            case "UNLOAD":
-//                path[1] = 2;
-//                break;
-//            case "CHARGING":
-//                path[1] = 3;
-//                break;
-//            default:
-//                break;
-//        }
+
 //        path[2] = steps.size()+1;
 //        path[3] = Integer.parseInt(new String(current_point.getName()));
 //        path[3] = Integer.parseInt(new String(steps.get(0).getSourcePoint().getName()));
@@ -225,6 +209,23 @@ public class ConfigRoute {
 
         path[9+steps.size()*4] = (byte)(point2_id/256);
         path[10+steps.size()*4] = (byte)(point2_id%256);
+        switch (driveorder.getDestination().getOperation()) {
+            case "MOVE":
+//                path[1] = 0;
+                break;
+            case "LOAD":
+                path[11+steps.size()*4] = 2;;
+//                path[path.length-5] = path[path.length-1];
+                break;
+            case "UNLOAD":
+                path[11+steps.size()*4] = 3;;
+                break;
+            case "CHARGING":
+//                path[1] = 3;
+                break;
+            default:
+                break;
+        }
         path[12+steps.size()*4] = 0;
         byte check = 0;
         for(int i = 0; i < steps.size()*4+13; i++) {

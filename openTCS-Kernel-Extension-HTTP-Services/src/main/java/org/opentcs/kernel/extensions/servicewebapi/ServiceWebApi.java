@@ -99,7 +99,7 @@ public class ServiceWebApi
     service = Service.ignite()
         .ipAddress(configuration.bindAddress())
         .port(configuration.bindPort());
-
+    service.webSocket("/api/v2", WebSocketHandler.class);
     if (configuration.useSsl()) {
       service.secure(sslParamSet.getKeystoreFile().getAbsolutePath(),
                      sslParamSet.getKeystorePassword(),

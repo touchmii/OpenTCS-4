@@ -11,6 +11,21 @@
   <groupId>org.opentcs</groupId>
   <artifactId>opentcs-plantoverview</artifactId>
   <version>${opentcs.version}</version>
+
+  <properties>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <debug_base>${basedir}/src/dist</debug_base>
+    <debug_home>${basedir}/src/dist</debug_home>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
+
   <build>
     <plugins>
         <plugin>
@@ -185,11 +200,6 @@
     </plugins>
   </build>
 
-  <!-- <repositories>
-    <repository>
-      <id></id>
-    </repository>
-  </repositories> -->
   <dependencies>
     <dependency>
       <groupId>org.opentcs</groupId>
@@ -230,6 +240,12 @@
     <dependency>
       <groupId>org.opentcs</groupId>
       <artifactId>opentcs-plantoverview-panel-statistics</artifactId>
+      <version>${opentcs.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.opentcs</groupId>
+      <artifactId>opentcs-plantoverview-panel-video</artifactId>
       <version>${opentcs.version}</version>
       <scope>compile</scope>
     </dependency>
@@ -303,15 +319,21 @@
       <groupId>org.swingexplorer</groupId>
       <artifactId>swingexplorer-core</artifactId>
       <version>1.9.0-SNAPSHOT</version>
-      <!-- <scope>system</scope> -->
+      <scope>compile</scope>
       <!-- <systemPath>${basedir}/../lib/swingexplorer-core-1.9.0.jar</systemPath> -->
     </dependency>
     <dependency>
       <groupId>org.swingexplorer</groupId>
       <artifactId>swingexplorer-agent</artifactId>
       <version>1.9.0-SNAPSHOT</version>
-      <!-- <scope>system</scope> -->
+      <scope>compile</scope>
       <!-- <systemPath>${basedir}/../lib/swingexplorer-agent-1.9.0.jar</systemPath> -->
+    </dependency>
+    <dependency>
+      <groupId>com.github.JetBrains.projector-server</groupId>
+      <artifactId>projector-agent</artifactId>
+      <version>v1.2.1</version>
+      <scope>runtime</scope>
     </dependency>
   </dependencies>
 </project>

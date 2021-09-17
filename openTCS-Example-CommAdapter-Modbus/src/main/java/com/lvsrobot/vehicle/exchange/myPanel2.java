@@ -158,6 +158,7 @@ public class myPanel2 extends VehicleCommAdapterPanel {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        // Generated using JFormDesigner Evaluation license - 蒋滨鸿
         ManualControl = new JPanel();
         button8 = new JButton();
         button9 = new JButton();
@@ -193,6 +194,13 @@ public class myPanel2 extends VehicleCommAdapterPanel {
 
         //======== this ========
         setBorder(null);
+        setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax
+        .swing.border.EmptyBorder(0,0,0,0), "JFor\u006dDesi\u0067ner \u0045valu\u0061tion",javax.swing
+        .border.TitledBorder.CENTER,javax.swing.border.TitledBorder.BOTTOM,new java.awt.
+        Font("Dia\u006cog",java.awt.Font.BOLD,12),java.awt.Color.red
+        ), getBorder())); addPropertyChangeListener(new java.beans.PropertyChangeListener(){@Override
+        public void propertyChange(java.beans.PropertyChangeEvent e){if("bord\u0065r".equals(e.getPropertyName(
+        )))throw new RuntimeException();}});
 
         //======== ManualControl ========
         {
@@ -365,51 +373,21 @@ public class myPanel2 extends VehicleCommAdapterPanel {
 
             //---- pausePathButton ----
             pausePathButton.setText("\u6682\u505c\u8def\u5f84");
-            pausePathButton.addActionListener(new java.awt.event.ActionListener(){
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    pausePathButtonActionPerformed(evt);
-                }
-            });
 
             //---- resumePathButton ----
             resumePathButton.setText("\u7ee7\u7eed\u8def\u5f84");
-            resumePathButton.addActionListener(new java.awt.event.ActionListener(){
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    resumePathButtonActionPerformed(evt);
-                }
-            });
 
             //---- resetAlarmButton ----
             resetAlarmButton.setText("\u6e05\u9664\u62a5\u8b66");
-            resetAlarmButton.addActionListener(new java.awt.event.ActionListener(){
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    resetAlarmButtonActionPerformed(evt);
-                }
-            });
 
             //---- forkLoadButton ----
             forkLoadButton.setText("\u53c9\u8d27");
-            forkLoadButton.addActionListener(new java.awt.event.ActionListener(){
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    forkLoadButtonActionPerformed(evt);
-                }
-            });
 
             //---- forkUnloadButton ----
             forkUnloadButton.setText("\u5378\u8d27");
-            forkUnloadButton.addActionListener(new java.awt.event.ActionListener(){
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    forkUnloadButtonActionPerformed(evt);
-                }
-            });
 
             //---- abortPathButton ----
             abortPathButton.setText("\u53d6\u6d88\u8def\u5f84");
-            abortPathButton.addActionListener(new java.awt.event.ActionListener(){
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    abortPathButtonActionPerformed(evt);
-                }
-            });
 
             GroupLayout AutoControlLayout = new GroupLayout(AutoControl);
             AutoControl.setLayout(AutoControlLayout);
@@ -552,6 +530,7 @@ public class myPanel2 extends VehicleCommAdapterPanel {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+    // Generated using JFormDesigner Evaluation license - 蒋滨鸿
     private JPanel ManualControl;
     private JButton button8;
     private JButton button9;

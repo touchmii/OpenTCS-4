@@ -301,7 +301,7 @@
     <vehicle name="Vehicle-01" length="1000" energyLevelCritical="30" energyLevelGood="90" energyLevelFullyRecharged="30" energyLevelSufficientlyRecharged="90" maxVelocity="1000" maxReverseVelocity="1000" type="">
         <property name="ip" value="192.168.0.50"/>
         <property name="port" value="1024"/>
-        <property name="tcs:preferredAdapterClass" value="com.lvsrobot.vehicletcp.ExampleCommAdapterFactory"/>
+        <property name="tcs:preferredAdapterClass" value="com.lvsrobot.vehicletcp.TCPCommAdapterFactory"/>
     </vehicle>
     <locationType name="充电">
         <allowedOperation name="CHARGE"/>

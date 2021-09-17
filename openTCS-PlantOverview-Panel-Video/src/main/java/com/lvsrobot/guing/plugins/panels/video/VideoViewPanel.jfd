@@ -1,0 +1,49 @@
+JFDML JFormDesigner: "7.0.4.0.360" Java: "11.0.11" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "org.opentcs.components.plantoverview.PluggablePanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq {space :::p, par l {comp panel4:::::x, comp panel3:::::x}}}"
+			"$verticalGroup": "par l {seq l {comp panel3:::::x, space u:::p, comp panel4:::p:168:p, space :p:22:p}}"
+		} ) {
+			name: "this"
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+				"$horizontalGroup": "par l {seq l {space :::p, comp vlcview::::477:x, space :::p}, seq l {space :p:25:p, comp comboBox1:::p::p, space ::381:x}}"
+				"$verticalGroup": "par l {seq t {comp vlcview::::233:x, space u:::p, comp comboBox1:::p::p, space :p:8:p}}"
+			} ) {
+				name: "panel3"
+				add( new FormComponent( "javax.swing.JComboBox" ) {
+					name: "comboBox1"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+					name: "vlcview"
+					"border": new javax.swing.border.TitledBorder( "video" )
+				} )
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+				"$horizontalGroup": "par l {seq t {space :p:20:p, par l {comp button1:::p::p, comp button2:::p::p}, space ::108:x, comp scrollPane1:::p:277:p, space :::p}}"
+				"$verticalGroup": "par l {seq t {space :::x, comp scrollPane1:::p::p, space :::p}, seq l {space :p:19:p, comp button1:::p::p, space s:::p, comp button2:::p::p, space :::x}}"
+			} ) {
+				name: "panel4"
+				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+					name: "scrollPane1"
+					add( new FormComponent( "javax.swing.JList" ) {
+						name: "list1"
+					} )
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "button1"
+					"text": "text"
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "button2"
+					"text": "text"
+				} )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 5, 0 )
+			"size": new java.awt.Dimension( 495, 485 )
+		} )
+	}
+}

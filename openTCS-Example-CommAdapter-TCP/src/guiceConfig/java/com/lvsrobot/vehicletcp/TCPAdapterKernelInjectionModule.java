@@ -14,7 +14,7 @@ public class TCPAdapterKernelInjectionModule extends KernelInjectionModule {
 
     @Override
     protected void configure() {
-        install(new FactoryModuleBuilder().build(ExampleAdapterComponentsFactory.class));
-        vehicleCommAdaptersBinder().addBinding().to(ExampleCommAdapterFactory.class);
+        install(new FactoryModuleBuilder().build(TCPAdapterComponentsFactory.class));
+        vehicleCommAdaptersBinder().addBinding().to(TCPCommAdapterFactory.class);
     }
 }

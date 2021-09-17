@@ -25,6 +25,8 @@ import org.opentcs.util.Environment;
 import org.opentcs.util.logging.UncaughtExceptionLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+//import org.jetbrains.projector.server.ProjectorLauncher;
+//import org.jetbrains.projector.server.ProjectorServer;
 
 /**
  * The plant overview process's default entry point.
@@ -57,6 +59,8 @@ public class RunPlantOverview {
                        org.opentcs.util.configuration.XMLConfiguration.class.getName());
 
     Environment.logSystemInfo();
+
+//    ProjectorLauncher.runProjectorServer();
 
     Injector injector = Guice.createInjector(customConfigurationModule());
     injector.getInstance(PlantOverviewStarter.class).startPlantOverview();

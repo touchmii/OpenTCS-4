@@ -20,6 +20,7 @@ dependencies {
   compile project(':openTCS-PlantOverview-Panel-LoadGenerator')
   compile project(':openTCS-PlantOverview-Panel-ResourceAllocation')
   compile project(':openTCS-PlantOverview-Panel-Statistics')
+  compile project(':openTCS-PlantOverview-Panel-Video')
   compile project(':openTCS-PlantOverview-Themes-Default')
   
   // There does not seem to be an official binary release for JHotDraw...

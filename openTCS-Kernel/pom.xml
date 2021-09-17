@@ -7,6 +7,9 @@
     <artifactId>opentcs</artifactId>
     <version>4.20.0-SNAPSHOT</version>
   </parent>
+  <groupId>org.opentcs</groupId>
+  <artifactId>opentcs-kernel</artifactId>
+  <version>${opentcs.version}</version>
 
   <build>
     <plugins>
@@ -48,21 +51,6 @@
               </arguments>
     
               <workingDirectory>${basedir}\target\install</workingDirectory>
-              <systemProperties>
-                <systemProperty>
-                  <key>java.util.logging.config.file</key>
-                  <value>'./config/logging.config'</value>
-                  <key>java.security.policy</key>
-                  <value>'file:./config/java.policy'</value>
-                  <key>opentcs.base</key>
-                  <value>'.'</value>
-                  <key>opentcs.home</key>
-                  <value>'.'</value>
-                  <key>opentcs.cfg4j.reload.interval</key>
-                  <value>10000</value>
-    
-                </systemProperty>
-              </systemProperties>
             </configuration>
           </execution>
           <execution>
@@ -231,13 +219,9 @@
           </execution>
         </executions>
       </plugin>
-
     </plugins>
   </build>
 
-  <groupId>org.opentcs</groupId>
-  <artifactId>opentcs-kernel</artifactId>
-  <version>${opentcs.version}</version>
   <dependencies>
     <dependency>
       <groupId>org.opentcs</groupId>
@@ -405,15 +389,15 @@
       <groupId>org.swingexplorer</groupId>
       <artifactId>swingexplorer-core</artifactId>
       <version>1.9.0-SNAPSHOT</version>
-      <!-- <scope>system</scope>
-      <systemPath>${library.path}/../lib/swingexplorer-core-1.9.0.jar</systemPath> -->
+      <scope>system</scope>
+      <systemPath>${library.path}/../lib/swingexplorer-core-1.9.0.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.swingexplorer</groupId>
       <artifactId>swingexplorer-agent</artifactId>
       <version>1.9.0-SNAPSHOT</version>
-      <!-- <scope>system</scope>
-      <systemPath>${library.path}/../lib/swingexplorer-agent-1.9.0.jar</systemPath> -->
+      <scope>system</scope>
+      <systemPath>${library.path}/../lib/swingexplorer-agent-1.9.0.jar</systemPath>
     </dependency>
   </dependencies>
 </project>

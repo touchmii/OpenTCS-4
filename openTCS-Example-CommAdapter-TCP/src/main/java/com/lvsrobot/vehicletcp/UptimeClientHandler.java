@@ -15,17 +15,12 @@
  */
 package com.lvsrobot.vehicletcp;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.util.CharsetUtil;
 
-import java.io.Serializable;
-import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -65,12 +60,13 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
         agvInfo.setPosition(byteToUnsignedInt(retBytes[6]) << 8 | byteToUnsignedInt(retBytes[7]));
         agvInfo.setSpeed(byteToUnsignedInt(retBytes[8]));
         agvInfo.setAngle(byteToUnsignedInt(retBytes[9]));
+        agvInfo.setTuopan(byteToUnsignedInt(retBytes[10]));
         agvInfo.setBattery(byteToUnsignedInt(retBytes[11]));
 //        agvInfo.setException(byteToUnsignedInt(retBytes[5]));
         agvInfo.setStatus(byteToUnsignedInt(retBytes[12]));
         agvInfo.setBizhang(byteToUnsignedInt(retBytes[13]));
         agvInfo.setCharge(byteToUnsignedInt(retBytes[16]));
-        ExampleCommAdapter.callback(agvInfo);
+        TCPCommAdapter.callback(agvInfo);
     }
 //    @Override
 //    public void channelRead(ChannelHandlerContext ctx, Obj)

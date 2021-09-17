@@ -1,0 +1,45 @@
+JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.bundlePackage": "i18n.org.opentcs.plantoverview.resourceAllocationPanel"
+	"i18n.bundleName": "Bundle"
+	"i18n.autoExternalize": false
+	"i18n.keyPrefix": "ResourceAllocationPanel"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "org.opentcs.components.plantoverview.PluggablePanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "0"
+				"$rowSpecs": "0"
+			} ) {
+				name: "optionsPanel"
+				add( new FormComponent( "javax.swing.JCheckBox" ) {
+					name: "enableUpdatesCheckbox"
+					"selected": true
+					"text": new FormMessage( null, "resourceAllocationPanel.checkBox_enableUpdates.text" )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "enableUpdatesCheckboxActionPerformed", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"hAlign": 0
+					"vAlign": 0
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "First"
+			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "allocationScrollPane"
+				add( new FormComponent( "javax.swing.JTree" ) {
+					name: "allocationTable"
+					auxiliary() {
+						"JavaCodeGenerator.preInitCode": "${field}.setModel(new AllocationTreeModel());\n${field}.setCellRenderer(new AllocationTreeCellRenderer());"
+						"JavaCodeGenerator.variableModifiers": 4
+					}
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 400, 300 )
+		} )
+	}
+}

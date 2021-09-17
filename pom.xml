@@ -25,14 +25,14 @@
             </snapshots>
         </repository>
         <!--Github仓库地址-->
-        <repository>
-            <id>github</id>
-            <name>GitHub OWNER Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/touchmii/swingexplorer</url>
-            <!-- <snapshots>
-                <enabled>false</enabled>
-            </snapshots> -->
-        </repository>
+<!--        <repository>-->
+<!--            <id>github</id>-->
+<!--            <name>GitHub OWNER Apache Maven Packages</name>-->
+<!--            <url>https://maven.pkg.github.com/touchmii/swingexplorer</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
     </repositories>
 
     <properties>
@@ -70,13 +70,15 @@
         <module>openTCS-Kernel-Extension-Statistics</module>
         <module>openTCS-Kernel-Extension-TCP-Host-Interface</module>
         <module>openTCS-Kernel-Extension-TCP-MES-Interface</module>
-        <module>openTCS-Kernel-Extension-WebSockets-Services</module>
+        <module>openTCS-Kernel-Extension-SQL-Services</module>
+<!--        <module>openTCS-Kernel-Extension-WebSockets-Services</module>-->
         <module>openTCS-KernelControlCenter</module>
         <module>openTCS-PlantOverview</module>
         <module>openTCS-PlantOverview-Base</module>
         <module>openTCS-PlantOverview-Panel-LoadGenerator</module>
         <module>openTCS-PlantOverview-Panel-ResourceAllocation</module>
         <module>openTCS-PlantOverview-Panel-Statistics</module>
+        <module>openTCS-PlantOverview-Panel-Video</module>
         <module>openTCS-PlantOverview-Themes-Default</module>
         <module>openTCS-Strategies-Default</module>
         <module>openTCS-WebClient</module>

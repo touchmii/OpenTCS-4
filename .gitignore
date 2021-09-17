@@ -37,3 +37,6 @@ target/
 */venv/*
 
 *tmp*
+
+*.log
+/openTCS-WebClient

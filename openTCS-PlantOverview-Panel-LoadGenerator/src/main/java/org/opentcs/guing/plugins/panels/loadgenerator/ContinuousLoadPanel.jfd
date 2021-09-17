@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "7.0.2.4.305" Java: "11.0.6" encoding: "UTF-8"
+JFDML JFormDesigner: "7.0.4.0.360" Java: "11.0.11" encoding: "UTF-8"
 
 new FormModel {
 	"i18n.bundlePackage": "i18n.org.opentcs.plantoverview.loadGeneratorPanel"
@@ -14,7 +14,7 @@ new FormModel {
 			name: "this"
 			"preferredSize": new java.awt.Dimension( 520, 700 )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
-				"$columnSpecs": "0, 0, 0, 0"
+				"$columnSpecs": "0, 0, 142, 0"
 				"$rowSpecs": "0, 0, 0"
 			} ) {
 				name: "triggerPanel"
@@ -400,12 +400,17 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"size": new java.awt.Dimension( 556, 504 )
+			"location": new java.awt.Point( 0, 0 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "orderSpecButtonGroup"
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 520 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "triggerButtonGroup"
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 581 )
 		} )
 		add( new FormComponent( "javax.swing.JComboBox" ) {
 			name: "operationTypesComboBox"
@@ -414,6 +419,8 @@ new FormModel {
 			auxiliary() {
 				"JavaCodeGenerator.typeParameters": "String"
 			}
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 642 )
 		} )
 		add( new FormComponent( "javax.swing.JComboBox" ) {
 			name: "locationsComboBox"
@@ -424,12 +431,16 @@ new FormModel {
 				"JavaCodeGenerator.typeParameters": "TCSObjectReference<Location>"
 			}
 			addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "locationsComboBoxItemStateChanged", true ) )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 688 )
 		} )
 		add( new FormComponent( "javax.swing.JFileChooser" ) {
 			name: "fileChooser"
 			auxiliary() {
 				"JavaCodeGenerator.preInitCode": "${field}.setFileFilter(new FileNameExtensionFilter(\"*.xml\", \"xml\"));"
 			}
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 734 )
 		} )
 	}
 }

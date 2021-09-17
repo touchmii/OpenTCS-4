@@ -29,3 +29,7 @@ dependencies {
 task release {
     dependsOn build
 }
+
+test {
+    useJUnitPlatform()
+}
