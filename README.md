@@ -10,6 +10,8 @@
 开源的交通控制系统，可用于AGV的交通管制系统
 
 #### 使用方式
+详情访问 [OpenTCS Page](https://touchmii.github.io/OpenTCS-4)
+
 推荐使用IDEA,打开此项目后等待gradle加载完毕
 
 ![](https://raw.githubusercontent.com/touchmii/uPic/master/imgSnipaste_2020-10-24_17-12-31.png)
@@ -23,6 +25,7 @@
 ####WebClient启动
 在gradle里面找到openTCS-WebClient->gretty->jettyRunWar,右键选择运行即可,在浏览器里面打开http://localhost:8090/Demo
 ![](https://raw.githubusercontent.com/touchmii/uPic/master/img20201107174504.png))
+
 
 #### 修改部分
 
