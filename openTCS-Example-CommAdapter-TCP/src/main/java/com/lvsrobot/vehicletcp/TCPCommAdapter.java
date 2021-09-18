@@ -640,65 +640,11 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
                 }
                 Thread.sleep(200);
             } catch (Exception ex) {
-                LOG.error(ex.getMessage());
+                // LOG.error(ex.getMessage());
 //                LOG.error(ex.printStackTrace());
             }
         }
 
-        private void simulateMovement(Step step) throws Exception {
-            if (step.getPath() == null) {
-                return;
-            }
-            Orientation orientation = step.getVehicleOrientation();
-            long pathLength = step.getPath().getLength();
-            int maxVelocity;
-            switch (orientation) {
-                case BACKWARD:
-                    maxVelocity = step.getPath().getMaxReverseVelocity();
-                    break;
-                default:
-                    maxVelocity = step.getPath().getMaxVelocity();
-                    break;
-            }
-            String pointName = step.getDestinationPoint().getName();
-
-            getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
-            String currentPoint = "";
-            int currentStatus = 0;
-
-//            agv.sendPath(Integer.parseInt(pointName));
-            while (!currentPoint.equals(pointName) && !isTerminated()) {
-                AgvInfo agvInfo = agv.getAgvInfo();
-                if (agvInfo == null) {
-                    Thread.sleep(200);
-                    continue;
-                }
-                currentPoint = String.valueOf(agvInfo.getPosition());
-                currentStatus = agvInfo.getStatus();
-                getProcessModel().setVehiclePosition(currentPoint);
-                if (currentStatus == 0) {
-                    getProcessModel().setVehicleState(Vehicle.State.IDLE);
-                } else if (currentStatus == 1) {
-                    getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
-                }
-            }
-
-
-        }
-
-        /**
-         * Simulates an operation.
-         *
-         * @param operation A operation
-         * @throws InterruptedException If an exception occured while simulating
-         */
-        private void simulateOperation(String operation) {
-            requireNonNull(operation, "operation");
-            if (isTerminated()) {
-                return;
-            }
-            agv.sendWork(operation);
-        }
     }
 
 
