@@ -36,7 +36,7 @@ public class ConfigRoute {
         debug_path = "robot path ";
     }
     public void setAngle(double _angle) {
-        debug_path += String.format("angle %s ,", _angle);
+        debug_path += String.format("angle %s, ", _angle);
         current_angle = _angle;
     }
 
@@ -95,16 +95,16 @@ public class ConfigRoute {
             point2 = steps.get(i).getDestinationPoint().getPosition();
             if (i == 0) {
                 if (current_angle == 0) {
-                    // 设置一个左侧的点
+                    // 设置一个左侧的虚拟点
                     point0 = new Triple(point1.getX()-2*td, point1.getY(), 0);
                 } else if (current_angle == 90) {
-                    // 设置一个下方的点
+                    // 设置一个下方的虚拟点
                     point0 = new Triple(point1.getX(), point1.getY()-2*td, 0);
                 } else if (current_angle == 180) {
-                    // 设置一个右侧的点
+                    // 设置一个右侧的虚拟点
                     point0 = new Triple(point1.getX()+2*td, point1.getY(), 0);
                 } else if (current_angle == 270) {
-                    // 设置一个上方的点
+                    // 设置一个上方的虚拟点
                     point0 = new Triple(point1.getX(), point1.getY()+2*td, 0);
                 }
             } else {
@@ -200,11 +200,25 @@ public class ConfigRoute {
             }
 
         }
+
+//        String distOpration = driveorder.getDestination().getOperation();
         point2_id_str = steps.get(steps.size()-1).getDestinationPoint().getName();
+        String pointxx_id_str = steps.get(steps.size()-1).getSourcePoint().getName();
         point2_id = Integer.parseInt(point2_id_str);
-        if(steps.get(steps.size()-1).getDestinationPoint().getProperty("charge") != null){
+        if(steps.get(steps.size()-1).getDestinationPoint().getProperty("charge") != null) {
             path[11 + (steps.size()-1) * 4] = 0x20;
             debug_path += "BB";
+        } else if (steps.get(steps.size()-1).getDestinationPoint().getProperty("back") != null) {
+            if (path[11 + (steps.size()-1) * 4] == 0) {
+                path[11 + (steps.size()-1) * 4] = 0x20; //BB nop
+                debug_path += "BB";
+            } else if (path[11 + (steps.size()-1) * 4] == 0x10) { // RR
+                path[11 + (steps.size()-1) * 4] = 0x21; //BL nop
+                debug_path = debug_path.replace(pointxx_id_str+"RR", pointxx_id_str+"BL");
+            } else if (path[11 + (steps.size()-1) * 4] == 0x4) { //LL
+                path[11 + (steps.size()-1) * 4] = 0x22; //BR nop
+                debug_path = debug_path.replace(pointxx_id_str+"LL", pointxx_id_str+"BR");;
+            }
         }
 
         path[9+steps.size()*4] = (byte)(point2_id/256);
@@ -214,11 +228,11 @@ public class ConfigRoute {
 //                path[1] = 0;
                 break;
             case "LOAD":
-                path[11+steps.size()*4] = 2;;
+//                path[11+steps.size()*4] = 2;;
 //                path[path.length-5] = path[path.length-1];
                 break;
             case "UNLOAD":
-                path[11+steps.size()*4] = 3;;
+//                path[11+steps.size()*4] = 3;;
                 break;
             case "CHARGING":
 //                path[1] = 3;
@@ -234,7 +248,7 @@ public class ConfigRoute {
         path[steps.size()*4+13] = (byte) ~ check;
 
         debug_path += point2_id_str;
-        LOG.info(debug_path);
+//        LOG.info(debug_path);
 //        int[] path2;
 //        int dir = 0;
 //        for(int i=0 , (len(path2)-4)/2, i++) {

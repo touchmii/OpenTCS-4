@@ -18,7 +18,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.border.MatteBorder;
 
+
 public class AgvTelegramNew {
+
     private static final Logger LOG = LoggerFactory.getLogger(AgvTelegramNew.class);
     AgvInfo agvInfo = new AgvInfo();
 
@@ -106,7 +108,7 @@ public class AgvTelegramNew {
     public synchronized boolean sendPath(byte[] path) {
         this.Connect();
         f.channel().writeAndFlush(path);
-        LOG.info("send path: {}", ByteBufUtil.hexDump(path));
+//        LOG.info("send path: {}", ByteBufUtil.hexDump(path));
         return true;
     }
 
@@ -164,7 +166,29 @@ public class AgvTelegramNew {
 
     public void forkAction(Triple vehiclePrecisePosition, int i, int parseInt) {
     }
+    public void liftAction(String point, LIFTACTION action) {
+        int point_num = Integer.parseInt(point);
+        byte action_;
+        if (action == LIFTACTION.UP) {
+            action_ = 2;
+        } else {
+            action_ = 0x12;
+        }
+        byte[] path_data = {0, 1, 0xc, 0, 8, 0, 0, 1, 1, (byte)(point_num/256), (byte)(point_num%256), action_, 0, 0};
+        byte check = 0;
+        for(int i = 0; i < 13; i++) {
+            check = (byte) (check ^ path_data[i]);
+        }
+        path_data[13] = (byte) ~ check;
+        LOG.info("send lift action command: {}", ByteBufUtil.hexDump(path_data));
+        f.channel().writeAndFlush(path_data);
+    }
 
     public void sendWork(String operation) {
+    }
+
+    public enum LIFTACTION {
+        UP,
+        DOWN;
     }
 }
