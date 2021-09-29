@@ -199,7 +199,7 @@ public class DoorController {
                     } else {
 //                        Route.Step removeStep = Steps_.get(Steps_.size()-1);
 //                        Steps_.remove(removeStep);
-                        if (Steps_.size() > 1) {
+                        if (Steps_.size() > 0) {
 //                            String openDoor = null;
 //                            try {
 //                                openDoor = step.getDestinationPoint().getProperty("door");

@@ -83,13 +83,13 @@
         <module>openTCS-Strategies-Default</module>
         <module>openTCS-WebClient</module>
         <module>openTCS-Example-CommAdapter</module>
-        <module>openTCS-Example-CommAdapter-HTTP</module>
-        <module>openTCS-Example-CommAdapter-Jbh</module>
-        <module>openTCS-Example-CommAdapter-Modbus</module>
-        <module>openTCS-Example-CommAdapter-Qian</module>
-        <module>openTCS-Example-CommAdapter-Serial</module>
-        <module>openTCS-Example-CommAdapter-TCP</module>
-        <module>openTCS-Example-CommAdapter-VREP</module>
+        <module>openTCS-CommAdapter-HTTP</module>
+        <module>openTCS-CommAdapter-Jbh</module>
+        <module>openTCS-CommAdapter-Modbus</module>
+        <module>openTCS-CommAdapter-Qian</module>
+        <module>openTCS-CommAdapter-Serial</module>
+        <module>openTCS-CommAdapter-TCP</module>
+        <module>openTCS-CommAdapter-VREP</module>
         <module>openTCS-CommAdapter-ROS-Bridge</module>
     </modules>
     

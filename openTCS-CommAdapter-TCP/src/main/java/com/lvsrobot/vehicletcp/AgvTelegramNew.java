@@ -32,9 +32,12 @@ public class AgvTelegramNew {
     static int remote_port = 0;
     static ChannelFuture f = null;
     EventLoopGroup group = null;
-    private static final UptimeClientHandler handler = new UptimeClientHandler();
-    private static Bootstrap bs = null;
-    public AgvTelegramNew(String ip, int port) {
+    private final UptimeClientHandler handler;
+    private Bootstrap bs = null;
+    private String name;
+    public AgvTelegramNew(String ip, int port, TCPCommAdapter tcpCommAdapter) {
+        handler = new UptimeClientHandler(tcpCommAdapter, this);
+        name = tcpCommAdapter.getName();
         remote_ip = ip;
         remote_port = port;
         group = new NioEventLoopGroup();
@@ -84,14 +87,14 @@ public class AgvTelegramNew {
         group.shutdownGracefully();
     }
 
-    public static void connect() {
+    public void connect() {
         bs.connect().addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.cause() != null) {
                     handler.startTime = -1;
 //                    handler.println("Failed to connect");
-                    LOG.error("Failed to connect: {} by: {}", remote_ip,future.cause());
+                    LOG.error("{} Failed to connect: {} by: {}", remote_ip,future.cause());
                 } else {
                     f = future;
                 }
@@ -108,7 +111,7 @@ public class AgvTelegramNew {
     public synchronized boolean sendPath(byte[] path) {
         this.Connect();
         f.channel().writeAndFlush(path);
-//        LOG.info("send path: {}", ByteBufUtil.hexDump(path));
+        LOG.debug("{} send path: {}", this.name, ByteBufUtil.hexDump(path));
         return true;
     }
 
@@ -127,7 +130,7 @@ public class AgvTelegramNew {
             e.printStackTrace();
         }
         f.channel().writeAndFlush(radarCommand);
-        LOG.info("send radar command: {}", ByteBufUtil.hexDump(radarCommand));
+        LOG.debug("send radar command: {}", ByteBufUtil.hexDump(radarCommand));
         try {
 
             Thread.sleep(200);//毫秒
@@ -180,7 +183,7 @@ public class AgvTelegramNew {
             check = (byte) (check ^ path_data[i]);
         }
         path_data[13] = (byte) ~ check;
-        LOG.info("send lift action command: {}", ByteBufUtil.hexDump(path_data));
+        LOG.debug("{} send lift action command: {}", this.name, ByteBufUtil.hexDump(path_data));
         f.channel().writeAndFlush(path_data);
     }
 

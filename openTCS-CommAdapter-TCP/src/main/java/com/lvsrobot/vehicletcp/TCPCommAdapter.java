@@ -28,10 +28,7 @@ import org.slf4j.helpers.MessageFormatter;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -100,6 +97,8 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
 
     private AgvTelegramNew agv;
 
+    private Timer pathTimer = new Timer(getName()+"pathTimer");
+
     private ConfigRoute configRoute = new ConfigRoute();
 
     private Point currentPoint;
@@ -108,7 +107,7 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
     private Point previousPoint;
     private String previousID;
 
-    private static AgvInfo agvInfo_callback = null;
+    private AgvInfo agvInfo_callback = null;
 
     private MovementCommand currentCommand;
 
@@ -160,7 +159,7 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
         if (isEnabled()) {
             return;
         }
-        agv = new AgvTelegramNew(getProcessModel().getIp(), getProcessModel().getPort());
+        agv = new AgvTelegramNew(getProcessModel().getIp(), getProcessModel().getPort(), this);
 //        agv.Connect();
         agv.getAgvInfo();
 
@@ -172,8 +171,8 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
 
         // Create task for vehicle simulation.
         vehicleTask = new VehicleTask();
-        Thread simThread = new Thread(vehicleTask, getName() + "-simulationTask");
-        simThread.start();
+        Thread Thread = new Thread(vehicleTask, getName() + "-TCP-Task");
+        Thread.start();
         super.enable();
 //        getProcessModel().setVehiclePosition("4");
 //        String init_point = getInitialPosition();
@@ -187,6 +186,7 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
             return;
         }
         agv.Terminal();
+        pathTimer.cancel();
         currentDriveOrder = null;
         sendDriveOrder = null;
         currentPoint = null;
@@ -222,7 +222,7 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
         // Reset the execution flag for single-step mode.
         singleStepExecutionAllowed = false;
         // Don't do anything else - the command will be put into the sentQueue
-        // automatically, where it will be picked up by the simulation task.
+        // automatically, where it will be picked up by the ulation task.
     }
 
     @Override
@@ -241,7 +241,7 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
         String command_str = publishCommand.getEventAppendix().toString();
         try {
             operate_point = Integer.parseInt(command_str);
-            LOG.info("Operate action in Point: {}", operate_point);
+            LOG.info("{} Operate action in Point: {}", getName(), operate_point);
 //            getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("Operate confirm in Point: {}", operate_point), UserNotification.Level.INFORMATIONAL));
             getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("forkUnload int point: {}", operate_point).getMessage(), UserNotification.Level.INFORMATIONAL));
 
@@ -284,7 +284,7 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
                 break;
         }
 
-        LOG.info("controlcenter action: '{}'", publishCommand.getEventAppendix());
+        LOG.info("{} controlcenter action: '{}'", getName(), publishCommand.getEventAppendix());
     }
 
     @Override
@@ -394,18 +394,44 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
 //    }
    @Override
    public void abortDriveOrder() {
-        LOG.info("abort path");
+        LOG.info("{} abort path", getName());
         //agv.abortPath();
         getSentQueue().clear();
    }
 
+       public void publishNotify(String msg, UserNotification.Level level) {
+           getProcessModel().publishUserNotification(new UserNotification(
+           MessageFormatter.format("{}: {}", vehicle.getName(),msg).getMessage(), level));
+       }
 
-   public static void callback(AgvInfo agvInfo) {
+   public void callback(AgvInfo agvInfo) {
         agvInfo_callback = agvInfo;
    }
 
-    private class VehicleTask extends CyclicTask {
-        private int simAdvanceTime;
+   private class pathTimer extends TimerTask {
+        private byte[] path;
+        private String debugPath;
+        private boolean exex_success = false;
+        public pathTimer(byte[] path_, String debugPath_) {
+            path = path_;
+            debugPath = debugPath_;
+        }
+        @Override
+        public void run() {
+            if (getProcessModel().getVehicleState().equals(Vehicle.State.IDLE) && !exex_success) {
+                LOG.info("{} resend path {}",getName(), debugPath);
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {}
+                agv.sendPath(path);
+            } else if (getProcessModel().getVehicleState().equals(Vehicle.State.EXECUTING)) {
+                exex_success = true;
+            }
+        }
+    }
+
+   private class VehicleTask extends CyclicTask {
+        private int AdvanceTime;
 
         private VehicleTask() {
             super(500);
@@ -451,6 +477,7 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
         private int closeDoorIndex = 0;
         private String doorName = null;
         private Route.Step doorStep = null;
+        private boolean singleAction = false;
 
         @Override
         protected void runActualTask() {
@@ -458,8 +485,8 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
                 //获取状态  位置  速度  方向等
                 AgvInfo agvInfo = agv.getAgvInfo();
                 if (agvInfo_callback != null) {
-//                    Thread.sleep(500);
-//                    return;
+    //                    Thread.sleep(500);
+    //                    return;
                     currentPoint = String.valueOf(agvInfo_callback.getPosition());
                     currentPoint_int = agvInfo_callback.getPosition();
                     currentStatus = agvInfo_callback.getStatus();
@@ -470,10 +497,10 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
     //                previous_precise = current_precise;
     //                current_precise = agvInfo.getPrecisePosition();
     //                currentID = v
-//                    previous_angle = current_angle;
-//                    current_angle = agvInfo_callback.getAngle();
+    //                    previous_angle = current_angle;
+    //                    current_angle = agvInfo_callback.getAngle();
 
-//                    LOG.info("BiZhang dis : {}", agvInfo_callback.getBizhang());
+    //                    LOG.info("BiZhang dis : {}", agvInfo_callback.getBizhang());
                     if(currentPoint_int == 522 && currentAngle == 0 && agvInfo_callback.getBizhang() > 10) {
                         agv.radarDis(10, 35, 15);
                         agv.radarDis(10, 35, 15);
@@ -509,26 +536,26 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
 
                     agvInfo_callback = null;
                 }
-//                LOG.info("xxxx");
-//                if(agvInfo.getLoadStatus() == 1) {
-//                    loadState = LoadState.FULL;
-//                } else {
-//                    loadState = LoadState.EMPTY;
-//                }
-//                getProcessModel().setMaxFwdVelocity(agvInfo.getSpeed());
-//                getProcessModel().setMaxRevVelocity(agvInfo.getSpeed());
-//                getProcessModel().setVehicleMaxVelocity(agvInfo.getSpeed());
-//                LOG.info("get vehicle max speed {}", getProcessModel().getVehicleMaxVelocity());
-//                LOG.info("vehicle battery : {}", agvInfo.getBattery());
+    //                LOG.info("xxxx");
+    //                if(agvInfo.getLoadStatus() == 1) {
+    //                    loadState = LoadState.FULL;
+    //                } else {
+    //                    loadState = LoadState.EMPTY;
+    //                }
+    //                getProcessModel().setMaxFwdVelocity(agvInfo.getSpeed());
+    //                getProcessModel().setMaxRevVelocity(agvInfo.getSpeed());
+    //                getProcessModel().setVehicleMaxVelocity(agvInfo.getSpeed());
+    //                LOG.info("get vehicle max speed {}", getProcessModel().getVehicleMaxVelocity());
+    //                LOG.info("vehicle battery : {}", agvInfo.getBattery());
 
-//                getProcessModel().setVehiclePosition(currentPoint);
+    //                getProcessModel().setVehiclePosition(currentPoint);
 
                 if (currentStatus == 0) {
                     if (wait_point.equals("")) {
 
                         getProcessModel().setVehicleState(Vehicle.State.IDLE);
                     } else {
-//                        assert agvInfo_callback != null;
+    //                        assert agvInfo_callback != null;
                         if (String.valueOf(operate_point).equals(wait_point) && currentPoint.equals(wait_point)) {
                             operate_point = 0;
                             wait_point = "";
@@ -549,6 +576,9 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
                             }
                         } else if (currentPoint.equals(wait_point) && (action.equals("LOAD") || action.equals("UNLOAD")))  {
                             if (action.equals("LOAD")) {
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (Exception e) {}
                                 agv.liftAction(currentPoint, AgvTelegramNew.LIFTACTION.UP);
                                 try {
                                     Thread.sleep(1000);
@@ -556,54 +586,83 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
                                 agv.liftAction(currentPoint, AgvTelegramNew.LIFTACTION.UP);
                             }
                             if (action.equals("UNLOAD")) {
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (Exception e) {}
                                 agv.liftAction(currentPoint, AgvTelegramNew.LIFTACTION.DOWN);
                                 try {
                                     Thread.sleep(1000);
                                 } catch (Exception e) {}
                                 agv.liftAction(currentPoint, AgvTelegramNew.LIFTACTION.DOWN);
                             }
-                            getProcessModel().setVehicleState(Vehicle.State.IDLE);
-                            getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("AGV action: {}, in point {} succeed", action, wait_point).getMessage(), UserNotification.Level.INFORMATIONAL));
+    //                            getProcessModel().setVehicleState(Vehicle.State.IDLE);
+                            LOG.info("{} action: {} in pint: {} succeed", getName(), action, wait_point);
+                            publishNotify(String.format("%s action: %s, in point %s succeed",getName(), action, wait_point), UserNotification.Level.INFORMATIONAL);
                             wait_point = "";
                             action = "";
+                            if(singleAction) {
+                                //提前处理单独的升降订单
+                                MovementCommand sentCmd = getSentQueue().poll();
+                                getProcessModel().commandExecuted(currentCommand);
+                                currentCommand = null;
+                                curCommand = null;
+                                singleAction = false;
+                            }
                         } else if (operate_point > 0) {
                             operate_point = 0;
                         }
                     }
-                } else if (currentStatus == 1) {
+                } else if (currentStatus == 1 || currentStatus == 2 || currentStatus == 4) {
                     getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
                 }
 
-//                if (sendDriveOrder != null  && getSentQueue().size() == 0) {
-//                    LOG.info("abort path :{}", currentDriveOrder.getRoute());
-//                    getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("abort path to vehicle: {}", currentDriveOrder.getRoute()).getMessage(), UserNotification.Level.INFORMATIONAL));
-//                    agv.abortPath();
-//                    sendDriveOrder = null;
-//                    curCommand = null;
-//                    currentCommand = null;
-//                    sendDriveOrder = null;
-//                }
+    //                if (sendDriveOrder != null  && getSentQueue().size() == 0) {
+    //                    LOG.info("abort path :{}", currentDriveOrder.getRoute());
+    //                    getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("abort path to vehicle: {}", currentDriveOrder.getRoute()).getMessage(), UserNotification.Level.INFORMATIONAL));
+    //                    agv.abortPath();
+    //                    sendDriveOrder = null;
+    //                    curCommand = null;
+    //                    currentCommand = null;
+    //                    sendDriveOrder = null;
+    //                }
                 if(currentCommand == null && curCommand == null && getSentQueue().size() > 0) {
 
                     synchronized (TCPCommAdapter.this) {
                         curCommand = getSentQueue().peek();
                     }
                     currentCommand = curCommand;
+                    //检测是否为单步动作，源点为空
+                    try {
+                        currentCommand.getRoute().getSteps().get(0).getSourcePoint();
+                    } catch (NullPointerException e) {
+                        if(currentCommand.getFinalDestination().getName().equals(currentPoint)) {
+                            singleAction = true;
+                        }
+                    }
+                    LOG.debug("{} command: {}, driver order: {}", getName(), curCommand.toString(), getcurrentDriveOrder().toString());
+
                 }
-                simAdvanceTime = (int) (ADVANCE_TIME * 1.0);
+                AdvanceTime = (int) (ADVANCE_TIME * 1.0);
                 if (curCommand == null) {
                     Uninterruptibles.sleepUninterruptibly(ADVANCE_TIME, TimeUnit.MILLISECONDS);
-                    getProcessModel().getVelocityController().advanceTime(simAdvanceTime);
+                    getProcessModel().getVelocityController().advanceTime(AdvanceTime);
+                //起点跟终点相同的订单且动作不为空
+                } else if ( singleAction
+                        && !currentCommand.getOperation().equals("NOP")) {
+                    wait_point = currentCommand.getFinalDestination().getName();
+                    action = currentCommand.getOperation();
+                    getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
+                    publishNotify(String.format("exec action: %s in Location: %s", action, currentCommand.getOpLocation()), UserNotification.Level.INFORMATIONAL);
                 } else {
                     // If we were told to move somewhere, simulate the journey.
-//                    LOG.info("Processing MovementCommand...");
-//                    final Route.Step curStep = curCommand.getStep();
+    //                    LOG.info("Processing MovementCommand...");
+    //                    final Route.Step curStep = curCommand.getStep();
                     if (driveOrderList == null) {
                         configRoute.setRoute(getcurrentDriveOrder());
                         configRoute.setAngle(currentAngle);
                         byte[] path = configRoute.getPath();
                         String debugPath_ = configRoute.getDebugPath();
-                        LOG.info("split befor path: {}", debugPath_);
+                        LOG.info("{} split befor path: {}", getName(), debugPath_);
                         driveOrderList = DoorController.splitDriverOrder(getcurrentDriveOrder());
                         stepList = DoorController.checkPassDoor(getcurrentDriveOrder());
                         driver_index = 0;
@@ -618,9 +677,9 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
                             try {
                                 doorName = stepList.get(0).getDestinationPoint().getProperty("door");
                             } catch (Exception e) {
-                                LOG.error("get first door Name error");
+                                LOG.error("{} get first door Name error", getName());
                             }
-                            LOG.info("init open door point: {}, wait door point: {}, close door point: {}, door name: {}", openDoorID, waitDoorID, openDoorID, doorName);
+                            LOG.info("{} init open door point: {}, wait door point: {}, close door point: {}, door name: {}", getName(), openDoorID, waitDoorID, openDoorID, doorName);
 
 
                         }
@@ -640,45 +699,52 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
                         String debugPath = null;
                         Boolean sendPathFlag = false;
                         if (currentPoint.equals(waitDoorID)) {
-                            LOG.info("wait doot open at point: {}", currentPoint);
+                            LOG.info("{} wait doot open at point: {}", getName(), currentPoint);
                             DoorStatus doorStatus = DoorController.doorAction(doorName, DoorController.DOORACTION.OPEN);
                             if (doorStatus.getError() < 1 && doorStatus.getStatus().equals("open")) {
-                                LOG.info("open {} door succeed", doorName);
+                                LOG.info("{} open {} door succeed",getName(), doorName);
                                 sendPathFlag = true;
-//                                debugPath
+    //                                debugPath
                             }
                         }  else {
                             sendPathFlag = true;
                         }
 
                         if (sendPathFlag) {
-//                            configRoute.setRoute(getcurrentDriveOrder());
+    //                            configRoute.setRoute(getcurrentDriveOrder());
                             configRoute.setRoute(driveOrderList.get(driver_index));
                             configRoute.setAngle(currentAngle);
                             byte[] path = configRoute.getPath();
                             debugPath = configRoute.getDebugPath();
-                            agv.sendPath(path);
                             Thread.sleep(500);
+                            agv.sendPath(path);
+                            Thread.sleep(1000);
                             if (!agv.sendPath(path)) {
-                                LOG.info("send path to vehicle: {}", debugPath);
+                                LOG.info("{}, send path to vehicle: {}", getName(), debugPath);
                                 return;
                             }
                             if (currentCharge == 1) {
                                 Thread.sleep(200);
                                 agv.sendPath(path);
-                                LOG.info("send path again");
+                                LOG.info("{} send path again", getName());
                             }
                             sendPathFlag = false;
-//                        }
+                            try {
+                                pathTimer.cancel();
+                                pathTimer.schedule(new pathTimer(path, debugPath), 5000, 5000);
+                            } catch (Exception e) {
+                                LOG.error("{} set path timer fial: {}", e.getMessage());
+                            }
+    //                        }
 
-//                        if (getProcessModel().getVehicleState() == Vehicle.State.EXECUTING) {
-//                        if (!sendDriveOrder.getRoute().getSteps().get(0).getSourcePoint().getName().equals(currentPoint)) {
+    //                        if (getProcessModel().getVehicleState() == Vehicle.State.EXECUTING) {
+    //                        if (!sendDriveOrder.getRoute().getSteps().get(0).getSourcePoint().getName().equals(currentPoint)) {
 
                             sendDriveOrder = driveOrderList.get(driver_index);
-                            LOG.info("send path to vehicle : {}", debugPath);
+                            LOG.info("{} send path to vehicle : {}", getName(), debugPath);
     //                        MessageFormatter.format(format, arg).getMessage()
     //                        UserNotification notif = new UserNotification(MessageFormatter.format("send path to vehicle: {}", path).getMessage(), UserNotification.Level.INFORMATIONAL);
-                            getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("send path to vehicle: {}", debugPath).getMessage(), UserNotification.Level.INFORMATIONAL));
+                            publishNotify(String.format("send path to vehicle: %s", debugPath), UserNotification.Level.INFORMATIONAL);
     //                        pathStartPosition = sendDriveOrder.getRoute().getSteps().get(0).getSourcePoint();
                             pathStartPosition = driveOrderList.get(driver_index).getRoute().getSteps().get(0).getSourcePoint();
     //                        pathStartID = sendDriveOrder.getRoute().getSteps().get(0).getSourcePoint().getName();
@@ -688,7 +754,7 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
                                 if (getcurrentDriveOrder().getDestination().getOperation().equals("LOAD") || getcurrentDriveOrder().getDestination().getOperation().equals("UNLOAD") || getcurrentDriveOrder().getDestination().getOperation().equals("CHARGE")) {
                                     wait_point = getcurrentDriveOrder().getRoute().getFinalDestinationPoint().getName();
                                     action = getcurrentDriveOrder().getDestination().getOperation();
-                                    LOG.warn("XXX wait_point: {} action: {}", wait_point, getcurrentDriveOrder().getDestination().getOperation());
+                                    LOG.warn("{} XXX wait_point: {} action: {}", getName(), wait_point, getcurrentDriveOrder().getDestination().getOperation());
                                 }
                             }
     //                        ppp = getcurrentDriveOrder().getRoute().getSteps().get(0).getSourcePoint().getName();
@@ -699,42 +765,44 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
                     if (!currentPoint.equals(ppp)) {
 
                         if (currentPoint.equals(openDoorID)) {
-                            LOG.info("open {} door at point: {}", doorName, currentPoint);
+                            LOG.info("{} open {} door at point: {}", getName(), doorName, currentPoint);
+                            publishNotify(String.format("open %s door at point: %s", doorName, currentPoint), UserNotification.Level.INFORMATIONAL);
                             DoorStatus doorStatus = DoorController.doorAction(doorName, DoorController.DOORACTION.OPEN);
                         } else if (currentPoint.equals(closeDoorID)) {
-                            LOG.info("close {} door at point: {}", doorName, currentPoint);
+                            LOG.info("{} close {} door at point: {}", getName(), doorName, currentPoint);
+                            publishNotify(String.format("close %s door at point: %s", doorName, currentPoint), UserNotification.Level.INFORMATIONAL);
                             DoorStatus doorStatus = DoorController.doorAction(doorName, DoorController.DOORACTION.CLOSE);
                             if (doorStatus.getError() == 0) {
-                                LOG.error("close {} door at point: {} succeed!", doorName, currentPoint);
-//                            }
-//                            if (doorStatus.getError() == -4) {
-//                                for (Route.Step step : stepList) {
-//                                    if (doorStep.equals(step)) {
-//                                        doorStep = stepList.get(stepList.indexOf(step)+1);
-//                                    }
-//                                }
+                                LOG.error("{} close {} door at point: {} succeed!", getName(), doorName, currentPoint);
+    //                            }
+    //                            if (doorStatus.getError() == -4) {
+    //                                for (Route.Step step : stepList) {
+    //                                    if (doorStep.equals(step)) {
+    //                                        doorStep = stepList.get(stepList.indexOf(step)+1);
+    //                                    }
+    //                                }
                                 openDoorIndex = 1;
                                 closeDoorIndex = 1;
                                 try {
                                     doorName = stepList.get(openDoorIndex).getDestinationPoint().getProperty("door");
                                 } catch ( Exception e) {
-                                    LOG.error("get next door name error: {}", e.getMessage());
+                                    LOG.error("{} get next door name error: {}", getName(), e.getMessage());
                                 }
                                 openDoorID = openDoorList.get(openDoorIndex).getName();
                                 closeDoorID = closeDoorList.get(closeDoorIndex).getName();
                                 waitDoorID = stepList.get(openDoorIndex).getSourcePoint().getName();
-                                LOG.info("update open door point: {}, wait door point: {}, close door point: {}, door name: {}", openDoorID, closeDoorID, waitDoorID, doorName);
+                                LOG.info("{} update open door point: {}, wait door point: {}, close door point: {}, door name: {}", getName(), openDoorID, closeDoorID, waitDoorID, doorName);
                             }
                         }
 
                         ppp = currentPoint;
-//                        currentPoint = p;
-//                        if( currentPoint == p)
-//                        getProcessModel().setVehiclePosition(p.getName());
+    //                        currentPoint = p;
+    //                        if( currentPoint == p)
+    //                        getProcessModel().setVehiclePosition(p.getName());
                         if (currentPoint.equals(currentCommand.getStep().getDestinationPoint().getName())) {
-                            LOG.info("current dist point: {}, no. dist point: {}, current point: {}", getcurrentDriveOrder().getDestination().getDestination().getName(), driveOrderList.get(driver_index).getDestination().getDestination().getName(), currentPoint);
+                            LOG.info("{} current dist point: {}, no. dist point: {}, current point: {}", getName(), getcurrentDriveOrder().getDestination().getDestination().getName(), driveOrderList.get(driver_index).getDestination().getDestination().getName(), currentPoint);
 
-//                            if (currentPoint.equals(currentDriveOrder.getDestination().getDestination().getName())) {
+    //                            if (currentPoint.equals(currentDriveOrder.getDestination().getDestination().getName())) {
                             if (currentPoint.equals(driveOrderList.get(driver_index).getDestination().getDestination().getName()) ||
                                 currentPoint.equals(driveOrderList.get(driver_index).getRoute().getSteps().get(driveOrderList.get(driver_index).getRoute().getSteps().size()-1).getDestinationPoint().getName())) {
                                 if (driver_index == driveOrderList.size()-1) {
@@ -780,13 +848,13 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
                 Thread.sleep(200);
             } catch (Exception ex) {
                 // LOG.error(ex.getMessage());
-//                LOG.error(ex.printStackTrace());
+    //                LOG.error(ex.printStackTrace());
             }
         }
 
     }
 
-//    class
+    //    class
 
 
     private enum LoadState {

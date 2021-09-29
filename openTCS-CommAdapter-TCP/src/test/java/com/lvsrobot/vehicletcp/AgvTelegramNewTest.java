@@ -11,7 +11,7 @@ class AgvTelegramNewTest {
 
     @BeforeAll
     public static void  initClient() {
-        agv = new AgvTelegramNew("192.168.10.235", 10001);
+        agv = new AgvTelegramNew("192.168.10.235", 10001, new TCPCommAdapter());
         agv.getAgvInfo();
     }
 

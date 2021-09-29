@@ -2,14 +2,24 @@ package com.lvsrobot.rosbridge;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.lvsrobot.rosbridge.msg.Waypoint;
+import com.lvsrobot.rosbridge.msg.WaypointList;
 import edu.wpi.rail.jrosbridge.Ros;
 import edu.wpi.rail.jrosbridge.Topic;
 import edu.wpi.rail.jrosbridge.callback.TopicCallback;
 import edu.wpi.rail.jrosbridge.handler.RosHandler;
 import edu.wpi.rail.jrosbridge.messages.Message;
+import edu.wpi.rail.jrosbridge.messages.geometry.Point;
+import edu.wpi.rail.jrosbridge.messages.geometry.Pose;
 import edu.wpi.rail.jrosbridge.messages.geometry.Pose2D;
+import edu.wpi.rail.jrosbridge.messages.geometry.Quaternion;
+import edu.wpi.rail.jrosbridge.messages.std.Header;
 import org.opentcs.data.model.Triple;
+import org.opentcs.data.order.DriveOrder;
+import org.opentcs.data.order.Route;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,14 +29,18 @@ public class AgvTelegramROS {
     private Ros ros;
     private Topic topic_echo;
     private Topic topic_info;
+    private Topic topic_waypoint;
+
+    private double x = 0;
+    private double y = 0;
 
 
     private static final Logger LOG = LoggerFactory.getLogger(AgvTelegramROS.class);
 
     /**
      * 新建车辆通信连接
-     * @param String ip
-     * @param int port
+     * @param ip
+     * @param port
      */
     public AgvTelegramROS(String ip, int port) {
         try {
@@ -51,10 +65,15 @@ public class AgvTelegramROS {
             ros.connect();
             topic_echo = new Topic(ros, "/echo", "std_msgs/String");
             topic_info = new Topic(ros, "/pose", "geometry_msgs/Pose2D");
+            topic_waypoint = new Topic(ros, "/waypoint", "yocs_msgs/WaypointList");
             topic_info.subscribe(new TopicCallback() {
                 @Override
                 public void handleMessage(Message message) {
                     System.out.println("From ROS: "+ message.toString());
+                    //TODO 判断这个message的类型，然后吧消息的xy取出，调用getProcess setVehicle位置
+                    Pose2D pose2d = (Pose2D) message;
+                    x = pose2d.getX();
+                    y = pose2d.getY();
                 }
             });
         }
@@ -123,41 +142,7 @@ public class AgvTelegramROS {
 //            return null;
 //        }
         AgvInfo agvInfo = new AgvInfo();
-//        agvInfo.setCurrentPosition({byteToUnsignedInt(retBytes[0]) << 8 | byteToUnsignedInt(retBytes[1]), byteToUnsignedInt(retBytes[2]) << 8 | byteToUnsignedInt(retBytes[3])});
-//        agvInfo.setSpeed(byteToUnsignedInt(retBytes[3]));
-//        agvInfo.setElectric(byteToUnsignedInt(retBytes[4]));
-//        agvInfo.setException(byteToUnsignedInt(retBytes[5]));
-//        agvInfo.setStatus(byteToUnsignedInt(retBytes[6]));
-//        agvInfo.setPosition(retReadInputRegisters[0]);
-//        agvInfo.setSpeed(retReadInputRegisters[]);
-//        agvInfo.setElectric(retReadInputRegisters[2]);
-//        agvInfo.setException(retReadInputRegisters[3]);
-
-
-//        agvInfo.setStatus(retReadInputRegisters[7]);
-//        int[] precisePosition = {10*(int)(short)retReadInputRegisters[0], 10*(int)(short)retReadInputRegisters[1]};
-//        agvInfo.setPrecisePosition(precisePosition);
-//        int[] currentPosition = {10*(int)(short)retReadInputRegisters[12], 10*(int)(short)retReadInputRegisters[13]};
-//        agvInfo.setCurrentPosition(currentPosition);
-//        int[] previousPosition = {10*(int)(short)retReadInputRegisters[14], 10*(int)(short)retReadInputRegisters[15]};
-//        agvInfo.setPreviousPositon(previousPosition);
-//        double orientation = (double)retReadInputRegisters[2];
-//        agvInfo.setVehicleOrientation(orientation);
-//        agvInfo.setBattery(retReadInputRegisters[10]);
-//        agvInfo.setLoadStatus(retReadInputRegisters[32]);
-//        agvInfo.setCharge_status(retReadInputRegisters[33]);
-//        agvInfo.setSpeed(retReadInputRegisters[52]);
-//        //是否触发避障，0未触发 1触发 地址18
-//        agvInfo.setVehicleAvoidance(retReadInputRegisters[18]);
-
-
-//        LOG.info("rec 51 {}",retReadInputRegisters[51]);
-//        LOG.info("rec 52 {}",retReadInputRegisters[52]);
-//        LOG.info("rec 53 {}",retReadInputRegisters[53]);
-
-//        agvInfo.setCurrent_position_id(retReadInputRegisters[13]);
-//        agvInfo.setBattery(retReadInputRegisters[14]);
-//        agvInfo.
+        agvInfo.setPrecisePosition(new int[]{(int) x * 1000, (int) y * 1000, 0});
 
         return agvInfo;
     }
@@ -187,7 +172,7 @@ public class AgvTelegramROS {
 
     /**
      * 发送驱动订单
-     * @param int[] path
+     * @param path
      * @return boolean
      * 是否成功
      */
@@ -199,6 +184,24 @@ public class AgvTelegramROS {
             topic_echo.publish(toSend);
         } catch (Exception e) {
             LOG.error("send path error: {}", e.toString());
+            this.disConnecte();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 发布waypointlist 话题
+     * @param waypointList
+     * @return 发送是否成功
+     */
+    public synchronized boolean sendWaypointList(WaypointList waypointList) {
+        //目前发布为话题，可改为调用服务。
+        try {
+            this.Connecte();
+            topic_waypoint.publish(waypointList);
+        } catch (Exception e) {
+            LOG.error("send waypointlist error: {}", e.getMessage());
             this.disConnecte();
             return false;
         }
@@ -284,6 +287,29 @@ public class AgvTelegramROS {
             return false;
         }
         return true;
+    }
+
+    public WaypointList getWaypointList(DriveOrder driveOrder) {
+        List<Route.Step> stepList = driveOrder.getRoute().getSteps();
+        List<Waypoint> waypointList_ = new ArrayList<>();
+
+        //第一个点取第零步的源点
+        String name = stepList.get(0).getSourcePoint().getName();
+        double x = stepList.get(0).getDestinationPoint().getPosition().getX();
+        double y = stepList.get(0).getDestinationPoint().getPosition().getY();
+        Pose pose = new Pose(new Point(x, y, 0), new Quaternion());
+        waypointList_.add(new Waypoint(new Header(), name, pose));
+
+        for(Route.Step step : stepList) {
+            name = step.getDestinationPoint().getName();
+            x = step.getDestinationPoint().getPosition().getX();
+            y = step.getDestinationPoint().getPosition().getY();
+            pose = new Pose(new Point(x, y, 0), new Quaternion());
+            waypointList_.add(new Waypoint(new Header(), name, pose));
+        }
+        WaypointList waypointList = new WaypointList(waypointList_.toArray(new Waypoint[0]));
+
+        return waypointList;
     }
 
 }

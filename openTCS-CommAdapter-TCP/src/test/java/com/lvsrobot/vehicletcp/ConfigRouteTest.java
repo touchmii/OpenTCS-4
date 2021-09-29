@@ -117,7 +117,12 @@ class ConfigRouteTest {
 //        for (int i=0; i < 5; i++) {
 //            pointList.add(new Point("Point"+String.valueOf(i)).withPosition(new Triple(1000*i, 0, 0)));
 //        }
-        pointList.add(new Point("Point"+String.valueOf(4)).withPosition(new Triple(1000*5, 0, 0)).withProperty("dis", "0"));
+        pointList.add(new Point("Point"+String.valueOf(3)).withPosition(new Triple(1000*5, 0, 0))
+//                .withProperty("dis", "0")
+        );
+        pointList.add(new Point("Point"+String.valueOf(4)).withPosition(new Triple(1000*5, 0, 0))
+                .withProperty("dis", "0")
+        );
         pointList.add(new Point("Point"+String.valueOf(5)).withPosition(new Triple(1000*5, 0, 0)).withProperty("door", "JN2"));
         pointList.add(new Point("Point"+String.valueOf(6)).withPosition(new Triple(1000*5, 0, 0)).withProperty("door", "JN2"));
         pointList.add(new Point("Point"+String.valueOf(7)).withPosition(new Triple(1000*5, 0, 0)));

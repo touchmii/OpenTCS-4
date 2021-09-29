@@ -20,6 +20,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -31,8 +33,15 @@ import java.util.concurrent.TimeUnit;
 @Sharable
 public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(UptimeClientHandler.class);
+    private final TCPCommAdapter tcpCommAdapter;
+    private final AgvTelegramNew agvTelegramNew;
     public long startTime = -1;
     private ChannelHandlerContext lctx = null;
+    public UptimeClientHandler(TCPCommAdapter tcpCommAdapter_, AgvTelegramNew agvTelegramNew_) {
+        tcpCommAdapter = tcpCommAdapter_;
+        agvTelegramNew = agvTelegramNew_;
+    }
     private static Integer byteToUnsignedInt(byte data) {
         return data & 0xff;
     }
@@ -41,7 +50,8 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
         if (startTime < 0) {
             startTime = System.currentTimeMillis();
         }
-        println("Connected to: " + ctx.channel().remoteAddress());
+        LOG.info("Conencted to: {} port: {}", tcpCommAdapter.getName(), ctx.channel().remoteAddress());
+//        println("Connected to: " + ctx.channel().remoteAddress());
 //        ctx.writeAndFlush(Unpooled.copiedBuffer("Hello", CharsetUtil.UTF_8));
         lctx = ctx;
     }
@@ -66,7 +76,7 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
         agvInfo.setStatus(byteToUnsignedInt(retBytes[12]));
         agvInfo.setBizhang(byteToUnsignedInt(retBytes[13]));
         agvInfo.setCharge(byteToUnsignedInt(retBytes[16]));
-        TCPCommAdapter.callback(agvInfo);
+        tcpCommAdapter.callback(agvInfo);
     }
 //    @Override
 //    public void channelRead(ChannelHandlerContext ctx, Obj)
@@ -81,27 +91,30 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
         if (e.state() == IdleState.ALL_IDLE) {
 //        if (e.state() == IdleState.READER_IDLE) {
             // The connection was OK but there was no traffic for last period.
-            println("Disconnecting due to no inbound traffic");
+//            println("Disconnecting due to no inbound traffic");
+            LOG.error("Disconnect {} {} due to no inbound traffic", tcpCommAdapter.getName(), ctx.channel().remoteAddress());
             ctx.close();
         }
     }
 
     @Override
     public void channelInactive(final ChannelHandlerContext ctx) {
-        println("Disconnected from: " + ctx.channel().remoteAddress());
+        LOG.info("{} Disconnected from: {}", tcpCommAdapter.getName(), ctx.channel().remoteAddress());
+//        println("Disconnected from: " + ctx.channel().remoteAddress());
     }
 
     @Override
     public void channelUnregistered(final ChannelHandlerContext ctx) throws Exception {
-        println("Sleeping for: " + AgvTelegramNew.RECONNECT_DELAY + 's');
-
+//        println("Sleeping for: " + agvTelegramNew.RECONNECT_DELAY + 's');
+        LOG.info("{} Sleeping for: {} s", tcpCommAdapter.getName(), agvTelegramNew.RECONNECT_DELAY);
         ctx.channel().eventLoop().schedule(new Runnable() {
             @Override
             public void run() {
-                println("Reconnecting to: " + AgvTelegramNew.remote_ip + ':' + AgvTelegramNew.remote_port);
-                AgvTelegramNew.connect();
+                LOG.info("{} Reconnecting to: {}:{}", tcpCommAdapter.getName(), agvTelegramNew.remote_ip, agvTelegramNew.remote_port);
+//                println("Reconnecting to: " + agvTelegramNew.remote_ip + ':' + agvTelegramNew.remote_port);
+                agvTelegramNew.connect();
             }
-        }, AgvTelegramNew.RECONNECT_DELAY, TimeUnit.SECONDS);
+        }, agvTelegramNew.RECONNECT_DELAY, TimeUnit.SECONDS);
     }
 //    @Override
 //        public void channelUnregistered(final ChannelHandlerContext ctx) throws Exception {
@@ -118,7 +131,8 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
+        LOG.error("{} exception: {}", tcpCommAdapter.getName(), cause.getMessage());
+//        cause.printStackTrace();
         ctx.close();
     }
 
