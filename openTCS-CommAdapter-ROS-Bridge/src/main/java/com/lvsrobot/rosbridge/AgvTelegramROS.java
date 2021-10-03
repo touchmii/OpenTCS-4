@@ -5,6 +5,9 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.lvsrobot.rosbridge.library.IncomingMessageLib;
+import com.lvsrobot.rosbridge.library.OutgoingMessageLib;
+import com.lvsrobot.rosbridge.library.UnitConverterLib;
 import com.lvsrobot.rosbridge.msg.Waypoint;
 import com.lvsrobot.rosbridge.msg.WaypointList;
 import edu.wpi.rail.jrosbridge.Ros;
@@ -12,14 +15,12 @@ import edu.wpi.rail.jrosbridge.Topic;
 import edu.wpi.rail.jrosbridge.callback.TopicCallback;
 import edu.wpi.rail.jrosbridge.handler.RosHandler;
 import edu.wpi.rail.jrosbridge.messages.Message;
-import edu.wpi.rail.jrosbridge.messages.geometry.Point;
-import edu.wpi.rail.jrosbridge.messages.geometry.Pose;
-import edu.wpi.rail.jrosbridge.messages.geometry.Pose2D;
-import edu.wpi.rail.jrosbridge.messages.geometry.Quaternion;
+import edu.wpi.rail.jrosbridge.messages.geometry.*;
 import edu.wpi.rail.jrosbridge.messages.std.Header;
 import org.opentcs.data.model.Triple;
 import org.opentcs.data.order.DriveOrder;
 import org.opentcs.data.order.Route;
+import org.opentcs.drivers.vehicle.MovementCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,11 @@ public class AgvTelegramROS {
     private Topic topic_echo;
     private Topic topic_info;
     private Topic topic_waypoint;
+    private Topic topic_goal;
+    private Topic topic_pose;
+
+    private Triple estimatedPosition;
+    ROSBridgeProcessModel processModel;
 
     private double x = 0;
     private double y = 0;
@@ -42,10 +48,11 @@ public class AgvTelegramROS {
      * @param ip
      * @param port
      */
-    public AgvTelegramROS(String ip, int port) {
+    public AgvTelegramROS(String ip, int port, ROSBridgeProcessModel processModel) {
+        this.processModel = processModel;
         try {
 //            ros = new Ros(ip);
-            ros = new Ros("192.168.0.104");
+            ros = new Ros(ip);
             ros.addRosHandler(new RosHandler() {
                 @Override
                 public void handleConnection(Session session) {
@@ -59,27 +66,63 @@ public class AgvTelegramROS {
 
                 @Override
                 public void handleError(Session session, Throwable t) {
-                    System.out.println(("ROS is Error"));
+                    LOG.error("ros error session : {} cause : {}", session, t.getStackTrace());
+//                    System.out.println(("ROS is Error"));
                 }
             });
             ros.connect();
             topic_echo = new Topic(ros, "/echo", "std_msgs/String");
             topic_info = new Topic(ros, "/pose", "geometry_msgs/Pose2D");
-            topic_waypoint = new Topic(ros, "/waypoint", "yocs_msgs/WaypointList");
+            topic_waypoint = new Topic(ros, "/waypoints", "yocs_msgs/WaypointList");
+            topic_goal = new Topic(ros, "/move_base_simple/goal", "geometry_msgs/PoseStamped");
             topic_info.subscribe(new TopicCallback() {
                 @Override
                 public void handleMessage(Message message) {
                     System.out.println("From ROS: "+ message.toString());
                     //TODO 判断这个message的类型，然后吧消息的xy取出，调用getProcess setVehicle位置
-                    Pose2D pose2d = (Pose2D) message;
+//                    Pose2D pose2d = (Pose2D) message;
+                    Pose2D pose2d = Pose2D.fromMessage(message);
                     x = pose2d.getX();
                     y = pose2d.getY();
                 }
             });
+
+            topic_pose = new Topic(ros, "/amcl_pose", "geometry_msgs/PoseWithCovarianceStamped");
+            topic_pose.subscribe(new poseCallback(processModel));
         }
         catch (Exception e) {
 //            e.printStackTrace();
             LOG.info("Exception: {}", e.getMessage());
+        }
+    }
+
+    public class poseCallback implements TopicCallback {
+        private Triple estimatedPosition;
+        private ROSBridgeProcessModel processModel;
+        public poseCallback(ROSBridgeProcessModel processModel) {
+            //前面必须加this，否则无法把参数赋值到变量
+            this.processModel = processModel;
+        }
+
+        public void handleMessage(Message message) {
+//            LOG.info("Recive type : {} amcl_pose : {}", message.getMessageType(), message);
+            try {
+                PoseWithCovarianceStamped amclPose = PoseWithCovarianceStamped.fromMessage(message);
+                Triple oldEstimatePosition = this.estimatedPosition;
+                this.estimatedPosition = IncomingMessageLib.generateTripleByAmclPose(amclPose);
+
+                // Set precise position
+//            processModel.firePropertyChange(POSITION_ESTIMATE.name(), oldEstimatePosition, this.estimatedPosition);
+
+                // Set orientation angle
+                Quaternion orientationQuaternion = amclPose.getPose().getPose().getOrientation();
+                double orientationDegrees = UnitConverterLib.quaternionToAngleDegree(orientationQuaternion);
+                LOG.debug("Position X: {} mm Y: {} mm Yaw: {} °", estimatedPosition.getX(), estimatedPosition.getY(), orientationDegrees);
+                processModel.setVehicleOrientationAngle(orientationDegrees);
+                processModel.setVehiclePrecisePosition(this.estimatedPosition);
+            } catch (Exception e) {
+                LOG.error("pair amcl_pose error: {}", e.getStackTrace());
+            }
         }
     }
 
@@ -202,6 +245,21 @@ public class AgvTelegramROS {
             topic_waypoint.publish(waypointList);
         } catch (Exception e) {
             LOG.error("send waypointlist error: {}", e.getMessage());
+            this.disConnecte();
+            return false;
+        }
+        return true;
+    }
+
+    public synchronized boolean sendGoalPose(MovementCommand movementCommand) {
+        // Generate message.
+        LOG.info("Command Execution: Dispatching vehicle to point '{}'", movementCommand.getStep().getDestinationPoint().getName());
+        PoseStamped message = OutgoingMessageLib.generateScaledNavigationMessageByPoint(movementCommand.getStep().getDestinationPoint());
+        try {
+            this.Connecte();
+            topic_goal.publish(message);
+        } catch (Exception e) {
+            LOG.error("send goal error: {}", e.getMessage());
             this.disConnecte();
             return false;
         }

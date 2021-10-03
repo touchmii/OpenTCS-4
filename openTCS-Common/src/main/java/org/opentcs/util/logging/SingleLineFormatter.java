@@ -58,6 +58,7 @@ public class SingleLineFormatter
         .append(String.format("%1$-20s", Thread.currentThread().getName()))
         .append(' ')
         .append(String.format("%1$-55s", source(record)))
+//        .append(" line: %L ")
         .append(": ")
         .append(formatMessage(record))
         .append(lineSeparator);

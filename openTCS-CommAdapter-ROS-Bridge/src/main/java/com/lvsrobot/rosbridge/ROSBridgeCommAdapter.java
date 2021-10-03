@@ -142,7 +142,7 @@ public class ROSBridgeCommAdapter extends BasicVehicleCommAdapter {
         if (isEnabled()) {
             return;
         }
-        agv = new AgvTelegramROS(getProcessModel().getIp(), getProcessModel().getPort());
+        agv = new AgvTelegramROS(getProcessModel().getIp(), getProcessModel().getPort(), this.getProcessModel());
 
 
 
@@ -408,9 +408,9 @@ public class ROSBridgeCommAdapter extends BasicVehicleCommAdapter {
                 previous_angle = current_angle;
                 current_angle = agvInfo.getVehicleOrientation();
 
-                getProcessModel().setVehiclePrecisePosition(agvInfo.getPrecisePosition());
-                getProcessModel().setVehicleOrientationAngle(agvInfo.getVehicleOrientation());
-                getProcessModel().setVehicleEnergyLevel(agvInfo.getBattery());
+//                getProcessModel().setVehiclePrecisePosition(agvInfo.getPrecisePosition());
+//                getProcessModel().setVehicleOrientationAngle(agvInfo.getVehicleOrientation());
+//                getProcessModel().setVehicleEnergyLevel(agvInfo.getBattery());
                 if(agvInfo.getLoadStatus() == 1) {
                     loadState = LoadState.FULL;
                 } else {
