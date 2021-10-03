@@ -35,7 +35,7 @@ import io.netty.util.CharsetUtil;
  * server.  This example demonstrates how to implement reliable reconnection
  * mechanism in Netty.
  */
-public final class UptimeClient {
+/*public final class UptimeClient {
 
     static final String HOST = System.getProperty("host", "192.168.0.101");
     static final int PORT = Integer.parseInt(System.getProperty("port", "1024"));
@@ -86,4 +86,4 @@ public final class UptimeClient {
             }
         });
     }
-}
+}*/

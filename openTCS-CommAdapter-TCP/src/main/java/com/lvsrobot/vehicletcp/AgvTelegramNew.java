@@ -30,7 +30,7 @@ public class AgvTelegramNew {
     static final int IDLE_TIMEOUT = 50;
     static String remote_ip = null;
     static int remote_port = 0;
-    static ChannelFuture f = null;
+    ChannelFuture f = null;
     EventLoopGroup group = null;
     private final UptimeClientHandler handler;
     private Bootstrap bs = null;
@@ -94,7 +94,7 @@ public class AgvTelegramNew {
                 if (future.cause() != null) {
                     handler.startTime = -1;
 //                    handler.println("Failed to connect");
-                    LOG.error("{} Failed to connect: {} by: {}", remote_ip,future.cause());
+                    LOG.error("Failed to connect: {} by: {}", remote_ip, future.cause());
                 } else {
                     f = future;
                 }

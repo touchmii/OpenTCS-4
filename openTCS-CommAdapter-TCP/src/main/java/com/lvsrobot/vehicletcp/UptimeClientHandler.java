@@ -112,6 +112,7 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
             public void run() {
                 LOG.info("{} Reconnecting to: {}:{}", tcpCommAdapter.getName(), agvTelegramNew.remote_ip, agvTelegramNew.remote_port);
 //                println("Reconnecting to: " + agvTelegramNew.remote_ip + ':' + agvTelegramNew.remote_port);
+                agvTelegramNew.disConnect();
                 agvTelegramNew.connect();
             }
         }, agvTelegramNew.RECONNECT_DELAY, TimeUnit.SECONDS);
