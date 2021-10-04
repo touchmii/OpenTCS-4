@@ -100,12 +100,6 @@ public class ROSBridgeCommAdapter extends BasicVehicleCommAdapter {
 
     private Point previousPoint;
 
-    private MovementCommand currentCommand;
-
-    private MovementCommand previousCommand;
-
-//    private
-
 //    private  sendDriverOrder;
 
     /**
@@ -156,6 +150,9 @@ public class ROSBridgeCommAdapter extends BasicVehicleCommAdapter {
         adapterThread.start();
         super.enable();
 //        getProcessModel().setVehiclePosition("4");
+        try {
+            Thread.sleep(2000);
+        } catch (Exception e) {}
         String init_point = getInitialPosition();
         getProcessModel().setVehiclePosition(init_point);
         getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("adapter init finish, vehicle current point: {}", init_point).getMessage(), UserNotification.Level.INFORMATIONAL));
@@ -171,9 +168,6 @@ public class ROSBridgeCommAdapter extends BasicVehicleCommAdapter {
         sendDriveOrder = null;
         currentPoint = null;
         previousPoint = null;
-        currentCommand = null;
-        previousCommand = null;
-//        this.setcurrentDriveOrder(null);
         vehicleROSBridgeTask.terminate();
         vehicleROSBridgeTask = null;
         getProcessModel().getVelocityController().removeVelocityListener(getProcessModel());
@@ -330,13 +324,12 @@ public class ROSBridgeCommAdapter extends BasicVehicleCommAdapter {
     }
 
     public String getInitialPosition() {
-        AgvInfo agvInfo = agv.getAgvInfo();
-        int a = 0;
-        while (agvInfo == null && a < 5) { agvInfo = agv.getAgvInfo(); a ++;}
-        Triple precisePosition = agvInfo.getPrecisePosition();
-        getProcessModel().setVehiclePrecisePosition(precisePosition);
+        Triple triple = getProcessModel().getVehiclePrecisePosition();
+//        while (triple.getX() == 0.0) { triple = getProcessModel().getVehiclePrecisePosition();}
+
         getProcessModel().setVehicleState(Vehicle.State.IDLE);
 //        Triple precisePosition = new Triple((long)currentPosition[0], (long)currentPosition[1], 0);
+        Triple precisePosition = getProcessModel().getVehiclePrecisePosition();
         List<Point> PointList = getPointLists().stream().filter(point -> Math.abs(point.getPosition().getX() - precisePosition.getX()) < 500).filter(point -> Math.abs(point.getPosition().getY() - precisePosition.getY()) < 500).collect(Collectors.toList());
 
         switch( PointList.size() ) {
@@ -384,7 +377,8 @@ public class ROSBridgeCommAdapter extends BasicVehicleCommAdapter {
 
         Triple current_precise;
 
-        Triple previous_precise;
+        Triple dist_precise;
+        double dist_angle;
 
         double current_angle;
 
@@ -393,60 +387,21 @@ public class ROSBridgeCommAdapter extends BasicVehicleCommAdapter {
         @Override
         protected void runActualTask() {
             try {
-                //获取状态  位置  速度  方向等
-                AgvInfo agvInfo = agv.getAgvInfo();
-                if (agvInfo == null) {
-                    Thread.sleep(500);
-                    return;
-                }
-//                String currentPoint = String.valueOf(agvInfo.getPosition());
-                int currentStatus = agvInfo.getStatus();
-//                int[] currentPosition = agvInfo.getCurrentPosition();
-//                Triple precisePosition = new Triple((long)currentPosition[0], (long)currentPosition[1], 0);
-                previous_precise = current_precise;
-                current_precise = agvInfo.getPrecisePosition();
-                previous_angle = current_angle;
-                current_angle = agvInfo.getVehicleOrientation();
-
-//                getProcessModel().setVehiclePrecisePosition(agvInfo.getPrecisePosition());
-//                getProcessModel().setVehicleOrientationAngle(agvInfo.getVehicleOrientation());
-//                getProcessModel().setVehicleEnergyLevel(agvInfo.getBattery());
-                if(agvInfo.getLoadStatus() == 1) {
-                    loadState = LoadState.FULL;
-                } else {
-                    loadState = LoadState.EMPTY;
-                }
-                getProcessModel().setMaxFwdVelocity(agvInfo.getSpeed());
-                getProcessModel().setMaxRevVelocity(agvInfo.getSpeed());
-                getProcessModel().setVehicleMaxVelocity(agvInfo.getSpeed());
-//                LOG.info("get vehicle max speed {}", getProcessModel().getVehicleMaxVelocity());
-//                LOG.info("vehicle battery : {}", agvInfo.getBattery());
-
-//                getProcessModel().setVehiclePosition(currentPoint);
-
-                if (currentStatus < 2) {
-                    getProcessModel().setVehicleState(Vehicle.State.IDLE);
-                } else if (currentStatus == 2) {
-                    getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
-                }
-
-                if (sendDriveOrder != null  && getSentQueue().size() == 0) {
-                    LOG.info("abort path :{}", currentDriveOrder.getRoute());
-                    getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("abort path to vehicle: {}", currentDriveOrder.getRoute()).getMessage(), UserNotification.Level.INFORMATIONAL));
-                    agv.abortPath();
-                    sendDriveOrder = null;
-                    curCommand = null;
-                    currentCommand = null;
-                    sendDriveOrder = null;
-                }
-                if(currentCommand == null && curCommand == null && getSentQueue().size() > 0) {
+                if(curCommand == null && getSentQueue().size() > 0) {
 
                     synchronized (ROSBridgeCommAdapter.this) {
                         curCommand = getSentQueue().peek();
                     }
-                    currentCommand = curCommand;
+                    if (curCommand.getStep().getSourcePoint().equals(getcurrentDriveOrder().getRoute().getSteps().get(0).getSourcePoint())) {
+                        //起始地点
+                        sendDriveOrder = getcurrentDriveOrder();
+                        getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
+                        pathStartPosition = curCommand.getStep().getSourcePoint();
+                        dist_precise = curCommand.getFinalDestination().getPosition();
+                        dist_angle = curCommand.getFinalDestination().getVehicleOrientationAngle();
+                    }
+                    agv.sendGoalPose(curCommand);
                 }
-                simAdvanceTime = (int) (ADVANCE_TIME * 1.0);
                 if (curCommand == null) {
                     Uninterruptibles.sleepUninterruptibly(ADVANCE_TIME, TimeUnit.MILLISECONDS);
                     getProcessModel().getVelocityController().advanceTime(simAdvanceTime);
@@ -454,145 +409,42 @@ public class ROSBridgeCommAdapter extends BasicVehicleCommAdapter {
                     // If we were told to move somewhere, simulate the journey.
                     LOG.debug("Processing MovementCommand...");
 //                    final Route.Step curStep = curCommand.getStep();
-                    if (sendDriveOrder != getcurrentDriveOrder()) {
-                        configRoute.setRoute(getcurrentDriveOrder());
-                        int[] path = configRoute.getPath(agvInfo.getPrecisePosition());
-                        if (agv.sendPath(path) != true) {
-                            return;
-                        }
-                        sendDriveOrder = getcurrentDriveOrder();
-                        LOG.info("send path to vehicle : {}", path);
-//                        MessageFormatter.format(format, arg).getMessage()
-//                        UserNotification notif = new UserNotification(MessageFormatter.format("send path to vehicle: {}", path).getMessage(), UserNotification.Level.INFORMATIONAL);
-                        getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("send path to vehicle: {}", path).getMessage(), UserNotification.Level.INFORMATIONAL));
-                        pathStartPosition = sendDriveOrder.getRoute().getSteps().get(0).getSourcePoint();
-                        getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
 
-//                        agv.sendPath()
-                    }
                     Point p;
                     if (getSentQueue().size() != 0) {
 //                        p = approachPosition(sendDriveOrder, agvInfo.getPrecisePosition(), 300, 300);
-                        p = approachPosition(sendDriveOrder, agvInfo.getCurrentPosition(), 300, 300);
+                        p = approachPosition(sendDriveOrder, getProcessModel().getVehiclePrecisePosition(), 300, 300);
                     } else {
 //                        p = approachPosition(sendDriveOrder, agvInfo.getPrecisePosition(), 300, 100);
-                        p = approachPosition(sendDriveOrder, agvInfo.getCurrentPosition(), 300, 100);
+                        p = approachPosition(sendDriveOrder, getProcessModel().getVehiclePrecisePosition(), 300, 100);
                     }
                     if (p != null && p != pathStartPosition && p != currentPoint) {
                         currentPoint = p;
 //                        if( currentPoint == p)
                         getProcessModel().setVehiclePosition(p.getName());
+                        current_precise = getProcessModel().getVehiclePrecisePosition();
                         if (getSentQueue().size() == 0) {
-                            if (Math.abs(current_precise.getX() - previous_precise.getX()) < 50 && Math.abs(current_precise.getY() - previous_precise.getY()) < 50 && Math.abs(current_angle - previous_angle) < 2) {
-                                getProcessModel().commandExecuted(currentCommand);
+                            if (Math.abs(current_precise.getX() - dist_precise.getX()) < 50 && Math.abs(current_precise.getY() - dist_precise.getY()) < 50 && Math.abs(current_angle - dist_angle) < 2) {
+                                getProcessModel().commandExecuted(curCommand);
                                 getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("reach to end point: {}", p).getMessage(), UserNotification.Level.INFORMATIONAL));
 
-                                currentCommand = null;
                                 curCommand = null;
                                 getProcessModel().setVehicleState(Vehicle.State.IDLE);
                             }
                             Thread.sleep(500);
                         } else {
 
-                            getProcessModel().commandExecuted(currentCommand);
+                            getProcessModel().commandExecuted(curCommand);
                             getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("reach to point: {}", p).getMessage(), UserNotification.Level.INFORMATIONAL));
 
-                            currentCommand = null;
                             curCommand = null;
                         }
                     }
-                    // Simulate the movement.
-//                    simulateMovement(curStep);
-//                    if
-
-
-                    // Simulate processing of an operation.
-//                    if (!curCommand.isWithoutOperation()) {
-//                        simulateOperation(curCommand.getOperation());
-//                    }
-//                    LOG.debug("Processed MovementCommand.");
-//                    if (!isTerminated()) {
-//                        // Set the vehicle's state back to IDLE, but only if there aren't
-//                        // any more movements to be processed.
-//                        if (getSentQueue().size() <= 1 && getCommandQueue().isEmpty()) {
-//                            getProcessModel().setVehicleState(Vehicle.State.IDLE);
-//                        }
-//                        // Update GUI.
-//                        synchronized (ExampleCommAdapter.this) {
-//                            MovementCommand sentCmd = getSentQueue().poll();
-//                            // If the command queue was cleared in the meantime, the kernel
-//                            // might be surprised to hear we executed a command we shouldn't
-//                            // have, so we only peek() at the beginning of this method and
-//                            // poll() here. If sentCmd is null, the queue was probably cleared
-//                            // and we shouldn't report anything back.
-//                            if (sentCmd != null && sentCmd.equals(curCommand)) {
-//                                // Let the vehicle manager know we've finished this command.
-//                                getProcessModel().commandExecuted(curCommand);
-//                                ExampleCommAdapter.this.notify();
-//                            }
-//                        }
-//                    }
                 }
                 Thread.sleep(200);
             } catch (Exception ex) {
                 LOG.error(ex.getMessage());
-//                LOG.error(ex.printStackTrace());
             }
-        }
-
-        private void simulateMovement(Step step) throws Exception {
-            if (step.getPath() == null) {
-                return;
-            }
-            Orientation orientation = step.getVehicleOrientation();
-            long pathLength = step.getPath().getLength();
-            int maxVelocity;
-            switch (orientation) {
-                case BACKWARD:
-                    maxVelocity = step.getPath().getMaxReverseVelocity();
-                    break;
-                default:
-                    maxVelocity = step.getPath().getMaxVelocity();
-                    break;
-            }
-            String pointName = step.getDestinationPoint().getName();
-
-            getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
-            String currentPoint = "";
-            int currentStatus = 0;
-
-//            agv.sendPath(Integer.parseInt(pointName));
-            while (!currentPoint.equals(pointName) && !isTerminated()) {
-                AgvInfo agvInfo = agv.getAgvInfo();
-                if (agvInfo == null) {
-                    Thread.sleep(200);
-                    continue;
-                }
-                currentPoint = String.valueOf(agvInfo.getPosition());
-                currentStatus = agvInfo.getStatus();
-                getProcessModel().setVehiclePosition(currentPoint);
-                if (currentStatus == 0) {
-                    getProcessModel().setVehicleState(Vehicle.State.IDLE);
-                } else if (currentStatus == 1) {
-                    getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
-                }
-            }
-
-
-        }
-
-        /**
-         * Simulates an operation.
-         *
-         * @param operation A operation
-         * @throws InterruptedException If an exception occured while simulating
-         */
-        private void simulateOperation(String operation) {
-            requireNonNull(operation, "operation");
-            if (isTerminated()) {
-                return;
-            }
-            agv.sendWork(operation);
         }
     }
 

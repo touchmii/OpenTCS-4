@@ -15,7 +15,7 @@ public abstract class UnitConverterLib {
     public static double convertMillimetersToMeters(long millimeters) {
         double millimetersDouble = (double) millimeters;
 
-        return millimetersDouble / 1000;
+        return millimetersDouble / 1000.0;
     }
 
     public static double[] convertTripleToCoordinatesInMeter(@Nonnull Triple triple) {
@@ -35,7 +35,7 @@ public abstract class UnitConverterLib {
     }
 
     private static long convertMetersToMillimeters(double meters) {
-        double millimeters = meters * 1000;
+        double millimeters = meters * 1000.0;
 
         return Math.round(millimeters);
     }
