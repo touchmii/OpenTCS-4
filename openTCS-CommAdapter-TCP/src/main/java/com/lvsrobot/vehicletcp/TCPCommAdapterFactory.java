@@ -86,6 +86,9 @@ public class TCPCommAdapterFactory implements VehicleCommAdapterFactory {
         if (vehicle.getProperty("port") == null) {
             return false;
         }
+        if (vehicle.getProperty("portlog") == null) {
+            return false;
+        }
         try {
             checkInRange(Integer.parseInt(vehicle.getProperty("port")), 102, 65535);
         } catch (IllegalArgumentException exc) {
@@ -103,6 +106,7 @@ public class TCPCommAdapterFactory implements VehicleCommAdapterFactory {
         TCPCommAdapter adapter = componentsFactory.createExampleCommAdapter(vehicle);
         adapter.getProcessModel().setIp(vehicle.getProperty("ip"));
         adapter.getProcessModel().setPort(Integer.parseInt(vehicle.getProperty("port")));
+        adapter.getProcessModel().setPortlog(Integer.parseInt(vehicle.getProperty("portlog")));
         return adapter;
     }
 }

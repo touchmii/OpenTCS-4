@@ -390,7 +390,7 @@ public class ROSBridgeCommAdapter extends BasicVehicleCommAdapter {
                 if(curCommand == null && getSentQueue().size() > 0) {
 
                     synchronized (ROSBridgeCommAdapter.this) {
-                        curCommand = getSentQueue().peek();
+                        curCommand = getSentQueue().poll();
                     }
                     if (curCommand.getStep().getSourcePoint().equals(getcurrentDriveOrder().getRoute().getSteps().get(0).getSourcePoint())) {
                         //起始地点

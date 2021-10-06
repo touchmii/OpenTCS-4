@@ -29,6 +29,8 @@ public class TCPProcessModel extends VehicleProcessModel implements VelocityList
     private String ip;
     private int port;
 
+    private int port_log;
+
     private boolean singleStepModeEnabled;
     /**
      * Indicates which operation is a loading operation.
@@ -322,6 +324,9 @@ public class TCPProcessModel extends VehicleProcessModel implements VelocityList
     public void setPort(int port) {
         this.port = port;
     }
+
+    public void setPortlog(int port) {this.port_log = port;}
+    public int getPortlog() {return this.port_log;}
 
     /**
      * Notification arguments to indicate some change.

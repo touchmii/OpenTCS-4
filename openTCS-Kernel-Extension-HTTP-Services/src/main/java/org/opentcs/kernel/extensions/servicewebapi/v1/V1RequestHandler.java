@@ -158,7 +158,7 @@ public class V1RequestHandler
         List<Vehicle> vehicles = statusInformationProvider.getVehicles();
         StringBuilder vehiclesBrief = new StringBuilder();
         for (Vehicle vehicle : vehicles) {
-            vehiclesBrief.append(String.format("车辆: %s, 位置: %s 电量: %s", vehicle.getName(), vehicle.getCurrentPosition().getName(), vehicle.getEnergyLevel()));
+            vehiclesBrief.append(String.format("车辆: %s, 位置: %s 电量: %s 状态: %s", vehicle.getName(), vehicle.getCurrentPosition().getName(), vehicle.getEnergyLevel(), vehicle.getState()));
         }
         return vehiclesBrief.toString();
     }
@@ -249,7 +249,7 @@ public class V1RequestHandler
     private Object handleGetVehicleBriefByName(Request request, Response response) throws ObjectUnknownException {
         response.type(HttpConstants.CONTENT_TYPE_TEXT_PLAIN_UTF8);
         VehicleState vehicle = statusInformationProvider.getVehicleStateByName(request.params(":NAME"));
-        return String.format("车辆名称: %s, 位置: %s, 电量: %s, 任务: %s.", vehicle.getName(), vehicle.getCurrentPosition(), vehicle.getEnergyLevel(), vehicle.getTransportOrder());
+        return String.format("车辆名称: %s, 位置: %s, 电量: %s, 状态: %s, 任务: %s.", vehicle.getName(), vehicle.getCurrentPosition(), vehicle.getEnergyLevel(),vehicle.getState(), vehicle.getTransportOrder());
     }
 
     private Object handlePutVehicleIntegrationLevel(Request request, Response response) throws ObjectUnknownException, IllegalArgumentException {

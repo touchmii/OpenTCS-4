@@ -128,14 +128,11 @@ public class OrderHandler {
 
       } catch (Exception e) {
         LOG.warn("Can't send command to vehicle");
-        e.getMessage();
-        throw new ObjectUnknownException(("Can't send command to vehicle"));
+        throw new Exception((e.getMessage()));
       }
 
     } catch (Exception e) {
-      e.getMessage();
       LOG.warn("Can't found vechile name: {}", name);
-      throw new ObjectUnknownException("Unknow Vehicle name: " + name);
     }
     return String.format("Send command: %s to Vehicle: %s success.", command.getCommand(),name);
   }

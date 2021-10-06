@@ -117,13 +117,48 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
 
     private final TCSObjectService objectService;
 
+    private NettyServer nettyServer;
+
     private int operate_point = 0;
 
     private boolean abortPath = false;
 
+    public boolean isServerConnect() {
+        return serverConnect;
+    }
+
+    public void setServerConnect(boolean serverConnect) {
+        this.serverConnect = serverConnect;
+    }
+
+    private boolean serverConnect = false;
+
+    public boolean isNotFindcode() {
+        return notFindcode;
+    }
+
+    public void setFindcode(boolean notFindcode) {
+        this.notFindcode = notFindcode;
+    }
+
+    private boolean notFindcode = true;
+
+    public boolean isPauseFlag() {
+        return pauseFlag;
+    }
+
+    public void setPauseFlag(boolean pauseFlag) {
+        this.pauseFlag = pauseFlag;
+    }
+
+    private boolean pauseFlag = false;
+
+    private DriveOrder sendDriveOrder;
+
+
 //    private
 
-//    private  sendDriverOrder;
+//    private DriveOrder sendDriverOrder;
 
     /**
      * Creates a new instance.
@@ -165,6 +200,9 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
 //        agv.Connect();
         agv.getAgvInfo();
 
+        NettyServer nettyServer = new NettyServer(getProcessModel().getPortlog(), this);
+        nettyServer.start();
+//        nettyServer.action();
 
 
         getProcessModel().getVelocityController().addVelocityListener(getProcessModel());
@@ -265,6 +303,14 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
                 agv.resumePath();
                 getProcessModel().publishUserNotification(new UserNotification("send resume path command to vehicle", UserNotification.Level.INFORMATIONAL));
                 break;
+            case "xPath":
+                try {
+                    resumePath();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+//                publishNotify("send resume path command to vehicle");
             case "abortPath":
                 agv.abortPath();
                 getProcessModel().publishUserNotification(new UserNotification("send abort path command to vehicle", UserNotification.Level.INFORMATIONAL));
@@ -439,6 +485,68 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
         }
     }
 
+   public void resumePath() throws Exception {
+        if (!getProcessModel().getVehicleState().equals(Vehicle.State.ERROR)) {
+            throw new Exception(("车辆未发生错误"));
+        }
+//        driveOrder.getRoute().getSteps().stream().map(step -> step.getSourcePoint().getName().equals())
+       //TODO 检测当前位置是否在路径上
+       String point = getProcessModel().getVehiclePosition();
+       LOG.info("resume Driver order: {}", sendDriveOrder.toString());
+       List<Route.Step> stepList = sendDriveOrder.getRoute().getSteps();
+       List<Route.Step> newStepList = new ArrayList<>();
+       boolean start = false;
+
+       for(Route.Step step : stepList) {
+           if (start) {
+               newStepList.add(step);
+           }
+           if (step.getSourcePoint().getName().equals(point)) {
+               start = true;
+               newStepList.add(step);
+           }
+
+       }
+       if (start) {
+
+           Route route =  new Route(newStepList, newStepList.size());
+           DriveOrder newDriverOrder;
+           try {
+               String opration = sendDriveOrder.getDestination().getOperation();
+
+              newDriverOrder = new DriveOrder(new DriveOrder.Destination(stepList.get(stepList.size()-1).getDestinationPoint().getReference()).withOperation(opration)).withRoute(route);
+           } catch (Exception e) {
+
+           } finally {
+              newDriverOrder = new DriveOrder(new DriveOrder.Destination(stepList.get(stepList.size()-1).getDestinationPoint().getReference())).withRoute(route);
+
+           }
+
+           configRoute.setRoute(newDriverOrder);
+           configRoute.setAngle(getProcessModel().getVehicleOrientationAngle());
+           byte[] path = configRoute.getPath();
+
+           try {
+               Thread.sleep(500);
+           } catch (InterruptedException e) {
+               e.printStackTrace();
+           }
+           agv.sendPath(path);
+           try {
+               Thread.sleep(1000);
+           } catch (InterruptedException e) {
+               e.printStackTrace();
+           }
+           agv.sendPath(path);
+           LOG.info("{}, send resume path to vehicle: {}", getName(), configRoute.getDebugPath());
+           getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
+       } else {
+           LOG.error("车辆不在失败的路径上");
+           throw new Exception(("车辆不在失败的路径上"));
+       }
+
+   }
+
    private class VehicleTask extends CyclicTask {
         private int AdvanceTime;
 
@@ -516,6 +624,7 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
                      doorStep = null;
                      singleAction = false;
                      updateDoorFlag = false;
+                     getSentQueue().clear();
                 }
                 //获取状态  位置  速度  方向等
                 AgvInfo agvInfo = agv.getAgvInfo();
@@ -587,7 +696,7 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
 
     //                getProcessModel().setVehiclePosition(currentPoint);
 
-                if (currentStatus == 0) {
+                if (currentStatus == 0 && !getProcessModel().getVehicleState().equals(Vehicle.State.ERROR)) {
                     if (wait_point.equals("")) {
 
                         getProcessModel().setVehicleState(Vehicle.State.IDLE);
@@ -650,7 +759,9 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
                         }
                     }
                 } else if (currentStatus == 1 || currentStatus == 2 || currentStatus == 4) {
-                    getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
+                    if (!getProcessModel().getVehicleState().equals(Vehicle.State.ERROR)) {
+                        getProcessModel().setVehicleState(Vehicle.State.EXECUTING);
+                    }
                 }
 
                 if (sendDriveOrder != null  && getSentQueue().size() == 0) {
