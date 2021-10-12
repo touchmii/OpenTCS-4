@@ -9,11 +9,15 @@ import static java.util.Objects.requireNonNull;
 
 import javax.annotation.Nonnull;
 
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.CharsetUtil;
 import org.opentcs.common.LoopbackAdapterConstants;
 import org.opentcs.data.model.Vehicle;
 import org.opentcs.drivers.vehicle.VehicleProcessModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.opentcs.util.Assertions.checkInRange;
 
 /**
  * A custom model for the {@link TCPCommAdapter} which holds additional information
@@ -22,14 +26,123 @@ import static org.opentcs.util.Assertions.checkInRange;
  * @author Mats Wilhelm (Fraunhofer IML)
  */
 public class TCPProcessModel extends VehicleProcessModel implements VelocityListener {
+    private static final Logger LOG = LoggerFactory.getLogger(TCPProcessModel.class);
     /**
      * Indicates whether this communication adapter is in single step mode or not (i.e. in automatic
      * mode).
      */
     private String ip;
+
     private int port;
 
     private int port_log;
+
+    public String getCurPoint() {
+        return curPoint;
+    }
+
+    public void setCurPoint(String curPoint) {
+        this.curPoint = curPoint;
+    }
+
+    private String curPoint;
+
+    public String getPrePoint() {
+        return prePoint;
+    }
+
+    public void setPrePoint(String prePoint) {
+        this.prePoint = prePoint;
+    }
+
+    private String prePoint;
+
+    public boolean isClientConnectFlag() {
+        return clientConnectFlag;
+    }
+
+    public void setClientConnectFlag(boolean clientConnectFlag) {
+        this.clientConnectFlag = clientConnectFlag;
+    }
+
+    private boolean clientConnectFlag = false;
+
+    public boolean isFindCode() {
+        return findCode;
+    }
+
+    public void setFindCode(boolean findCode) {
+        this.findCode = findCode;
+    }
+
+    public boolean isPauseFlag() {
+        return pauseFlag;
+    }
+
+    public void setPauseFlag(boolean pauseFlag) {
+        this.pauseFlag = pauseFlag;
+    }
+
+    private boolean findCode;
+
+    private boolean pauseFlag;
+
+    public boolean isAbortPathFlag() {
+        return abortPathFlag;
+    }
+
+    public void setAbortPathFlag(boolean abortPathFlag) {
+        this.abortPathFlag = abortPathFlag;
+    }
+
+    private boolean abortPathFlag;
+
+    public boolean isServerConnect() {
+        return serverConnect;
+    }
+
+    public void setServerConnect(boolean serverConnect) {
+        this.serverConnect = serverConnect;
+    }
+
+    private boolean serverConnect = false;
+
+    public int getCurChargeState() {
+        return curChargeState;
+    }
+
+    public void setCurChargeState(int curChargeState) {
+        this.curChargeState = curChargeState;
+    }
+
+    private int curChargeState;
+
+    public int getVehiclePathState() {
+        return vehiclePathState;
+    }
+
+    public void setVehiclePathState(int vehiclePathState) {
+        this.vehiclePathState = vehiclePathState;
+    }
+
+    private int vehiclePathState;
+
+    public void setClient_ctx(ChannelHandlerContext client_ctx) {
+        this.client_ctx = client_ctx;
+    }
+
+    public void sendMsg(String str) {
+        if (client_ctx != null) {
+            client_ctx.writeAndFlush(Unpooled.copiedBuffer(str, CharsetUtil.UTF_8));
+        } else {
+            LOG.error("{}, client not connect", getName());
+        }
+    }
+
+    /**
+     * 小车ascii客户端句柄
+     */
+    private ChannelHandlerContext client_ctx;
 
     private boolean singleStepModeEnabled;
     /**
@@ -326,7 +439,10 @@ public class TCPProcessModel extends VehicleProcessModel implements VelocityList
     }
 
     public void setPortlog(int port) {this.port_log = port;}
+
     public int getPortlog() {return this.port_log;}
+
+
 
     /**
      * Notification arguments to indicate some change.

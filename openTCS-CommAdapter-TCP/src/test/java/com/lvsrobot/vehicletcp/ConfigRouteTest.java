@@ -77,7 +77,7 @@ class ConfigRouteTest {
             stepsList.add(new Route.Step(new Path("Step"+String.valueOf(i), pointList.get(i).getReference(), pointList.get(i+1).getReference()), pointList.get(i), pointList.get(i+1), Vehicle.Orientation.FORWARD, i));
         }
         Route route = new Route(stepsList, stepsList.size());
-        DriveOrder driveOrder = new DriveOrder(new DriveOrder.Destination(destPoint.getReference())).withRoute(route);
+        DriveOrder driveOrder = new DriveOrder(new DriveOrder.Destination(destPoint.getReference()).withOperation("LOAD")).withRoute(route);
         return driveOrder;
     }
 

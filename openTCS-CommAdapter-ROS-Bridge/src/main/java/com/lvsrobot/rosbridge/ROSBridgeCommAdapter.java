@@ -416,21 +416,21 @@ public class ROSBridgeCommAdapter extends BasicVehicleCommAdapter {
                         p = approachPosition(sendDriveOrder, getProcessModel().getVehiclePrecisePosition(), 300, 300);
                     } else {
 //                        p = approachPosition(sendDriveOrder, agvInfo.getPrecisePosition(), 300, 100);
-                        p = approachPosition(sendDriveOrder, getProcessModel().getVehiclePrecisePosition(), 300, 100);
+                        p = approachPosition(sendDriveOrder, getProcessModel().getVehiclePrecisePosition(), 300, 300);
                     }
                     if (p != null && p != pathStartPosition && p != currentPoint) {
                         currentPoint = p;
 //                        if( currentPoint == p)
                         getProcessModel().setVehiclePosition(p.getName());
                         current_precise = getProcessModel().getVehiclePrecisePosition();
-                        if (getSentQueue().size() == 0) {
-                            if (Math.abs(current_precise.getX() - dist_precise.getX()) < 50 && Math.abs(current_precise.getY() - dist_precise.getY()) < 50 && Math.abs(current_angle - dist_angle) < 2) {
+                        if (curCommand.getFinalDestination().getName().equals(p.getName())) {
+//                            if (Math.abs(current_precise.getX() - dist_precise.getX()) < 50 && Math.abs(current_precise.getY() - dist_precise.getY()) < 50 && Math.abs(current_angle - dist_angle) < 2) {
                                 getProcessModel().commandExecuted(curCommand);
                                 getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("reach to end point: {}", p).getMessage(), UserNotification.Level.INFORMATIONAL));
 
                                 curCommand = null;
                                 getProcessModel().setVehicleState(Vehicle.State.IDLE);
-                            }
+//                            }
                             Thread.sleep(500);
                         } else {
 

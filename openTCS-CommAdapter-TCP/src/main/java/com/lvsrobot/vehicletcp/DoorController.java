@@ -3,7 +3,9 @@ package com.lvsrobot.vehicletcp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.lvsrobot.vehicletcp.binding.DoorStatus;
+import org.opentcs.data.model.Path;
 import org.opentcs.data.model.Point;
+import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.order.DriveOrder;
 import org.opentcs.data.order.Route;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,8 @@ public class DoorController {
         14: ['制粒','192.168.10.163' ],
         15: ['制粒缓冲','192.168.10.164' ],
         16: ['胶囊填充1','192.168.10.165' ]*/
+
+//    public static HttpClient httpClient = HttpClient.create();
 
     public static String BY = "192.168.10.150";
     public static String ZJPH = "192.168.10.151";
@@ -138,8 +142,10 @@ public class DoorController {
         List<Route.Step> doorList = checkPassDoor(driveOrder);
         List<Point> openDoorList = new ArrayList<>();
         List<Route.Step> stepList = driveOrder.getRoute().getSteps();
+        String doorName;
         for (Route.Step doorStep : doorList) {
             int index = driveOrder.getRoute().getSteps().indexOf(doorStep);
+            doorName = doorStep.getDestinationPoint().getProperty("door");
 //            if (doorList.size() - doorList.indexOf(doorStep) > 0) {
 //                int nextdoorIndex = stepList.indexOf(doorList.get(doorList.indexOf(doorStep)+1));
 //                if (stepList.indexOf(doorList.get(nextdoorIndex)) - index < 4) {
@@ -153,10 +159,11 @@ public class DoorController {
 
                 p = doorStep.getSourcePoint().getProperty("dis");
             }
+
             if (p != null && p.equals("0")) {
-                openDoorList.add(doorStep.getSourcePoint());
+                openDoorList.add(doorStep.getSourcePoint().withProperty("door", doorName).withProperty("action", "open"));
             } else {
-                openDoorList.add(driveOrder.getRoute().getSteps().get(index - 1).getSourcePoint());
+                openDoorList.add(driveOrder.getRoute().getSteps().get(index - 1).getSourcePoint().withProperty("door", doorName).withProperty("action", "open"));
             }
         }
         return openDoorList;
@@ -164,14 +171,16 @@ public class DoorController {
     public static List<Point> getCloseDoor(DriveOrder driveOrder) {
         List<Route.Step> doorList = checkPassDoor(driveOrder);
         List<Point> closeDoorList = new ArrayList<>();
+        String doorName;
         for (Route.Step doorStep : doorList) {
             int index = driveOrder.getRoute().getSteps().indexOf(doorStep);
+            doorName = doorStep.getDestinationPoint().getProperty("door");
             if ((driveOrder.getRoute().getSteps().size() - 1) > 0) {
 
                 if (driveOrder.getRoute().getSteps().get(index + 1).getDestinationPoint().getProperty("door") != null) {
-                    closeDoorList.add(driveOrder.getRoute().getSteps().get(index + 2).getDestinationPoint());
+                    closeDoorList.add(driveOrder.getRoute().getSteps().get(index + 2).getDestinationPoint().withProperty("door", doorName).withProperty("action", "close"));
                 } else {
-                    closeDoorList.add(driveOrder.getRoute().getSteps().get(index + 1).getDestinationPoint());
+                    closeDoorList.add(driveOrder.getRoute().getSteps().get(index + 1).getDestinationPoint().withProperty("door", doorName).withProperty("action", "close"));
                 }
             }
         }
@@ -223,6 +232,15 @@ public class DoorController {
         } else {
             driveOrderList.add(driveOrder);
         }
+        //把举升充电分解成单独的路径,只包含动作的订单不处理
+//        if (driveOrder.getRoute().getSteps().size() > 1 && !driveOrder.getDestination().getOperation().equals("MOVE")) {
+//            Point point = driveOrder.getRoute().getFinalDestinationPoint();
+//            List<Route.Step> steps = new ArrayList<>();
+//            steps.add(new Route.Step(new Path("none", point.getReference(), point.getReference()), point, Vehicle.Orientation.FORWARD, 0));
+//            Route route = new Route(steps, 1);
+//            driveOrderList.add( new DriveOrder(new DriveOrder.Destination(point.getReference()).withOperation(driveOrder.getDestination().getOperation())).withRoute(route));
+//
+//        }
         return driveOrderList;
     }
 

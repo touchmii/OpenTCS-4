@@ -1,5 +1,6 @@
 package com.lvsrobot.vehicletcp;
 
+import io.netty.buffer.ByteBufUtil;
 import org.opentcs.data.model.Triple;
 import org.opentcs.data.order.DriveOrder;
 import org.opentcs.data.order.Route;
@@ -258,6 +259,32 @@ public class ConfigRoute {
 //        }
 
         return path;
+    }
+
+    public byte[] getPath(DriveOrder order, double angle) {
+        setRoute(order);
+        setAngle(angle);
+        return getPath();
+    }
+
+    public byte[] getliftAction(String point, String action) {
+        int point_num = Integer.parseInt(point);
+        byte action_ = 0;
+        if (action.equals("LOAD")) {
+            action_ = 2;
+        } else if (action.equals("UNLOAD")) {
+            action_ = 0x12;
+        } else if (action.equals("CHARGE")) {
+            return new byte[]{0, 1, 3, 0, 2, 3, 0, (byte) 252};
+        }
+        byte[] path_data = {0, 1, 0xc, 0, 8, 0, 0, 1, 1, (byte)(point_num/256), (byte)(point_num%256), action_, 0, 0};
+        byte check = 0;
+        for(int i = 0; i < 13; i++) {
+            check = (byte) (check ^ path_data[i]);
+        }
+        path_data[13] = (byte) ~ check;
+//        LOG.debug("{} send lift action command: {}", this.name, ByteBufUtil.hexDump(path_data));
+        return path_data;
     }
 //    public
 }

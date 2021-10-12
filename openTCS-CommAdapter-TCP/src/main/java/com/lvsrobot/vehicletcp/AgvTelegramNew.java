@@ -2,10 +2,7 @@ package com.lvsrobot.vehicletcp;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBufUtil;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -28,13 +25,20 @@ public class AgvTelegramNew {
     static final int READ_TIMEOUT = 0;
     static final int WRITE_TIMEOUT = 0;
     static final int IDLE_TIMEOUT = 50;
-    static String remote_ip = null;
-    static int remote_port = 0;
+    String remote_ip = null;
+    int remote_port = 0;
     ChannelFuture f = null;
     EventLoopGroup group = null;
     private final UptimeClientHandler handler;
     private Bootstrap bs = null;
     private String name;
+    public boolean reconnectFlag = true;
+
+    public void setCtx(ChannelHandlerContext ctx) {
+        this.ctx = ctx;
+    }
+
+    private ChannelHandlerContext ctx;
     public AgvTelegramNew(String ip, int port, TCPCommAdapter tcpCommAdapter) {
         handler = new UptimeClientHandler(tcpCommAdapter, this);
         name = tcpCommAdapter.getName();
@@ -82,9 +86,11 @@ public class AgvTelegramNew {
             f.channel().closeFuture();
             f = null;
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         group.shutdownGracefully();
+        handler.disConnect();
+        reconnectFlag = true;
     }
 
     public void connect() {
@@ -103,9 +109,13 @@ public class AgvTelegramNew {
     }
 
     public synchronized AgvInfo getAgvInfo() {
-        this.Connect();
+//        this.Connect();
         byte[] query = {0, 1, 2, 1, (byte)253};
-        f.channel().writeAndFlush(query);
+//        f.channel().writeAndFlush(query);
+        if (ctx != null) {
+
+            ctx.writeAndFlush(query);
+        }
         return agvInfo;
     }
     public synchronized boolean sendPath(byte[] path) {
@@ -127,7 +137,7 @@ public class AgvTelegramNew {
 
             Thread.sleep(200);//毫秒
         } catch (InterruptedException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         f.channel().writeAndFlush(radarCommand);
         LOG.debug("send radar command: {}", ByteBufUtil.hexDump(radarCommand));
@@ -135,7 +145,7 @@ public class AgvTelegramNew {
 
             Thread.sleep(200);//毫秒
         } catch (InterruptedException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         return true;
     }

@@ -15,11 +15,13 @@
  */
 package com.lvsrobot.vehicletcp;
 
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,19 +54,15 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
         }
         LOG.info("Conencted to: {} port: {}", tcpCommAdapter.getName(), ctx.channel().remoteAddress());
 //        println("Connected to: " + ctx.channel().remoteAddress());
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("Hello", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("Hello", CharsetUtil.UTF_8));
+        agvTelegramNew.setCtx(ctx);
+        tcpCommAdapter.getProcessModel().setClientConnectFlag(true);
         lctx = ctx;
     }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        // Discard received data
-//        ByteBuf byteBuf =  (ByteBuf) msg;
-//        byte[] m = SerializationU
-//        System.out.println("Recive client: " + ctx.channel().remoteAddress() + " message: " + byteBuf.toString(CharsetUtil.UTF_8));
-        Date d = new Date();
-//        System.out.println("Recive client: " + d.toGMTString() + ctx.channel().remoteAddress() + " message: " + javax.xml.bind.DatatypeConverter.printHexBinary((byte[]) msg));
-//        ctx.channel().writeAndFlush(msg);
+
         AgvInfo agvInfo = new AgvInfo();
         byte[] retBytes = (byte[]) msg;
         agvInfo.setPosition(byteToUnsignedInt(retBytes[6]) << 8 | byteToUnsignedInt(retBytes[7]));
@@ -78,8 +76,6 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
         agvInfo.setCharge(byteToUnsignedInt(retBytes[16]));
         tcpCommAdapter.callback(agvInfo);
     }
-//    @Override
-//    public void channelRead(ChannelHandlerContext ctx, Obj)
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
@@ -100,40 +96,32 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void channelInactive(final ChannelHandlerContext ctx) {
         LOG.info("{} Disconnected from: {}", tcpCommAdapter.getName(), ctx.channel().remoteAddress());
+        agvTelegramNew.setCtx(null);
+        tcpCommAdapter.getProcessModel().setClientConnectFlag(false);
+        tcpCommAdapter.getProcessModel().setVehiclePathState(-1);
 //        println("Disconnected from: " + ctx.channel().remoteAddress());
     }
 
     @Override
     public void channelUnregistered(final ChannelHandlerContext ctx) throws Exception {
 //        println("Sleeping for: " + agvTelegramNew.RECONNECT_DELAY + 's');
-        LOG.info("{} Sleeping for: {} s", tcpCommAdapter.getName(), agvTelegramNew.RECONNECT_DELAY);
-        ctx.channel().eventLoop().schedule(new Runnable() {
-            @Override
-            public void run() {
-                LOG.info("{} Reconnecting to: {}:{}", tcpCommAdapter.getName(), agvTelegramNew.remote_ip, agvTelegramNew.remote_port);
-//                println("Reconnecting to: " + agvTelegramNew.remote_ip + ':' + agvTelegramNew.remote_port);
-                agvTelegramNew.disConnect();
-                agvTelegramNew.connect();
-            }
-        }, agvTelegramNew.RECONNECT_DELAY, TimeUnit.SECONDS);
+        if (agvTelegramNew.reconnectFlag) {
+            LOG.info("{} Sleeping for: {} s", tcpCommAdapter.getName(), agvTelegramNew.RECONNECT_DELAY);
+            ctx.channel().eventLoop().schedule(new Runnable() {
+                @Override
+                public void run() {
+                    LOG.info("{} Reconnecting to: {}:{}", tcpCommAdapter.getName(), agvTelegramNew.remote_ip, agvTelegramNew.remote_port);
+    //                println("Reconnecting to: " + agvTelegramNew.remote_ip + ':' + agvTelegramNew.remote_port);
+                    agvTelegramNew.disConnect();
+                    agvTelegramNew.connect();
+                }
+            }, agvTelegramNew.RECONNECT_DELAY, TimeUnit.SECONDS);
+        }
     }
-//    @Override
-//        public void channelUnregistered(final ChannelHandlerContext ctx) throws Exception {
-//            println("Sleeping for: " + UptimeClient.RECONNECT_DELAY + 's');
-//
-//            ctx.channel().eventLoop().schedule(new Runnable() {
-//                @Override
-//                public void run() {
-//                    println("Reconnecting to: " + UptimeClient.HOST + ':' + UptimeClient.PORT);
-//                    UptimeClient.connect();
-//                }
-//            }, UptimeClient.RECONNECT_DELAY, TimeUnit.SECONDS);
-//        }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        LOG.error("{} exception: {}", tcpCommAdapter.getName(), cause.getMessage());
-//        cause.printStackTrace();
+//        LOG.error("{} exception: {}", tcpCommAdapter.getName(), cause.getStackTrace());
         ctx.close();
     }
 

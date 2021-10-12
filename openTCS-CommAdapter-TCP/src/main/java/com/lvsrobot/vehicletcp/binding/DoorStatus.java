@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class DoorStatus {
-    private int error = -1;
+    //离线状态
+    private int error = -99;
     @JsonProperty(value = "door")
     private int doorID;
     private int controlPin;
@@ -27,6 +28,8 @@ public class DoorStatus {
     private String firmwareVersion;
     @JsonProperty(value = "UTC Time")
     private String utcTime;
+
+//    private boolean offline;
 
     public int getError() {
         return error;
