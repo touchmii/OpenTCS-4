@@ -49,15 +49,14 @@ public class PathTruck extends CyclicTask {
     private static long sleep_time = 200;
     private static long idle_check_time = 3000;
     private static long path_exec_check_time = 3000;
-    private static long path_fail_check_time = 2*60*1000;
-    private static long path_off_check_time = 60*1000;
+    private static long path_fail_check_time = 2 * 60 * 1000;
+    private static long path_off_check_time = 60 * 1000;
 
     private static int path_state_idle = 0;
     private static int path_state_exec = 1;
     private static int path_state_finish = 2;
     private static int path_state_pause = 3;
     private static int path_state_goal = 4;
-
 
 
     public PathTruck(TCPProcessModel processModel, TCPCommAdapter commAdapter) {
@@ -71,7 +70,7 @@ public class PathTruck extends CyclicTask {
         sendCommandThread.start();
 
         doorTruck = new DoorTruck(processModel);
-        doorTruckThread = new Thread(doorTruck, "doorTruck");
+        doorTruckThread = new Thread(doorTruck, name + "doorTruck");
         doorTruckThread.start();
 
         delay_timer = new Timer();
@@ -95,7 +94,7 @@ public class PathTruck extends CyclicTask {
             for (Route.Step step : doorStepList) {
                 //Dist点为门，Src点为门前等待点
                 String doorName = step.getDestinationPoint().getProperty("door");
-                waitDoorList.add(step.getSourcePoint().withProperty("door",doorName));
+                waitDoorList.add(step.getSourcePoint().withProperty("door", doorName));
             }
         }
 
@@ -118,16 +117,19 @@ public class PathTruck extends CyclicTask {
         pathQueue.clear();
         pathExecQueue.clear();
         doorTruck.cleanDoor();
+        waitPoint = null;
     }
 
 
     public class SendCommand extends Thread {
         private AgvTelegramNew agv;
         private Queue<byte[]> queue;
+
         public SendCommand(AgvTelegramNew agv, Queue<byte[]> queue) {
             this.agv = agv;
             this.queue = queue;
         }
+
         @Override
         public void run() {
             while (this.isAlive()) {
@@ -140,7 +142,8 @@ public class PathTruck extends CyclicTask {
                     }
 
                     Thread.sleep(200);
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
             }
 
         }
@@ -148,16 +151,17 @@ public class PathTruck extends CyclicTask {
 
     public DoorStatus checkDoor(String point) {
         DoorStatus doorStatus = null;
-        for(Point p : waitPoint) {
+        for (Point p : waitPoint) {
             if (p.getName().equals(point)) {
                 doorStatus = doorTruck.getDoorStatus(p.getProperty("door"));
             }
         }
         return doorStatus;
     }
+
     public boolean isWaitPoint(String point) {
         boolean flag = false;
-        for(Point p : waitPoint) {
+        for (Point p : waitPoint) {
             if (p.getName().equals(point)) {
                 flag = true;
             }
@@ -182,7 +186,7 @@ public class PathTruck extends CyclicTask {
         List<Route.Step> newStepList = new ArrayList<>();
         boolean start = false;
 
-        for(Route.Step step : stepList) {
+        for (Route.Step step : stepList) {
             if (start) {
                 newStepList.add(step);
             }
@@ -193,16 +197,16 @@ public class PathTruck extends CyclicTask {
         }
         if (start) {
 
-            Route route =  new Route(newStepList, newStepList.size());
+            Route route = new Route(newStepList, newStepList.size());
             DriveOrder newDriverOrder;
             try {
                 String opration = sendSplitDriveOrder.getDestination().getOperation();
 
-                newDriverOrder = new DriveOrder(new DriveOrder.Destination(stepList.get(stepList.size()-1).getDestinationPoint().getReference()).withOperation(opration)).withRoute(route);
+                newDriverOrder = new DriveOrder(new DriveOrder.Destination(stepList.get(stepList.size() - 1).getDestinationPoint().getReference()).withOperation(opration)).withRoute(route);
             } catch (Exception e) {
 
             } finally {
-                newDriverOrder = new DriveOrder(new DriveOrder.Destination(stepList.get(stepList.size()-1).getDestinationPoint().getReference())).withRoute(route);
+                newDriverOrder = new DriveOrder(new DriveOrder.Destination(stepList.get(stepList.size() - 1).getDestinationPoint().getReference())).withRoute(route);
 
             }
 
@@ -244,7 +248,7 @@ public class PathTruck extends CyclicTask {
             } else {
                 idleCheckQueue.clear();
             }
-            if (idleCheckQueue.size() > idle_check_time/sleep_time) {
+            if (idleCheckQueue.size() > idle_check_time / sleep_time) {
                 idleCheckQueue.clear();
                 processModel.setVehicleState(Vehicle.State.IDLE);
             }
@@ -256,7 +260,7 @@ public class PathTruck extends CyclicTask {
                 pathExecQueue.clear();
                 pathExecCheckQueue.clear();
             }
-            if (pathExecCheckQueue.size() > path_exec_check_time/sleep_time) {
+            if (pathExecCheckQueue.size() > path_exec_check_time / sleep_time) {
                 addPath(pathExecQueue.peek());
                 pathExecCheckQueue.clear();
                 LOG.info("{} 添加重发路径", name);
@@ -269,7 +273,7 @@ public class PathTruck extends CyclicTask {
                     pathFailCheckQueue.clear();
                 }
             }
-            if (pathFailCheckQueue.size() > path_fail_check_time/sleep_time) {
+            if (pathFailCheckQueue.size() > path_fail_check_time / sleep_time) {
                 pathFailCheckQueue.clear();
 //                processModel.setVehicleState(Vehicle.State.ERROR);
                 processModel.setVehicleProperty("UnkonwError", "On");
@@ -282,14 +286,12 @@ public class PathTruck extends CyclicTask {
             } else if (!processModel.getVehicleState().equals(Vehicle.State.UNKNOWN)) {
                 pathOffCheckQueue.clear();
             }
-            if (pathOffCheckQueue.size() > path_off_check_time/sleep_time) {
+            if (pathOffCheckQueue.size() > path_off_check_time / sleep_time) {
                 pathOffCheckQueue.clear();
                 processModel.setVehicleState(Vehicle.State.UNKNOWN);
                 processModel.setVehiclePosition(null);
                 processModel.setVehicleEnergyLevel(0);
             }
-
-
 
 
             //检查新订单, 分割订单必须已经发送完成，否则会漏过中途升降动作
@@ -317,7 +319,7 @@ public class PathTruck extends CyclicTask {
             }
 
             //检查要发送的分割路径和车辆状态, 条件只执行一次，不管路径发送失败
-            if (sendSplitDriveOrder == null && driveOrderQueue.size() >0 &&
+            if (sendSplitDriveOrder == null && driveOrderQueue.size() > 0 &&
                     pathExecQueue.size() == 0 && processModel.getVehiclePathState() == 0) {
                 //准备第一条分割路径
                 sendSplitDriveOrder = driveOrderQueue.peek();
@@ -325,6 +327,7 @@ public class PathTruck extends CyclicTask {
                     //原地升降
                     LOG.info("原地升降");
                     driveOrderQueue.poll();
+                    processModel.commandExecuted(commAdapter.getSentQueue().poll());
                 }
                 //检查车辆当前位置是否符合路径起点
                 else if (sendSplitDriveOrder.getRoute().getSteps().get(0)
@@ -334,27 +337,29 @@ public class PathTruck extends CyclicTask {
                     if (waitPoint != null && isWaitPoint(curPoint)) {
                         LOG.debug("此点位需要开门");
                         //TODO
-                       DoorStatus doorStatus = checkDoor(curPoint);
-                       if (doorStatus == null) {
-                           sendSplitDriveOrder = null;
-                           //无需开门
-                       } else if (doorStatus.getError() < -10) {
-                           //自动门离线
-                           sendSplitDriveOrder = null;
-                           processModel.setVehicleProperty("error", "door offline");
-                           processModel.setVehicleState(Vehicle.State.ERROR);
-                       } else if (doorStatus.getStatus().equals("open") || doorStatus.getStatus().equals("opened")) {
-                           LOG.debug("门已经打开");
-                           sendFlag = true;
-                       } else if (doorStatus.getStatus().equals("opening")) {
-                           sendSplitDriveOrder = null;
-                           LOG.debug("正在开门");
+                        DoorStatus doorStatus = checkDoor(curPoint);
+                        if (doorStatus == null) {
+                            sendSplitDriveOrder = null;
+                            //无需开门
+                        } else if (doorStatus.getError() < -10) {
+                            //自动门离线
+                            sendSplitDriveOrder = null;
+                            processModel.setVehicleProperty("error", "door offline");
+                            processModel.setVehicleState(Vehicle.State.ERROR);
+                        } else if (doorStatus.getStatus().equals("open") || doorStatus.getStatus().equals("opened")) {
+                            LOG.debug("门已经打开");
+                            sendFlag = true;
+                        } else if (doorStatus.getStatus().equals("opening")) {
+                            sendSplitDriveOrder = null;
+                            LOG.debug("正在开门");
 //                           sendFlag = true;
-                       } else {
-                           sendSplitDriveOrder = null;
+                        } else {
+                            sendSplitDriveOrder = null;
 //                           processModel.setVehicleProperty("error", "door can't open");
-                       }
-                    } else {sendFlag = true;}
+                        }
+                    } else {
+                        sendFlag = true;
+                    }
 
                     if (sendFlag) {
                         byte[] path = configRoute.getPath(sendSplitDriveOrder, processModel.getVehicleOrientationAngle());
@@ -369,8 +374,8 @@ public class PathTruck extends CyclicTask {
 
             //到达分割路径终点, 升降动作需要单独判断
             if (sendSplitDriveOrder != null &&
-                sendSplitDriveOrder.getRoute().getFinalDestinationPoint().getName().equals(curPoint)
-            && processModel.getVehiclePathState() == 0
+                    sendSplitDriveOrder.getRoute().getFinalDestinationPoint().getName().equals(curPoint)
+                    && processModel.getVehiclePathState() == 0
             ) {
 //                sendSplitDriveOrder = driveOrderQueue.poll();
 //                if (sendSplitDriveOrder.getDestination().getOperation().equals("NOP")) {
@@ -394,7 +399,7 @@ public class PathTruck extends CyclicTask {
 //                            processModel.sendMsg("robot lifterat 0\n");
 //                        }
                         // 延时置空分片订单
-                        delay_timer.schedule(new DelayLift(), 5*1000);
+                        delay_timer.schedule(new DelayLift(), 5 * 1000);
 
                     } else {
                         sendSplitDriveOrder = null;
@@ -404,6 +409,8 @@ public class PathTruck extends CyclicTask {
                         commAdapter.setcurrentDriveOrder(null);
                     }
                     processDriverOrder = null;
+                } else {
+                    sendSplitDriveOrder = null;
                 }
             }
 

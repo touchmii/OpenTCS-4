@@ -5,6 +5,7 @@ import com.lvsrobot.vehicletcp.controller.PathTruck;
 import org.opentcs.components.kernel.services.TCSObjectService;
 import org.opentcs.components.kernel.services.TransportOrderService;
 import org.opentcs.customizations.kernel.KernelExecutor;
+import org.opentcs.data.model.Point;
 import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.notification.UserNotification;
 import org.opentcs.data.order.DriveOrder;
@@ -105,8 +106,8 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
      *
      * @param vehicle           The attached vehicle.
      * @param componentsFactory The components factory.
-     * 父类BasicVehicleCommAdapter引用了ExampleProcessModel的父类
-     * ProcessModel，此处将自己实现的类关联在以前，可以让内核调用到。
+     *                          父类BasicVehicleCommAdapter引用了ExampleProcessModel的父类
+     *                          ProcessModel，此处将自己实现的类关联在以前，可以让内核调用到。
      */
     @Inject
     public TCPCommAdapter(@Assisted Vehicle vehicle, TCPAdapterComponentsFactory componentsFactory, @KernelExecutor ExecutorService kernelExecutor, TransportOrderService orderService, @Nonnull TCSObjectService objectService) {
@@ -171,12 +172,11 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
         nettyServer.interrupt();
 
 
-
         getProcessModel().getVelocityController().removeVelocityListener(getProcessModel());
         super.disable();
     }
 
-//    @Override
+    //    @Override
     public DriveOrder getxcurrentDriverOrder() {
         //orderService.fetchObject(TransportOrder.class, t -> t.getName().equals(name)).stream().map(order -> order.getCurrentDriveOrder());
         List<DriveOrder> driveOrderList = orderService.fetchObjects(TransportOrder.class, t -> t.getProcessingVehicle().getName().equals(getName())).stream().map(order -> order.getCurrentDriveOrder()).collect(Collectors.toList());
@@ -346,25 +346,25 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
     }
 
 
-   @Override
-   public void abortDriveOrder() {
-       LOG.info("{} abort path", getName());
-       //agv.abortPath();
-       pathTruck.abortPath();
-       setcurrentDriveOrder(null);
-       getSentQueue().clear();
+    @Override
+    public void abortDriveOrder() {
+        LOG.info("{} abort path", getName());
+        //agv.abortPath();
+        pathTruck.abortPath();
+        setcurrentDriveOrder(null);
+        getSentQueue().clear();
 //       sendMsg("robot zanting 2\n");
-   }
+    }
 
-   public void publishNotify(String msg, UserNotification.Level level) {
-       getProcessModel().publishUserNotification(new UserNotification(
-       MessageFormatter.format("{}: {}", vehicle.getName(),msg).getMessage(), level));
-   }
+    public void publishNotify(String msg, UserNotification.Level level) {
+        getProcessModel().publishUserNotification(new UserNotification(
+                MessageFormatter.format("{}: {}", vehicle.getName(), msg).getMessage(), level));
+    }
 
-   public void publishNotify(String msg) {
-       getProcessModel().publishUserNotification(new UserNotification(
-       MessageFormatter.format("{}: {}", vehicle.getName(),msg).getMessage(), UserNotification.Level.INFORMATIONAL));
-   }
+    public void publishNotify(String msg) {
+        getProcessModel().publishUserNotification(new UserNotification(
+                MessageFormatter.format("{}: {}", vehicle.getName(), msg).getMessage(), UserNotification.Level.INFORMATIONAL));
+    }
 
     public void callback(AgvInfo agvInfo) {
         if (agvInfo != null) {
@@ -382,76 +382,70 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
             getProcessModel().setCurChargeState(agvInfo.getCharge());
 
             getProcessModel().setVehiclePosition(curPoint);
+            getProcessModel().setObstacle(agvInfo.getObstacle());
             getProcessModel().setVehicleOrientationAngle(agvInfo.getAngle());
             getProcessModel().setVehicleEnergyLevel(agvInfo.getBattery());
 
         }
     }
 
-   public void missMovement(MovementCommand command, String point) {
+    public void checkObstacle() {
+        if (objectService.fetchObject(Point.class, curPoint).getProperty("obstacle") == null) {
+//            LOG.info("{} 开避障位置");
+            if (getProcessModel().getObstacle() < 59) {
+                pathTruck.addPath(radarDis(60, 35, 10));
+                pathTruck.addPath(radarDis(60, 35, 10));
+            }
+        }
+
+    }
+
+    public byte[] radarDis(int distance, int width, int length) {
+        byte[] radarCommand = {0, 1, 4, 0, 3, (byte)distance, (byte)width, (byte)length, 0};
+        byte check = 0;
+        for(int i=0; i<8;i++) {
+            check = (byte) (check ^ radarCommand[i]);
+        }
+        radarCommand[8] = (byte) ~ check;
+        return radarCommand;
+    }
+
+    public void missMovement(MovementCommand command, String point) {
 //       String point = getProcessModel().getVehiclePosition();
-       List<String> remainCommand = getSentQueue().stream().map(movementCommand -> movementCommand.getStep().getDestinationPoint().getName()).collect(Collectors.toList());
-       if (remainCommand.contains(point)) {
-           while(!command.getStep().getDestinationPoint().getName().equals(point)) {
-               getSentQueue().poll();
-               getProcessModel().commandExecuted(command);
-               LOG.info("{} miss point: {}, current  point: {}", getName(), command.getStep().getDestinationPoint().getName(), point);
-               getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("miss to point: {}", command.getStep().getDestinationPoint().getName()).getMessage(), UserNotification.Level.INFORMATIONAL));
-//               if (command.getStep().getDestinationPoint().getName().equals(closeDoorID) && !updateDoorFlag) {
-//                   LOG.error("{} miss point close door", getName());
-//                   closeDoor();
-//               }
-               command = getSentQueue().peek();
-               //TODO miss to point后不发送任务
-           }
-           getSentQueue().poll();
-           getProcessModel().commandExecuted(command);
+        List<String> remainCommand = getSentQueue().stream().map(movementCommand -> movementCommand.getStep().getDestinationPoint().getName()).collect(Collectors.toList());
+        if (remainCommand.contains(point)) {
+            while (!command.getStep().getDestinationPoint().getName().equals(point)) {
+                getSentQueue().poll();
+                getProcessModel().commandExecuted(command);
+                LOG.info("{} miss point: {}, current  point: {}", getName(), command.getStep().getDestinationPoint().getName(), point);
+                getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("miss to point: {}", command.getStep().getDestinationPoint().getName()).getMessage(), UserNotification.Level.INFORMATIONAL));
+                command = getSentQueue().peek();
+                //TODO miss to point后不发送任务
+            }
+            getSentQueue().poll();
+            getProcessModel().commandExecuted(command);
 
-       } else {
-       }
-   }
+        } else {
+        }
+    }
 
-   //小车点位发生变化时
-   public void checkMovement(String curPoint) {
-       String point = curPoint;
-       MovementCommand command = getSentQueue().peek();
+    //小车点位发生变化时
+    public void checkMovement(String curPoint) {
+        String point = curPoint;
+        MovementCommand command = getSentQueue().peek();
 
-//       if (point.equals(openDoorID)) {
-//           LOG.info("{} open {} door at opendoor point: {}", getName(), doorName, point);
-//           publishNotify(String.format("open %s door at opendoor point: %s", doorName, point), UserNotification.Level.INFORMATIONAL);
-//           DoorStatus doorStatus = DoorController.doorAction(doorName, DoorController.DOORACTION.OPEN);
-//       } else if (point.equals(closeDoorID) && !updateDoorFlag) {
-//           closeDoor();
-//       }
+        if (point.equals(command.getStep().getDestinationPoint().getName())) {
+            // LOG.debug("{} current dist location: {}, no. dist point: {}, current point: {}", getName(), getcurrentDriveOrder().getDestination().getDestination().getName(), driveOrderList.get(driver_index).getDestination().getDestination().getName(), curPoint);
 
-       if (point.equals(command.getStep().getDestinationPoint().getName())) {
-           // LOG.debug("{} current dist location: {}, no. dist point: {}, current point: {}", getName(), getcurrentDriveOrder().getDestination().getDestination().getName(), driveOrderList.get(driver_index).getDestination().getDestination().getName(), curPoint);
-           // if (curPoint.equals(currentDriveOrder.getDestination().getDestination().getName())) {
-           /*if (point.equals(driveOrderList.get(driver_index).getDestination().getDestination().getName()) ||
-                   point.equals(driveOrderList.get(driver_index).getRoute().getSteps().get(driveOrderList.get(driver_index).getRoute().getSteps().size()-1).getDestinationPoint().getName())) {
-               if (driver_index == driveOrderList.size()-1) {
-                   publishNotify(String.format("reach to end point: %s", point));
-                   driveOrderList = null;
-                   stepList = null;
-                   driver_index = 0;
-               } else {
-                   publishNotify(String.format("reach to NO. %s path end point: %s", driver_index, point));
-                   driver_index++;
-               }
-           } else {
+            getSentQueue().poll();
+            getProcessModel().commandExecuted(command);
 
-               publishNotify(String.format("reach to point: %s", point));
-           }*/
+        } else {
+            missMovement(command, point);
+        }
+    }
 
-           getSentQueue().poll();
-           getProcessModel().commandExecuted(command);
-
-       } else {
-           missMovement(command, point);
-       }
-   }
-
-   private class VehicleTask extends CyclicTask {
+    private class VehicleTask extends CyclicTask {
 
         private VehicleTask() {
             super(500);
@@ -462,6 +456,7 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
             try {
                 if (updatePointQueue.peek() != null && getSentQueue().peek() != null) {
                     checkMovement(updatePointQueue.poll());
+                    checkObstacle();
                 }
 
                 //获取状态  位置  速度  方向等

@@ -125,6 +125,7 @@ public class AgvTelegramNew {
         return true;
     }
 
+
     public synchronized boolean radarDis(int distance, int width, int length) {
         this.Connect();
         byte[] radarCommand = {0, 1, 4, 0, 3, (byte)distance, (byte)width, (byte)length, 0};

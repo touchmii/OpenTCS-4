@@ -8,7 +8,10 @@ public class AgvInfo {
     private int battery;
     private int status;
     private double angle;
-    private int bizhang;
+    /*
+    避障距离cm
+     */
+    private int obstacle;
     private int charge;
 
     public int getTuopan() {
@@ -61,9 +64,9 @@ public class AgvInfo {
         this.status = status;
     }
 
-    public void setBizhang(int _bizhang) { this.bizhang = _bizhang;}
+    public void setObstacle(int _bizhang) { this.obstacle = _bizhang;}
 
-    public int getBizhang() {return this.bizhang;}
+    public int getObstacle() {return this.obstacle;}
 
     public void setCharge(int _charge) { this.charge = _charge;}
 

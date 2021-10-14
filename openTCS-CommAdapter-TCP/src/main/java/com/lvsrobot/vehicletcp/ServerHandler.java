@@ -59,8 +59,10 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
         //BiZhang_Flag = 1
         if(msg.toString().contains("Not Find 2DCord") || msg.toString().contains("Robot PianLi LuXian")) {
             LOG.error("{} Device Not Find Code", commAdapter.getName());
-            commAdapter.getProcessModel().setVehicleProperty("runError", "ERROR");
-            commAdapter.getProcessModel().setVehicleState(Vehicle.State.ERROR);
+            if (commAdapter.getProcessModel().getVehicleState().equals(Vehicle.State.EXECUTING)) {
+                commAdapter.getProcessModel().setVehicleProperty("runError", "ERROR");
+                commAdapter.getProcessModel().setVehicleState(Vehicle.State.ERROR);
+            }
         } else if (msg.toString().contains("BiZhang_Flag = 1")) {
             LOG.error("{} Device BiZhang On", commAdapter.getName());
             commAdapter.getProcessModel().setVehicleProperty("BiZhang", "On");
@@ -70,6 +72,11 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
         } else if (msg.toString().contains("robot zanting 2")) {
             commAdapter.getProcessModel().setAbortPathFlag(true);
             commAdapter.getProcessModel().setVehicleProperty("AbortPath", "On");
+        } else if (msg.toString().contains("robot setpathflag 0")
+                && commAdapter.getProcessModel().getVehicleState().equals(Vehicle.State.EXECUTING)) {
+//            commAdapter.getProcessModel().setVehicleProperty("AbortPath", "On");
+            LOG.error("Device setpathflag 0");
+            commAdapter.getProcessModel().setVehicleState(Vehicle.State.ERROR);
         }
     }
 

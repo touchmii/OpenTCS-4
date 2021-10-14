@@ -57,6 +57,16 @@ public class TCPProcessModel extends VehicleProcessModel implements VelocityList
 
     private String prePoint;
 
+    public int getObstacle() {
+        return obstacle;
+    }
+
+    public void setObstacle(int obstacle) {
+        this.obstacle = obstacle;
+    }
+
+    private int obstacle;
+
     public boolean isClientConnectFlag() {
         return clientConnectFlag;
     }
