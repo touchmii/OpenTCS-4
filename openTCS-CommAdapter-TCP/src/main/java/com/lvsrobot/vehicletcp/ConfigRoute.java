@@ -1,6 +1,5 @@
 package com.lvsrobot.vehicletcp;
 
-import io.netty.buffer.ByteBufUtil;
 import org.opentcs.data.model.Triple;
 import org.opentcs.data.order.DriveOrder;
 import org.opentcs.data.order.Route;
@@ -39,6 +38,16 @@ public class ConfigRoute {
     public void setAngle(double _angle) {
         debug_path += String.format("angle %s, ", _angle);
         current_angle = _angle;
+    }
+
+    public int mapValue(int v) {
+        if (v > 1600) {
+            return 1600;
+        } else if (v < -1600) {
+            return -1600;
+        } else {
+            return v;
+        }
     }
 
     /***
@@ -105,16 +114,16 @@ public class ConfigRoute {
                     // 设置一个右侧的虚拟点
                     point0 = new Triple(point1.getX()+2*td, point1.getY(), 0);
                 } else if (current_angle == 270) {
-                    // 设置一个上方的虚拟点
+                    // p设置一个上方的虚拟点
                     point0 = new Triple(point1.getX(), point1.getY()+2*td, 0);
                 }
             } else {
                 point0 = steps.get(i-1).getSourcePoint().getPosition();
             }
-            A1 = (int)(point1.getX()-point0.getX());
-            A2 = (int)(point1.getY()-point0.getY());
-            B1 = (int)(point2.getX()-point1.getX());
-            B2 = (int)(point2.getY()-point1.getY());
+            A1 = mapValue( (int)(point1.getX()-point0.getX()) );
+            A2 = mapValue( (int)(point1.getY()-point0.getY()) );
+            B1 = mapValue( (int)(point2.getX()-point1.getX()) );
+            B2 = mapValue( (int)(point2.getY()-point1.getY()) );
             int turn_time = 1;
             if (i == 0 &&
                     // 先竖后竖，回到原点

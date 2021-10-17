@@ -83,7 +83,11 @@ public class DoorController {
         List<Route.Step> doorStepList = checkPassDoor(driveOrder);
         List<Route.Step> stepList = driveOrder.getRoute().getSteps();
         List<DriveOrder> driveOrderList = new ArrayList<>();
-        if (doorStepList.size() > 0 && stepList.indexOf(doorStepList.get(0)) > 0) {
+        if ( stepList.indexOf(doorStepList.get(0)) == 0) {
+            //开门点在第一步需要去除，否则一要影响路径分割
+            doorStepList.remove(0);
+        }
+        if (doorStepList.size() > 0 ) {
 //            for (int i = 0; i < doorStepList.size(); i ++) {
 //                stepList.subList(i, stepList.indexOf(doorStepList.get(i)));
                 List<Route.Step> Steps_ = new ArrayList<>();
