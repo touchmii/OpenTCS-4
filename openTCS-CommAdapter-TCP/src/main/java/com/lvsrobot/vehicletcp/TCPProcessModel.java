@@ -3,12 +3,6 @@
  */
 package com.lvsrobot.vehicletcp;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-import static java.util.Objects.requireNonNull;
-
-import javax.annotation.Nonnull;
-
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
@@ -17,6 +11,8 @@ import org.opentcs.data.model.Vehicle;
 import org.opentcs.drivers.vehicle.VehicleProcessModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
 
 
 /**
@@ -56,6 +52,16 @@ public class TCPProcessModel extends VehicleProcessModel implements VelocityList
     }
 
     private String prePoint;
+
+    public boolean getObstacleFlag() {
+        return obstacleFlag;
+    }
+
+    public void setObstacleFlag(boolean obstacleFlag) {
+        this.obstacleFlag = obstacleFlag;
+    }
+
+    private boolean obstacleFlag = false;
 
     public int getObstacle() {
         return obstacle;

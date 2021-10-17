@@ -99,6 +99,15 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
 
     private Queue<String> updatePointQueue = new LinkedBlockingQueue<>();
 
+    private List<String> obstacleOffPoint;
+    private List<String> obstacleErrorPoint;
+
+    public Map<String, String> getDoorMap() {
+        return doorMap;
+    }
+
+    private Map<String, String> doorMap = new HashMap<>();
+
     NettyServer nettyServer;
 
     /**
@@ -137,8 +146,15 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
         if (isEnabled()) {
             return;
         }
+        obstacleOffPoint = objectService.fetchObjects(Point.class).stream().filter(p -> p.getProperty("obstacle") != null).map(p -> p.getName()).collect(Collectors.toList());
+        obstacleErrorPoint = objectService.fetchObjects(Point.class).stream().filter(p -> p.getProperty("offradar") != null).map(p -> p.getName()).collect(Collectors.toList());
+        objectService.fetchObjects(Point.class).stream().filter(p -> p.getProperty("door") != null).forEach(p -> doorMap.put(p.getProperty("door"), p.getProperty("ip")));
+        LOG.info("{} obstacle off point: {}", getName(), obstacleOffPoint.toString());
+        LOG.info("{} obstacle error point: {}", getName(), obstacleErrorPoint.toString());
+        LOG.info("{} doorMap : {}", getName(), doorMap.toString());
+
         pathTruck = new PathTruck(getProcessModel(), this);
-        Thread threadPathTruck = new Thread(pathTruck, getName() + "pathTruck");
+        Thread threadPathTruck = new Thread(pathTruck, getName() + "-PathTruck");
         threadPathTruck.start();
 
         nettyServer = new NettyServer(getProcessModel().getPortlog(), this);
@@ -146,7 +162,8 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
 
         getProcessModel().getVelocityController().addVelocityListener(getProcessModel());
 
-        getProcessModel().setVehicleProperty("error", "xx");
+        getProcessModel().setVehicleProperty("error", "");
+
 
         // Create task for vehicle.
         vehicleTask = new VehicleTask();
@@ -356,6 +373,14 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
 //       sendMsg("robot zanting 2\n");
     }
 
+    public void addObstaclePath() {
+        if (obstacleErrorPoint.contains(curPoint)) {
+            LOG.debug("{} 雷达误报警 点:  {}", getName(), curPoint);
+            pathTruck.addPath(radarDis(0, 35, 10));
+            pathTruck.addPath(radarDis(0, 35, 10));
+        }
+    }
+
     public void publishNotify(String msg, UserNotification.Level level) {
         getProcessModel().publishUserNotification(new UserNotification(
                 MessageFormatter.format("{}: {}", vehicle.getName(), msg).getMessage(), level));
@@ -390,9 +415,10 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
     }
 
     public void checkObstacle() {
-        if (objectService.fetchObject(Point.class, curPoint).getProperty("obstacle") == null) {
-//            LOG.info("{} 开避障位置");
+        //TODO 初始化一次性获取
+        if (!obstacleOffPoint.contains(curPoint)) {
             if (getProcessModel().getObstacle() < 59) {
+                LOG.debug("{} 开避障位置: {}", getName(), curPoint);
                 pathTruck.addPath(radarDis(60, 35, 10));
                 pathTruck.addPath(radarDis(60, 35, 10));
             }

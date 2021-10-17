@@ -19,13 +19,10 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.timeout.IdleState;
-import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,13 +37,16 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
     private final AgvTelegramNew agvTelegramNew;
     public long startTime = -1;
     private ChannelHandlerContext lctx = null;
+
     public UptimeClientHandler(TCPCommAdapter tcpCommAdapter_, AgvTelegramNew agvTelegramNew_) {
         tcpCommAdapter = tcpCommAdapter_;
         agvTelegramNew = agvTelegramNew_;
     }
+
     private static Integer byteToUnsignedInt(byte data) {
         return data & 0xff;
     }
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         if (startTime < 0) {
@@ -58,6 +58,7 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
         agvTelegramNew.setCtx(ctx);
         tcpCommAdapter.getProcessModel().setClientConnectFlag(true);
         lctx = ctx;
+        ctx.fireChannelActive();
     }
 
     @Override
@@ -79,7 +80,7 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
         tcpCommAdapter.callback(agvInfo);
     }
 
-    @Override
+    /*@Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
         if (!(evt instanceof IdleStateEvent)) {
             return;
@@ -93,8 +94,8 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
             LOG.error("Disconnect {} {} due to no inbound traffic", tcpCommAdapter.getName(), ctx.channel().remoteAddress());
             ctx.close();
         }
-    }
-
+    }*/
+    //先触发inactive 再触发 unregister
     @Override
     public void channelInactive(final ChannelHandlerContext ctx) {
         LOG.info("{} Disconnected from: {}", tcpCommAdapter.getName(), ctx.channel().remoteAddress());
@@ -102,6 +103,7 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
         tcpCommAdapter.getProcessModel().setClientConnectFlag(false);
         tcpCommAdapter.getProcessModel().setVehiclePathState(-1);
 //        println("Disconnected from: " + ctx.channel().remoteAddress());
+        ctx.fireChannelInactive();
     }
 
     @Override
@@ -113,30 +115,24 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
                 @Override
                 public void run() {
                     LOG.info("{} Reconnecting to: {}:{}", tcpCommAdapter.getName(), agvTelegramNew.remote_ip, agvTelegramNew.remote_port);
-    //                println("Reconnecting to: " + agvTelegramNew.remote_ip + ':' + agvTelegramNew.remote_port);
+                    //                println("Reconnecting to: " + agvTelegramNew.remote_ip + ':' + agvTelegramNew.remote_port);
                     agvTelegramNew.disConnect();
                     agvTelegramNew.connect();
                 }
-            }, agvTelegramNew.RECONNECT_DELAY, TimeUnit.SECONDS);
+            }, AgvTelegramNew.RECONNECT_DELAY, TimeUnit.SECONDS);
         }
     }
 
-    @Override
+    /*@Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
 //        LOG.error("{} exception: {}", tcpCommAdapter.getName(), cause.getStackTrace());
         ctx.close();
-    }
+        ctx.fireExceptionCaught();
+    }*/
 
 
     public void disConnect() {
         this.lctx.close();
     }
 
-    public void println(String msg) {
-        if (startTime < 0) {
-            System.err.format("[SERVER IS DOWN] %s%n", msg);
-        } else {
-            System.err.format("[UPTIME: %5ds] %s%n", (System.currentTimeMillis() - startTime) / 1000, msg);
-        }
-    }
 }

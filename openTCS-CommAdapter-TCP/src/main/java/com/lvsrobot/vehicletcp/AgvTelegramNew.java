@@ -13,8 +13,6 @@ import org.opentcs.data.model.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.border.MatteBorder;
-
 
 public class AgvTelegramNew {
 
@@ -89,7 +87,7 @@ public class AgvTelegramNew {
 //            e.printStackTrace();
         }
         group.shutdownGracefully();
-        handler.disConnect();
+//        handler.disConnect();
         reconnectFlag = true;
     }
 
@@ -100,7 +98,7 @@ public class AgvTelegramNew {
                 if (future.cause() != null) {
                     handler.startTime = -1;
 //                    handler.println("Failed to connect");
-                    LOG.error("Failed to connect: {} by: {}", remote_ip, future.cause());
+                    LOG.error("Failed to connect: {} by: {}", remote_ip, future.cause().getMessage());
                 } else {
                     f = future;
                 }
@@ -121,7 +119,7 @@ public class AgvTelegramNew {
     public synchronized boolean sendPath(byte[] path) {
         this.Connect();
         f.channel().writeAndFlush(path);
-        LOG.debug("{} send path: {}", this.name, ByteBufUtil.hexDump(path));
+//        LOG.debug("{} send path: {}", this.name, ByteBufUtil.hexDump(path));
         return true;
     }
 
