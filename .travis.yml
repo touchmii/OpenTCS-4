@@ -7,7 +7,7 @@ jdk: oraclejdk8
 
 script:
   - chmod +x ./gradlew
-  - ./gradlew release
+  - ./gradlew build -x test
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock

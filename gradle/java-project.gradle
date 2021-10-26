@@ -9,6 +9,14 @@ repositories {
   gradlePluginPortal()
 }
 
+configurations.all {
+  exclude module: 'slf4j-log4j12'
+  exclude module: 'log4j-slf4j-impl'
+  exclude module: 'log4j-core'
+  exclude module: 'log4j-api'
+//  exclude module: 'slf4j-api'
+}
+
 dependencies {
   compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
   compileOnly group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21', classifier: 'javadoc'

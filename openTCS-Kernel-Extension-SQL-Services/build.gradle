@@ -7,7 +7,7 @@ apply from: "${rootDir}/gradle/java-artifacts.gradle"
 apply from: "${rootDir}/gradle/java-codequality.gradle"
 apply from: "${rootDir}/gradle/guice-project.gradle"
 apply from: "${rootDir}/gradle/maven-publishing.gradle"
-apply from: "${rootDir}/gradle/license-headers.gradle"
+//apply from: "${rootDir}/gradle/license-headers.gradle"
 apply plugin: 'org.kordamp.gradle.stats'
 
 
@@ -22,7 +22,10 @@ dependencies {
   compileOnly group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.8', classifier: 'sources'
 
   // https://mvnrepository.com/artifact/org.javalite/activejdbc
-  implementation group: 'org.javalite', name: 'activejdbc', version: '3.0-j11'
+  implementation ('org.javalite:activejdbc:3.0-j11') {
+    exclude group: 'org.apache.logging.log4j'
+    exclude group: 'org.slf4j'
+  }
   compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
 //  compile group: 'org.javalite', name: 'activejdbc', version: '2.3.2-j8'
   // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
