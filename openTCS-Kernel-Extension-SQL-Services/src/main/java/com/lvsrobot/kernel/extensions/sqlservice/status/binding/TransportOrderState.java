@@ -55,7 +55,7 @@ public class TransportOrderState {
 
   private String vehicleLocation = null;
 
-  private TransportOrderState() {
+  public TransportOrderState() {
   }
 
   public String getName() {
