@@ -6,6 +6,7 @@ archivesBaseName = name.toLowerCase()
 
 repositories {
   jcenter()
+  gradlePluginPortal()
 }
 
 dependencies {
@@ -34,7 +35,16 @@ dependencies {
   testCompile group: 'org.mockito', name: 'mockito-core', version: '2.8.47'
   testCompileOnly group: 'org.mockito', name: 'mockito-core', version: '2.8.47', classifier: 'sources'
   
-  testRuntime group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.21'
+//  testRuntime group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.21'
+
+  testRuntime 'ch.qos.logback:logback-core:1.1.3'
+  testRuntime 'ch.qos.logback:logback-classic:1.1.3'
+
+  implementation 'javax.xml.bind:jaxb-api:2.3.0'
+  implementation 'com.sun.xml.bind:jaxb-impl:2.3.0'
+  implementation 'com.sun.xml.bind:jaxb-core:2.3.0'
+
+  implementation 'javax.activation:javax.activation-api:1.2.0'
 }
 
 compileJava {

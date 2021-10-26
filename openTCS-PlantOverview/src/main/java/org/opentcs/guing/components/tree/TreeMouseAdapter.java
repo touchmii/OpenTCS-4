@@ -8,6 +8,17 @@
  */
 package org.opentcs.guing.components.tree;
 
+import org.opentcs.guing.components.tree.elements.AbstractUserObject;
+import org.opentcs.guing.components.tree.elements.UserObject;
+import org.opentcs.guing.model.ModelComponent;
+import org.opentcs.guing.util.I18nPlantOverview;
+import org.opentcs.guing.util.ResourceBundleUtil;
+
+import javax.inject.Inject;
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -16,18 +27,6 @@ import java.util.Enumeration;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import org.opentcs.guing.components.tree.elements.AbstractUserObject;
-import org.opentcs.guing.components.tree.elements.UserObject;
-import org.opentcs.guing.model.ModelComponent;
-import org.opentcs.guing.util.I18nPlantOverview;
-import org.opentcs.guing.util.ResourceBundleUtil;
 
 /**
  * A mouse adapter for the <code>TreeView</code> for components and blocks.
@@ -159,7 +158,7 @@ public class TreeMouseAdapter
       @Override
       public void actionPerformed(ActionEvent event) {
         @SuppressWarnings("unchecked")
-        Enumeration<TreeNode> eTreeNodes = ((TreeNode) objectTree.getModel().getRoot()).children();
+        Enumeration<TreeNode> eTreeNodes = (Enumeration<TreeNode>) ((TreeNode) objectTree.getModel().getRoot()).children();
 
         while (eTreeNodes.hasMoreElements()) {
           TreeNode node = eTreeNodes.nextElement();

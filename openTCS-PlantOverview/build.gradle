@@ -32,17 +32,19 @@ dependencies {
   compile group: 'org.opentcs.thirdparty.dockingframes', name: 'docking-frames-core', version: '1.1.2p11'
   compileOnly group: 'org.opentcs.thirdparty.dockingframes', name: 'docking-frames-core', version: '1.1.2p11', classifier: 'sources'
 
-  runtime group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.21'
+//  runtime group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.21'
+  runtime 'ch.qos.logback:logback-core:1.1.3'
+  runtime 'ch.qos.logback:logback-classic:1.1.3'
 
   compile files("${rootDir}/lib/swingexplorer-core-1.9.0.jar")
   compile files("${rootDir}/lib/swingexplorer-agent-1.9.0.jar")
-  compile files("${rootDir}/lib/flatlaf-1.4.jar")
-  compile files("${rootDir}/lib/flatlaf-extras-1.4.jar")
+  compile files("${rootDir}/lib/flatlaf-1.6.1.jar")
+  compile files("${rootDir}/lib/flatlaf-extras-1.6.1.jar")
   implementation 'com.oliphantllc:swing-layout:1.0.3'
   implementation 'javassist:javassist:3.12.1.GA'
-  implementation 'com.formdev:flatlaf-extras:1.4'
-  implementation 'com.formdev:flatlaf:1.4'
-  implementation 'com.formdev:flatlaf-intellij-themes:1.4'
+//  implementation 'com.formdev:flatlaf-extras:1.4'
+//  implementation 'com.formdev:flatlaf:1.4'
+//  implementation 'com.formdev:flatlaf-intellij-themes:1.4'
   implementation 'com.jgoodies:jgoodies-forms:1.9.0'
   // https://mvnrepository.com/artifact/com.miglayout/miglayout-swing
   implementation group: 'com.miglayout', name: 'miglayout-swing', version: '5.3'
@@ -71,7 +73,10 @@ task release {
 }
 
 run {
-  systemProperties(['java.util.logging.config.file':'./config/logging.config',\
+  systemProperties([
+//          'java.util.logging.config.file':'./config/logging.config',\
+            'logback.configurationFile':'./config/logback.xml',\
+                    'sun.java2d.opengl': 'true', \
                     'java.security.policy':'file:./config/java.policy',\
                     'sun.java2d.d3d':'false',\
                     'opentcs.base':'.',\
@@ -85,7 +90,10 @@ task(runSimple, dependsOn: 'classes', type: JavaExec) {
   main = 'org.opentcs.guing.RunPlantOverview2'
   classpath = sourceSets.main.runtimeClasspath
   args 'mrhaki'
-  systemProperties(['java.util.logging.config.file': './config/logging.config',        \
+  systemProperties([
+//          'java.util.logging.config.file': './config/logging.config',        \
+          'logback.configurationFile':'./config/logback.xml',\
+                            'sun.java2d.opengl': 'true', \
                             'java.security.policy': 'file:./config/java.policy',        \
                             'sun.java2d.d3d': 'false',        \
                             'opentcs.base': '.',        \

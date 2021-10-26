@@ -97,7 +97,7 @@ public abstract class TreeViewManager
   public void sortItems() {
     @SuppressWarnings("unchecked")
     Enumeration<TreeNode> eTreeNodes
-        = ((TreeNode) getTreeView().getTree().getModel().getRoot()).children();
+        = (Enumeration<TreeNode>) ((TreeNode) getTreeView().getTree().getModel().getRoot()).children();
 
     while (eTreeNodes.hasMoreElements()) {
       getTreeView().sortItems(eTreeNodes.nextElement());

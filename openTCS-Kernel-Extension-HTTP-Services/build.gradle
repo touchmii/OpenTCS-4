@@ -6,6 +6,18 @@ apply from: "${rootDir}/gradle/maven-publishing.gradle"
 apply from: "${rootDir}/gradle/license-headers.gradle"
 apply plugin: 'org.kordamp.gradle.stats'
 
+
+repositories {
+  maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+  mavenCentral()
+  maven {
+    url "https://repo1.maven.org/maven2/"
+  }
+  maven {
+    url "https://repo1.maven.org/maven2/"
+  }
+}
+
 dependencies {
   compile project(':openTCS-API-Injection')
   compile project(':openTCS-Common')
@@ -19,6 +31,12 @@ dependencies {
   compileOnly group: 'com.fasterxml.jackson.module', name: 'jackson-module-jsonSchema', version: '2.9.8', classifier: 'sources'
   compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.8'
   compileOnly group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.8', classifier: 'sources'
+  implementation 'org.jfree:org.jfree.svg:5.0'
+  // https://mvnrepository.com/artifact/org.apache/batik-all
+//  implementation group: 'org.apache', name: 'batik-all', version: '1.7.0'
+  // https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-all
+//  implementation group: 'org.apache.xmlgraphics', name: 'batik-all', version: '1.14', ext: 'pom'
+  implementation 'org.apache.xmlgraphics:batik-all:1.14'
 }
 
 task release {

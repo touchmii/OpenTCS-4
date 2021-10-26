@@ -10,19 +10,19 @@ dependencies {
   compile project(':openTCS-API-Injection')
   implementation 'io.netty:netty-all:4.1.60.Final'
 
-  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.11'
-  compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.11', classifier: 'sources'
-  compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-jsonSchema', version: '2.8.11'
-  compileOnly group: 'com.fasterxml.jackson.module', name: 'jackson-module-jsonSchema', version: '2.8.11', classifier: 'sources'
-  compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.8.11'
-  compileOnly group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.8.11', classifier: 'sources'
+  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.10.8'
+  compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.10.8', classifier: 'sources'
+  compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-jsonSchema', version: '2.9.8'
+  compileOnly group: 'com.fasterxml.jackson.module', name: 'jackson-module-jsonSchema', version: '2.9.8', classifier: 'sources'
+  compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.8'
+  compileOnly group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.8', classifier: 'sources'
 
   // https://mvnrepository.com/artifact/org.javalite/activejdbc
-  implementation group: 'org.javalite', name: 'activejdbc', version: '2.4-j8'
+  implementation group: 'org.javalite', name: 'activejdbc', version: '3.0-j11'
   compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
 //  compile group: 'org.javalite', name: 'activejdbc', version: '2.3.2-j8'
   // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
-  implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '2.3.2'
+  implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.8.11.2'
 
 }
 
