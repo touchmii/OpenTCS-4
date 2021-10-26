@@ -43,7 +43,7 @@ public class SQLServiceController extends CyclicTask {
     public SQLServiceController(@ApplicationHome File directory,
                                 RequestStatusHandler statusHandler,
                                 TCSObjectService orderService,
-                                SQLServiceConfiguration serviceIotConfiguration,
+                                SQLServiceConfiguration serviceSQLConfiguration,
                                 @ApplicationEventBus EventBus eventBus,
                                 @ApplicationEventBus EventSource eventSource) {
         super(1*1000);
@@ -51,10 +51,10 @@ public class SQLServiceController extends CyclicTask {
         this.eventBus = eventBus;
         this.eventSource = eventSource;
         this.orderService = orderService;
-        this.serviceConfiguration = serviceIotConfiguration;
+        this.serviceConfiguration = serviceSQLConfiguration;
         eventSource.subscribe(new EvendHandle());
         this.dataDirectory = new File(requireNonNull(directory, "directory"), "data");
-        this.modelFile = new File(dataDirectory, serviceIotConfiguration.sqlName());
+        this.modelFile = new File(dataDirectory, serviceSQLConfiguration.sqlName());
 //        Base.open(serviceConfiguration.sqlDriver(), "jdbc:sqlite:"+modelFile.getAbsolutePath(), "", "");
 //        try {
 //            db.open(serviceIotConfiguration.sqlDriver(), "jdbc:sqlite:"+modelFile.getAbsolutePath(), "", "");

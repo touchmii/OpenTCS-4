@@ -21,8 +21,8 @@ public class ServiceSQL implements KernelExtension {
     public void initialize() {
 //        serviceController = new ServiceController();
 //        serviceController.run();
-        Thread IotServiceThread = new Thread(serviceController, "IotService");
-        IotServiceThread.start();
+        Thread SQLServiceThread = new Thread(serviceController, "SQLService");
+        SQLServiceThread.start();
         initialize = true;
     }
 

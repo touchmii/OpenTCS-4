@@ -16,7 +16,7 @@ public class ServiceSQLModule extends KernelInjectionModule {
                 SQLServiceConfiguration.class);
 
         if (!configuration.enable()) {
-            LOG.info("Service Iot disabled by configuration.");
+            LOG.info("Service SQL disabled by configuration.");
             return;
         }
 

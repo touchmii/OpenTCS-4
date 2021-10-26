@@ -1,3 +1,7 @@
+plugins {
+//  id 'java'
+  id 'de.schablinski.activejdbc-gradle-plugin' version '1.5.2'
+}
 apply from: "${rootDir}/gradle/java-project.gradle"
 apply from: "${rootDir}/gradle/java-artifacts.gradle"
 apply from: "${rootDir}/gradle/java-codequality.gradle"
@@ -6,9 +10,9 @@ apply from: "${rootDir}/gradle/maven-publishing.gradle"
 apply from: "${rootDir}/gradle/license-headers.gradle"
 apply plugin: 'org.kordamp.gradle.stats'
 
+
 dependencies {
   compile project(':openTCS-API-Injection')
-  implementation 'io.netty:netty-all:4.1.60.Final'
 
   compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.10.8'
   compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.10.8', classifier: 'sources'
