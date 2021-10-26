@@ -5,7 +5,7 @@
  * see the licensing information (LICENSE.txt) you should have received with
  * this copy of the software.)
  */
-package org.opentcs.kernel.extensions.servicewebapi.v1.status;
+package com.lvsrobot.iot.status;
 
 import org.opentcs.components.kernel.services.TCSObjectService;
 import org.opentcs.components.kernel.services.TransportOrderService;
@@ -18,10 +18,10 @@ import org.opentcs.data.model.Point;
 import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.order.DriveOrder;
 import org.opentcs.data.order.TransportOrder;
-import org.opentcs.kernel.extensions.servicewebapi.v1.status.binding.TransportOrderState;
-import org.opentcs.kernel.extensions.servicewebapi.v1.status.binding.VehicleState;
-import org.opentcs.kernel.extensions.servicewebapi.v1.status.filter.TransportOrderFilter;
-import org.opentcs.kernel.extensions.servicewebapi.v1.status.filter.VehicleFilter;
+import com.lvsrobot.iot.status.binding.TransportOrderState;
+import com.lvsrobot.iot.status.binding.VehicleState;
+import com.lvsrobot.iot.status.filter.TransportOrderFilter;
+import com.lvsrobot.iot.status.filter.VehicleFilter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -54,8 +54,6 @@ public class RequestStatusHandler {
 
     private final TCSObjectService objectService;
 
-    private final SVGMap svgMap;
-
     /**
      * Creates a new instance.
      *
@@ -69,17 +67,6 @@ public class RequestStatusHandler {
         this.vehicleService = requireNonNull(vehicleService, "vehicleService");
         this.kernelExecutor = requireNonNull(kernelExecutor, "kernelExecutor");
         this.objectService = requireNonNull(objectService, "objectService");
-        this.svgMap = new SVGMap(getPoints(), getPaths(), getLocations());
-        this.svgMap.drawPoint();
-    }
-
-    public String getSVG() {
-        String html = "<!DOCTYPE html>\n" +
-                "<html>\n" +
-                "<body>\n";
-        html += svgMap.getSVG();
-        html += "\n</body>\n</html>\n";
-        return html;
     }
 
     public List<Point> getPoints() {

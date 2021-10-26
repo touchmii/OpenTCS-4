@@ -7,12 +7,13 @@
  */
 package org.opentcs.kernel.extensions.sockethost;
 
-import javax.inject.Singleton;
 import org.opentcs.customizations.kernel.KernelInjectionModule;
 import org.opentcs.kernel.extensions.sockethost.orders.SocketTelegramOrderReceiver;
 import org.opentcs.kernel.extensions.sockethost.status.StatusMessageDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Singleton;
 
 /**
  * Configures the TCP host interface extension.
@@ -34,7 +35,7 @@ public class TcpMESInterfaceModule
                                          SocketHostInterfaceConfiguration.class);
 
     if (!configuration.enable()) {
-      LOG.info("TCP host interface disabled by configuration.");
+      LOG.info("MES host interface disabled by configuration.");
       return;
     }
 

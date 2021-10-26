@@ -11,14 +11,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import java.io.IOException;
-import java.util.List;
-
-import static java.util.Objects.requireNonNull;
-
-import javax.inject.Inject;
-
 import org.opentcs.data.ObjectExistsException;
 import org.opentcs.data.ObjectUnknownException;
 import org.opentcs.data.model.Vehicle;
@@ -36,6 +28,12 @@ import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
 import spark.Service;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.List;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Handles requests and produces responses for version 1 of the web API.
@@ -122,7 +120,7 @@ public class V1RequestHandler
         service.get("/vehicledetails", this::handleGetVehicleDetails);
         service.get("/vehicledetailsbrief", this::handleGetVehicleDetailsBrief);
         service.post("/command/:NAME", this::handlePostCommandByVehicle);
-        service.get("/mapbrief", this::handleGetMapBrief);
+        service.get("/mapbrief.html", this::handleGetMapBrief);
         service.post("/Point", this::handleReplacePoint);
     }
 
@@ -163,16 +161,9 @@ public class V1RequestHandler
         return vehiclesBrief.toString();
     }
     private Object handleGetMapBrief(Request request, Response response) throws IllegalArgumentException, IllegalStateException {
-        response.type(HttpConstants.CONTENT_TYPE_TEXT_PLAIN_UTF8);
-        StringBuilder mapBrief = new StringBuilder();
-        mapBrief.append("*-------*-------*--------*\n");
-        mapBrief.append("*-------*-------*--------*\n");
-        mapBrief.append("*-------*-------*--------*\n");
-        mapBrief.append("*-------*-------*--------*\n");
-        mapBrief.append("************◀**********************\n");
-        mapBrief.append("----------------------------------*\n");
-        mapBrief.append("----------------------------------*\n");
-        return mapBrief.toString();
+//        response.type(HttpConstants.CONTENT_TYPE_TEXT_PLAIN_UTF8);
+        response.type("text/html");
+        return statusInformationProvider.getSVG();
     }
     private Object handleGetPoints(Request request, Response response) throws IllegalArgumentException, IllegalStateException {
         response.type(HttpConstants.CONTENT_TYPE_APPLICATION_JSON_UTF8);

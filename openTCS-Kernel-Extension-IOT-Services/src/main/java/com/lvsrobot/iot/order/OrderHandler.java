@@ -5,7 +5,7 @@
  * see the licensing information (LICENSE.txt) you should have received with
  * this copy of the software.)
  */
-package org.opentcs.kernel.extensions.servicewebapi.v1.order;
+package com.lvsrobot.iot.order;
 
 import org.opentcs.access.KernelRuntimeException;
 import org.opentcs.access.to.order.DestinationCreationTO;
@@ -24,10 +24,10 @@ import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.order.TransportOrder;
 import org.opentcs.drivers.vehicle.VehicleCommAdapterEvent;
 import org.opentcs.drivers.vehicle.commands.PublishEventCommand;
-import org.opentcs.kernel.extensions.servicewebapi.v1.order.binding.Command;
-import org.opentcs.kernel.extensions.servicewebapi.v1.order.binding.Destination;
-import org.opentcs.kernel.extensions.servicewebapi.v1.order.binding.Property;
-import org.opentcs.kernel.extensions.servicewebapi.v1.order.binding.Transport;
+import com.lvsrobot.iot.order.binding.Command;
+import com.lvsrobot.iot.order.binding.Destination;
+import com.lvsrobot.iot.order.binding.Property;
+import com.lvsrobot.iot.order.binding.Transport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
