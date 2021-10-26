@@ -9,29 +9,6 @@
  */
 package org.opentcs.guing.components.tree;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import static java.util.Objects.requireNonNull;
-import java.util.Set;
-import javax.inject.Inject;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.KeyStroke;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.undo.AbstractUndoableEdit;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
 import org.jhotdraw.draw.Figure;
 import org.opentcs.guing.application.OpenTCSView;
 import org.opentcs.guing.application.action.edit.DeleteAction;
@@ -43,16 +20,26 @@ import org.opentcs.guing.components.tree.elements.UserObject;
 import org.opentcs.guing.model.AbstractConnectableModelComponent;
 import org.opentcs.guing.model.ModelComponent;
 import org.opentcs.guing.model.SimpleFolder;
-import static org.opentcs.guing.model.SystemModel.FolderKey.LINKS;
-import static org.opentcs.guing.model.SystemModel.FolderKey.LOCATIONS;
-import static org.opentcs.guing.model.SystemModel.FolderKey.LOCATION_TYPES;
-import static org.opentcs.guing.model.SystemModel.FolderKey.OTHER_GRAPHICAL_ELEMENTS;
-import static org.opentcs.guing.model.SystemModel.FolderKey.PATHS;
-import static org.opentcs.guing.model.SystemModel.FolderKey.POINTS;
 import org.opentcs.guing.model.elements.LayoutModel;
 import org.opentcs.guing.persistence.ModelManager;
 import org.opentcs.guing.util.I18nPlantOverview;
 import org.opentcs.guing.util.ResourceBundleUtil;
+
+import javax.inject.Inject;
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.undo.AbstractUndoableEdit;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.util.*;
+
+import static java.util.Objects.requireNonNull;
+import static org.opentcs.guing.model.SystemModel.FolderKey.*;
 
 /**
  * Standardimplementierung einer Baumansicht zur Darstellung der Modellelemente
@@ -230,10 +217,10 @@ public abstract class AbstractTreeViewPanel
     DefaultMutableTreeNode searchNode = null;
 
     @SuppressWarnings("unchecked")
-    Enumeration<DefaultMutableTreeNode> e = fRootNode.preorderEnumeration();
+    Enumeration<TreeNode> e = fRootNode.preorderEnumeration();
 
     while (e.hasMoreElements()) {
-      DefaultMutableTreeNode node = e.nextElement();
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
       UserObject userObject = (UserObject) node.getUserObject();
 
       // Select point and path "directly", not the entries in a block area.
@@ -265,7 +252,7 @@ public abstract class AbstractTreeViewPanel
   @Override
   public void sortChildren() {
     @SuppressWarnings("unchecked")
-    Enumeration<TreeNode> eTreeNodes = ((TreeNode) objectTree.getModel().getRoot()).children();
+    Enumeration<TreeNode> eTreeNodes = (Enumeration<TreeNode>) ((TreeNode) objectTree.getModel().getRoot()).children();
 
     while (eTreeNodes.hasMoreElements()) {
       TreeNode node = eTreeNodes.nextElement();
@@ -494,10 +481,10 @@ public abstract class AbstractTreeViewPanel
     List<DefaultMutableTreeNode> searchNodes = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
-    Enumeration<DefaultMutableTreeNode> e = fRootNode.preorderEnumeration();
+    Enumeration<TreeNode> e = fRootNode.preorderEnumeration();
 
     while (e.hasMoreElements()) {
-      DefaultMutableTreeNode node = e.nextElement();
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
       UserObject userObject = (UserObject) node.getUserObject();
 
       if (dataObject.equals(userObject.getModelComponent())) {
@@ -518,10 +505,10 @@ public abstract class AbstractTreeViewPanel
     List<DefaultMutableTreeNode> searchNodes = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
-    Enumeration<DefaultMutableTreeNode> e = fRootNode.preorderEnumeration();
+    Enumeration<TreeNode> e = fRootNode.preorderEnumeration();
 
     while (e.hasMoreElements()) {
-      DefaultMutableTreeNode node = e.nextElement();
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
       UserObject userObject = (UserObject) node.getUserObject();
 
       if (userObject == o) {

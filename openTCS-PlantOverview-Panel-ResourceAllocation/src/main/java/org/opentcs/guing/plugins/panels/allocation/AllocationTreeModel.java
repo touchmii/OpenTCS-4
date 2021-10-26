@@ -7,16 +7,14 @@
  */
 package org.opentcs.guing.plugins.panels.allocation;
 
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
+import org.opentcs.data.model.TCSResource;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
-import org.opentcs.data.model.TCSResource;
+import javax.swing.tree.TreeNode;
+import java.util.*;
+
 import static org.opentcs.guing.plugins.panels.allocation.I18nPlantOverviewPanelResourceAllocation.BUNDLE_PATH;
 
 /**
@@ -90,8 +88,9 @@ public class AllocationTreeModel
     }
     //Remove all children that are not in the new allocation
     @SuppressWarnings("unchecked")
-    List<DefaultMutableTreeNode> vehicleChildren = Collections.list(vehicleNode.children());
-    for (DefaultMutableTreeNode current : vehicleChildren) {
+    ArrayList<TreeNode> vehicleChildren = Collections.list(vehicleNode.children());
+    for (TreeNode currentx : vehicleChildren) {
+      DefaultMutableTreeNode current = (DefaultMutableTreeNode) currentx;
       if (!resources.contains((TCSResource<?>) current.getUserObject())) {
         vehicleNode.remove(current);
       }
@@ -133,11 +132,11 @@ public class AllocationTreeModel
    */
   private int getChildIndexOf(TCSResource<?> resource, DefaultMutableTreeNode vehicleNode) {
     @SuppressWarnings("unchecked")
-    Enumeration<DefaultMutableTreeNode> enumeration = vehicleNode.children();
+    Enumeration<TreeNode> enumeration = vehicleNode.children();
 
     int index = 0;
     while (enumeration.hasMoreElements()) {
-      DefaultMutableTreeNode child = enumeration.nextElement();
+      DefaultMutableTreeNode child = (DefaultMutableTreeNode) enumeration.nextElement();
       if (child.getUserObject().equals(resource)) {
         return index;
       }
