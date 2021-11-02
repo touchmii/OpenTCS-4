@@ -401,6 +401,7 @@ public class ROSBridgeCommAdapter extends BasicVehicleCommAdapter {
                         dist_angle = curCommand.getFinalDestination().getVehicleOrientationAngle();
                     }
                     agv.sendGoalPose(curCommand);
+                    LOG.info("目标点车辆角度: {}", curCommand.getStep().getDestinationPoint().getVehicleOrientationAngle());
                 }
                 if (curCommand == null) {
                     Uninterruptibles.sleepUninterruptibly(ADVANCE_TIME, TimeUnit.MILLISECONDS);

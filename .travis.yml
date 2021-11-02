@@ -3,7 +3,7 @@ install: skip
 
 os: linux
 dist: trusty
-jdk: oraclejdk8
+jdk: oraclejdk11
 
 script:
   - chmod +x ./gradlew

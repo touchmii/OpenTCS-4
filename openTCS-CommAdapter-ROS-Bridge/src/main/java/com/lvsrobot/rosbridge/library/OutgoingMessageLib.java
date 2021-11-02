@@ -48,7 +48,9 @@ public abstract class OutgoingMessageLib {
     }
 
     public static PoseStamped generateScaledNavigationMessageByPoint(@Nonnull Point point) {
-        Pose pose = generatePoseMessageByPoint(point, new Quaternion(0,0,0,1));
+        double angle = point.getVehicleOrientationAngle();
+        Quaternion quaternion = UnitConverterLib.yawToQuaternion(UnitConverterLib.convertAngleToRadian(angle));
+        Pose pose = generatePoseMessageByPoint(point, quaternion);
         edu.wpi.rail.jrosbridge.primitives.Time time =
                 new edu.wpi.rail.jrosbridge.primitives.Time((int) Instant.now().getEpochSecond());
         seq++;

@@ -5,6 +5,7 @@ import edu.wpi.rail.jrosbridge.messages.geometry.Quaternion;
 import org.opentcs.data.model.Triple;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
 
 /**
  * Library class for converting distance and rotation units.
@@ -38,6 +39,28 @@ public abstract class UnitConverterLib {
         double millimeters = meters * 1000.0;
 
         return Math.round(millimeters);
+    }
+
+    public static double convertAngleToRadian(double angle) {
+        //先对角度取余数,让绝对值大于360的数值转换到360度内.因ros接受的角度为正负180度,所以还需要在再做转换;
+        double x = angle%360;
+        return Math.abs(x) > 180 ? (x-360)/180*Math.PI : x/180*Math.PI;
+    }
+
+    /**
+     * 偏航角转四元数
+     * @param yaw, 单位弧度
+     * @return
+     */
+    public static Quaternion yawToQuaternion(double yaw) {
+//        qx = np.sin(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) - np.cos(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
+//        qy = np.cos(roll/2) * np.sin(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.cos(pitch/2) * np.sin(yaw/2)
+//        qz = np.cos(roll/2) * np.cos(pitch/2) * np.sin(yaw/2) - np.sin(roll/2) * np.sin(pitch/2) * np.cos(yaw/2)
+//        qw = np.cos(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
+        //弧度为单位
+        double z = Math.sin(yaw/2);
+        double w = Math.cos(yaw/2);
+        return new Quaternion(0,0,z,w);
     }
 
     public static double quaternionToAngleDegree(@Nonnull Quaternion quaternion) {
