@@ -16,6 +16,7 @@ import org.opentcs.data.model.Location;
 import org.opentcs.data.model.Path;
 import org.opentcs.data.model.Point;
 import org.opentcs.data.model.Vehicle;
+import org.opentcs.data.model.visualization.VisualLayout;
 import org.opentcs.data.order.DriveOrder;
 import org.opentcs.data.order.TransportOrder;
 import org.opentcs.kernel.extensions.servicewebapi.v1.status.binding.TransportOrderState;
@@ -26,6 +27,7 @@ import org.opentcs.kernel.extensions.servicewebapi.v1.status.filter.VehicleFilte
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
@@ -69,7 +71,7 @@ public class RequestStatusHandler {
         this.vehicleService = requireNonNull(vehicleService, "vehicleService");
         this.kernelExecutor = requireNonNull(kernelExecutor, "kernelExecutor");
         this.objectService = requireNonNull(objectService, "objectService");
-        this.svgMap = new SVGMap(getPoints(), getPaths(), getLocations());
+        this.svgMap = new SVGMap(getPoints(), getPaths(), getLocations(), getElement(), this);
         this.svgMap.drawPoint();
     }
 
@@ -94,6 +96,10 @@ public class RequestStatusHandler {
         return objectService.fetchObjects(Path.class).stream().collect(Collectors.toList());
     }
 
+    public List<VisualLayout> getElement() {
+        return objectService.fetchObjects(VisualLayout.class).stream().collect(Collectors.toList());
+    }
+
     public List<DriveOrder> getDriverOrder() {
 //        Vehicle vehicle = orderService.fetchObjects(Vehicle.class, )
         return orderService.fetchObjects(TransportOrder.class).stream().map(order -> order.getCurrentDriveOrder()).collect(Collectors.toList());
@@ -105,11 +111,24 @@ public class RequestStatusHandler {
                 .orElseThrow(() -> new ObjectUnknownException("Unknown transport order: " + name));
     }
 
+    public List<Vehicle> getAllVehicles() {
+        return orderService.fetchObjects(Vehicle.class).stream().collect(Collectors.toList());
+    }
+
     public List<Vehicle> getVehicles() {
         List<Vehicle> vehicles = orderService.fetchObjects(Vehicle.class,
                 new VehicleFilter("PROCESSING_ORDER"))
                 .stream().collect(Collectors.toList());
         return vehicles;
+    }
+
+    public List<DriveOrder> getVehiclesExecOrder() {
+        List<DriveOrder> orderList = new ArrayList<>();
+        getVehicles().forEach(v -> {
+            DriveOrder driveOrder = orderService.fetchObject(TransportOrder.class, v.getTransportOrder().getName()).getCurrentDriveOrder();
+            orderList.add(driveOrder);
+        });
+        return orderList;
     }
 
     /**

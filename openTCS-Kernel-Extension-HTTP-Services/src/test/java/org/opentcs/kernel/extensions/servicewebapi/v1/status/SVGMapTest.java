@@ -19,13 +19,17 @@ import org.opentcs.data.ObjectExistsException;
 import org.opentcs.data.model.Location;
 import org.opentcs.data.model.Path;
 import org.opentcs.data.model.Point;
+import org.opentcs.data.model.visualization.VisualLayout;
 import org.opentcs.util.persistence.ModelParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.mockito.Mockito.mock;
 
 class SVGMapTest {
     private static final Logger LOG = LoggerFactory.getLogger(SVGMapTest.class);
@@ -35,6 +39,7 @@ class SVGMapTest {
     private static List<Point> pointList = new ArrayList<>();
     private static List<Path> pathList = new ArrayList<>();
     private static List<Location> locationList = new ArrayList<>();
+    private static List<VisualLayout> visualLayoutList = new ArrayList<>();
     private static SVGMap svgMap;
     @BeforeAll
     public static void init() throws IOException {
@@ -45,7 +50,7 @@ class SVGMapTest {
         pointCreationTOList.forEach(p -> {
             pointList.add(createPoint(p));
         });
-        svgMap = new SVGMap(pointList, pathList, locationList);
+        svgMap = new SVGMap(pointList, pathList, locationList, visualLayoutList, mock(RequestStatusHandler.class));
     }
 
     public static Point createPoint(PointCreationTO to)
