@@ -6,8 +6,11 @@ import org.opentcs.data.order.Route;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@SuppressWarnings("deprecation")
 public class ConfigRoute {
 
     private DriveOrder driveorder;
@@ -23,6 +26,20 @@ public class ConfigRoute {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigRoute.class);
 
     private String debug_path = new String("robot path ");
+
+    private Map<String , Integer> actionMap = new HashMap<String, Integer>(){{
+        put("LL" , 4);
+        put("RR" , 0x10);
+        put("LD" , 7);
+        put("BK" , 0x17);
+        put("BB" , 0x20);
+        put("DB" , 0x19);
+        put("UB" , 0x18);
+        put("BL" , 0x21);
+        put("BR" , 0x22);
+        put("AA" , 2);
+        put("aa" , 3);
+    }};
 
     //    public ConfigRoute() {
 //
@@ -42,9 +59,9 @@ public class ConfigRoute {
 
     public int mapValue(int v) {
         if (v > 1600) {
-            return 1600;
+            return 1500;
         } else if (v < -1600) {
-            return -1600;
+            return -1500;
         } else {
             return v;
         }
@@ -59,17 +76,6 @@ public class ConfigRoute {
     }
     public byte[] getPath() {
         byte[] path = new byte[steps.size()*4+14];
-//        String debug_path = new String("robot path ");
-
-//        path[2] = steps.size()+1;
-//        path[3] = Integer.parseInt(new String(current_point.getName()));
-//        path[3] = Integer.parseInt(new String(steps.get(0).getSourcePoint().getName()));
-        //起点
-//        path[0] = (int)steps.get(0).getSourcePoint().getPosition().getX()/100;
-//        path[1] = (int)steps.get(0).getSourcePoint().getPosition().getY()/100;
-//        //终点
-//        path[2] = (int)steps.get(steps.size()-1).getSourcePoint().getPosition().getX()/100;
-//        path[3] = (int)steps.get(steps.size()-1).getSourcePoint().getPosition().getY()/100;
 
         //暂时车辆第一步需要往前走
         path[0] = 0x00;
@@ -218,6 +224,27 @@ public class ConfigRoute {
         if(steps.get(steps.size()-1).getDestinationPoint().getProperty("charge") != null) {
             path[11 + (steps.size()-1) * 4] = 0x20;
             debug_path += "BB";
+        } else if (steps.get(steps.size()-1).getDestinationPoint().getProperty("back") != null
+                && steps.get(steps.size()-2).getDestinationPoint().getProperty("back") != null) {
+            String pointxx_id_str2 = steps.get(steps.size()-2).getSourcePoint().getName();
+            //两个后退点
+            if (path[11 + (steps.size()-2) * 4] == 0) {
+                path[11 + (steps.size()-2) * 4] = 0x20; //BB nop
+                path[11 + (steps.size()-1) * 4] = 0x17; //BK
+//                debug_path += "BB";
+                debug_path = debug_path.replace(pointxx_id_str2, pointxx_id_str2+"BB");
+                debug_path = debug_path.replace(pointxx_id_str, pointxx_id_str+"BK");
+            } else if (path[11 + (steps.size()-2) * 4] == 0x10) { // RR
+                path[11 + (steps.size()-2) * 4] = 0x21; //BL nop
+                path[11 + (steps.size()-1) * 4] = 0x17; //BK
+                debug_path = debug_path.replace(pointxx_id_str2+"RR", pointxx_id_str2+"BL");
+                debug_path = debug_path.replace(pointxx_id_str, pointxx_id_str+"BK");
+            } else if (path[11 + (steps.size()-2) * 4] == 0x4) { //LL
+                path[11 + (steps.size()-2) * 4] = 0x22; //BR nop
+                path[11 + (steps.size()-1) * 4] = 0x17; //BK
+                debug_path = debug_path.replace(pointxx_id_str2+"LL", pointxx_id_str2+"BR");;
+                debug_path = debug_path.replace(pointxx_id_str, pointxx_id_str+"BK");;
+            }
         } else if (steps.get(steps.size()-1).getDestinationPoint().getProperty("back") != null) {
             if (path[11 + (steps.size()-1) * 4] == 0) {
                 path[11 + (steps.size()-1) * 4] = 0x20; //BB nop
@@ -271,10 +298,19 @@ public class ConfigRoute {
     }
 
     public byte[] getPath(DriveOrder order, double angle) {
+        //判断是否有预定义路径
+        String dest = order.getRoute().getSteps().get(0).getSourcePoint().getName();
+        if (order.getRoute().getFinalDestinationPoint().getProperties().containsKey(dest)) {
+            String prePath = order.getRoute().getFinalDestinationPoint().getProperty(dest);
+            debug_path = "robot path " + prePath;
+            return pairPath(prePath);
+        }
+
         setRoute(order);
         setAngle(angle);
         return getPath();
     }
+
 
     public byte[] getliftAction(String point, String action) {
         int point_num = Integer.parseInt(point);
@@ -295,5 +331,37 @@ public class ConfigRoute {
 //        LOG.debug("{} send lift action command: {}", this.name, ByteBufUtil.hexDump(path_data));
         return path_data;
     }
-//    public
+
+    public byte[] pairPath(String pathAscii) {
+        String[] points = pathAscii.split("->");
+        //暂时车辆第一步需要往前走
+        byte[] path = new byte[points.length*4+10];
+        path[0] = 0x00;
+        path[1] = 0x01;
+        path[2] = 0x0c;
+        //lenght
+        path[3] = (byte)((points.length*4+4)/256);
+        path[4] = (byte)((points.length*4+4)%256);
+        path[5] = 0x00;
+        path[6] = 0x00;
+        path[7] = 0x01;
+        path[8] = 0x01;
+        for (int i = 0; i < points.length; i ++) {
+            String[] x = points[i].split("[^A-Z0-9]+|(?<=[A-Z])(?=[0-9])|(?<=[0-9])(?=[A-Z])");
+            path[9+i*4] = (byte) (Integer.parseInt(x[0])/256);
+            path[10+i*4] = (byte) (Integer.parseInt(x[0])%256);
+            if (x.length>1) {
+                path[11+i*4] = (byte) actionMap.get(x[1]).intValue();
+            } else {path[11+i*4] = 0;}
+            if (i < points.length-1) {
+                path[12+i*4] = 1;
+            } else {path[12+i*4] = 0;}
+        }
+        byte check = 0;
+        for(int i = 0; i < points.length*4+9; i++) {
+            check = (byte) (check ^ path[i]);
+        }
+        path[points.length*4+9] = (byte) ~ check;
+        return path;
+    }
 }

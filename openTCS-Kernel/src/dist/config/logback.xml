@@ -83,7 +83,7 @@ configuration 子节点为 appender、logger、root
             <level>DEBUG</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/opentcs-kernel-debug.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/opentcs-tcp-debug.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory><!--保存最近30天的日志-->
         </rollingPolicy>
         <encoder>

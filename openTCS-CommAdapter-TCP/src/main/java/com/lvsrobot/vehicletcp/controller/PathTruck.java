@@ -97,7 +97,8 @@ public class PathTruck extends CyclicTask {
             for (Route.Step step : doorStepList) {
                 //Dist点为门，Src点为门前等待点
                 String doorName = step.getDestinationPoint().getProperty("door");
-                waitDoorList.add(step.getSourcePoint().withProperty("door", doorName));
+                String roomName = step.getDestinationPoint().getProperty("zh");
+                waitDoorList.add(step.getSourcePoint().withProperty("door", doorName).withProperty("zh", roomName));
             }
         }
 
@@ -167,6 +168,16 @@ public class PathTruck extends CyclicTask {
         for (Point p : waitPoint) {
             if (p.getName().equals(point)) {
                 flag = p.getProperty("door");
+            }
+        }
+        return flag;
+    }
+
+    public String getRoom(String point) {
+        String flag = null;
+        for (Point p : waitPoint) {
+            if (p.getName().equals(point)) {
+                flag = p.getProperty("zh");
             }
         }
         return flag;
@@ -329,7 +340,7 @@ public class PathTruck extends CyclicTask {
             }*/
 
             //检查新订单, 分割订单必须已经发送完成，否则会漏过中途升降动作
-            if (sendSplitDriveOrder == null && commAdapter.getcurrentDriveOrder() != processDriverOrder) {
+            if (sendSplitDriveOrder == null && commAdapter.getcurrentDriveOrder() != null && commAdapter.getcurrentDriveOrder() != processDriverOrder) {
                 processDriverOrder = commAdapter.getcurrentDriveOrder();
                 List<DriveOrder> driveOrderList = DoorController.splitDriverOrder(processDriverOrder);
                 driveOrderQueue.clear();
@@ -378,8 +389,9 @@ public class PathTruck extends CyclicTask {
                         } else if (doorStatus.getError() < -10) {
                             //自动门离线
                             String doorName = isWaitPoint(curPoint);
+                            String roomName = getRoom(curPoint);
                             sendSplitDriveOrder = null;
-                            processModel.setVehicleProperty("error", String.format("自动门故障: %s", doorName));
+                            processModel.setVehicleProperty("error", String.format("自动门故障: %s", roomName));
                             doorTruck.addRecheckDoor(doorName);
 //                            processModel.setVehicleState(Vehicle.State.ERROR);
                         } else if (doorStatus.getStatus().equals("open") || doorStatus.getStatus().equals("opened")) {
@@ -406,7 +418,7 @@ public class PathTruck extends CyclicTask {
                         LOG.info("{} send split path: {}", name, configRoute.getDebugPath());
                     }
                 } else {
-                    LOG.error("{} 车辆不在要发送路径的起点", name);
+                    LOG.error("{} 车辆不在要发送路径的起点: {} {}", name, sendSplitDriveOrder, curPoint);
                 }
             }
 

@@ -38,6 +38,8 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
     public long startTime = -1;
     private ChannelHandlerContext lctx = null;
 
+    private int reconnectTime = 0;
+
     public UptimeClientHandler(TCPCommAdapter tcpCommAdapter_, AgvTelegramNew agvTelegramNew_) {
         tcpCommAdapter = tcpCommAdapter_;
         agvTelegramNew = agvTelegramNew_;
@@ -52,6 +54,7 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
         if (startTime < 0) {
             startTime = System.currentTimeMillis();
         }
+        reconnectTime = 0;
         LOG.info("Conencted to: {} port: {}", tcpCommAdapter.getName(), ctx.channel().remoteAddress());
 //        println("Connected to: " + ctx.channel().remoteAddress());
         ctx.writeAndFlush(Unpooled.copiedBuffer("Hello", CharsetUtil.UTF_8));
@@ -98,7 +101,9 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
     //先触发inactive 再触发 unregister
     @Override
     public void channelInactive(final ChannelHandlerContext ctx) {
-        LOG.info("{} Disconnected from: {}", tcpCommAdapter.getName(), ctx.channel().remoteAddress());
+        if (reconnectTime < 3) {
+            LOG.info("{} Disconnected from: {}", tcpCommAdapter.getName(), ctx.channel().remoteAddress());
+        }
         agvTelegramNew.setCtx(null);
         tcpCommAdapter.getProcessModel().setClientConnectFlag(false);
         tcpCommAdapter.getProcessModel().setVehiclePathState(-1);
@@ -110,11 +115,16 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
     public void channelUnregistered(final ChannelHandlerContext ctx) throws Exception {
 //        println("Sleeping for: " + agvTelegramNew.RECONNECT_DELAY + 's');
         if (agvTelegramNew.reconnectFlag) {
-            LOG.info("{} Sleeping for: {} s", tcpCommAdapter.getName(), agvTelegramNew.RECONNECT_DELAY);
+            if (reconnectTime < 3) {
+                LOG.info("{} Sleeping for: {} s", tcpCommAdapter.getName(), agvTelegramNew.RECONNECT_DELAY);
+            }
+            reconnectTime ++;
             ctx.channel().eventLoop().schedule(new Runnable() {
                 @Override
                 public void run() {
-                    LOG.info("{} Reconnecting to: {}:{}", tcpCommAdapter.getName(), agvTelegramNew.remote_ip, agvTelegramNew.remote_port);
+                    if (reconnectTime < 3) {
+                        LOG.info("{} Reconnecting to: {}:{}", tcpCommAdapter.getName(), agvTelegramNew.remote_ip, agvTelegramNew.remote_port);
+                    }
                     //                println("Reconnecting to: " + agvTelegramNew.remote_ip + ':' + agvTelegramNew.remote_port);
                     agvTelegramNew.disConnect();
                     agvTelegramNew.connect();

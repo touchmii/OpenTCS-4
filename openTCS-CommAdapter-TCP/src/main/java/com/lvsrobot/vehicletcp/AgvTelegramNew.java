@@ -32,6 +32,8 @@ public class AgvTelegramNew {
     private String name;
     public boolean reconnectFlag = true;
 
+    private int reconnectTime = 0;
+
     public void setCtx(ChannelHandlerContext ctx) {
         this.ctx = ctx;
     }
@@ -98,8 +100,12 @@ public class AgvTelegramNew {
                 if (future.cause() != null) {
                     handler.startTime = -1;
 //                    handler.println("Failed to connect");
-                    LOG.error("Failed to connect: {} by: {}", remote_ip, future.cause().getMessage());
+                    reconnectTime ++;
+                    if (reconnectTime < 3) {
+                        LOG.error("Failed to connect: {} by: {}", remote_ip, future.cause().getMessage());
+                    }
                 } else {
+                    reconnectTime = 0;
                     f = future;
                 }
             }

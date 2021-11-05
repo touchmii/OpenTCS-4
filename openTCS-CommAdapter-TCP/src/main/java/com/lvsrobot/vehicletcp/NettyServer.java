@@ -78,10 +78,10 @@ public class NettyServer extends Thread {
             ChannelFuture cf = sbs.bind(port).sync();
 
             // 等待服务端口的关闭；在这个例子中不会发生，但你可以优雅实现；关闭你的服务
-//            cf.channel().closeFuture().sync();
+            cf.channel().closeFuture().sync();
             LOG.info("{} Close server", commAdapter.getName());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOG.error("{} tcp server shutdown: {}", commAdapter.getName(), e.getMessage());
         } finally{
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();

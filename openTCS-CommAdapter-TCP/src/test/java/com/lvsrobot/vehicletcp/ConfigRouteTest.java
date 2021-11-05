@@ -1,6 +1,6 @@
 package com.lvsrobot.vehicletcp;
 
-import  org.junit.Before;
+import io.netty.buffer.ByteBufUtil;
 import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -11,14 +11,17 @@ import org.opentcs.data.model.Triple;
 import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.order.DriveOrder;
 import org.opentcs.data.order.Route;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class ConfigRouteTest {
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigRouteTest.class);
     private static ConfigRoute configRoute = new ConfigRoute();
     private static DriveOrder driveOrder;
     private static DriveOrder driveOrder2;
@@ -54,8 +57,8 @@ class ConfigRouteTest {
         List<Route.Step> stepsList = new ArrayList<>();
         Point destPoint = null;
         for (int i = 0; i < tripleList.size()-1; i++) {
-            Point pointa = new Point("Point"+String.valueOf(i)).withPosition(tripleList.get(i));
-            Point pointb = new Point("Point"+String.valueOf(i+1)).withPosition(tripleList.get(i+1));
+            Point pointa = new Point(String.valueOf(i)).withPosition(tripleList.get(i));
+            Point pointb = new Point(String.valueOf(i+1)).withPosition(tripleList.get(i+1));
             if (i == 3) {
                 pointb.withProperty("door", "JN2");
             }
@@ -102,6 +105,14 @@ class ConfigRouteTest {
     }
 
     @Test
+    void pairPathTest() {
+        byte[] path1 = configRoute.pairPath("112BK->272BK->174");
+        LOG.info("hex path: {}", ByteBufUtil.hexDump(path1));
+        byte[] path2 = configRoute.pairPath("112BK->254BK->182");
+        LOG.info("hex path: {}", ByteBufUtil.hexDump(path2));
+    }
+
+    @Test
     void newDriver() {
         List<Triple> tripleList = new ArrayList<>();
         for (int i=0; i < 5; i++) {
@@ -112,16 +123,27 @@ class ConfigRouteTest {
 
     }
     @Test
+    void halfOrderTest() {
+        List<Triple> tripleList = new ArrayList<>();
+        for (int i=0; i < 55; i++) {
+            tripleList.add(new Triple(1000*i, 0, 0));
+        }
+        DriveOrder driveOrder = newDriverOrder(tripleList);
+        List<DriveOrder> driveOrderList = DoorController.halfOrder(driveOrder);
+        assertEquals(2, driveOrderList.size());
+    }
+    @Test
     void newDriver2() {
         List<Point> pointList = new ArrayList<>();
 //        for (int i=0; i < 5; i++) {
 //            pointList.add(new Point("Point"+String.valueOf(i)).withPosition(new Triple(1000*i, 0, 0)));
 //        }
         pointList.add(new Point("Point"+String.valueOf(3)).withPosition(new Triple(1000*5, 0, 0))
-//                .withProperty("dis", "0")
+                .withProperty("dis", "0")
         );
         pointList.add(new Point("Point"+String.valueOf(4)).withPosition(new Triple(1000*5, 0, 0))
-                .withProperty("dis", "0")
+//                .withProperty("dis", "0")
+//                .withProperty("door", "JN2")
         );
         pointList.add(new Point("Point"+String.valueOf(5)).withPosition(new Triple(1000*5, 0, 0)).withProperty("door", "JN2"));
         pointList.add(new Point("Point"+String.valueOf(6)).withPosition(new Triple(1000*5, 0, 0)).withProperty("door", "JN2"));
@@ -149,6 +171,18 @@ class ConfigRouteTest {
         int a = 0;
 
 
+    }
+
+    @Test
+    void testTurn() {
+        List<Triple> tripleList = new ArrayList<>();
+        tripleList.add(new Triple(0,0,0));
+        tripleList.add(new Triple(5000,0,0));
+        tripleList.add(new Triple(5500,0,0));
+        DriveOrder driveOrder = newDriverOrder(tripleList);
+        configRoute.getPath(driveOrder, 180);
+        String pathDebug = configRoute.getDebugPath();
+        assertEquals("robot path angle 180.0, 0LD->1->2", pathDebug);
     }
 
     @Test

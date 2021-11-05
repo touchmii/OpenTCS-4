@@ -59,14 +59,16 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
             pre_obstacle_time = System.currentTimeMillis();
             commAdapter.getProcessModel().setVehicleProperty("BiZhang", "On");
             commAdapter.getProcessModel().setObstacleFlag(true);
+            commAdapter.addObstaclePath();
         } else if (msg.toString().contains("BiZhang_Flag = 0")) {
             LOG.debug("{} Device BiZhang Off", commAdapter.getName());
             commAdapter.getProcessModel().setVehicleProperty("BiZhang", "Off");
             commAdapter.getProcessModel().setObstacleFlag(false);
-            if ( System.currentTimeMillis() - pre_obstacle_time < 3000) {
+            commAdapter.addObstaclePath();
+            if ( System.currentTimeMillis() - pre_obstacle_time > 300) {
                 commAdapter.addObstaclePath();
                 pre_obstacle_time = System.currentTimeMillis();
-//                LOG.error("{} 雷达误报警);
+                LOG.debug("{} 雷达误报警", commAdapter.getName());
             }
         } else if (msg.toString().contains("robot zanting 2")) {
             commAdapter.getProcessModel().setAbortPathFlag(true);
@@ -84,7 +86,8 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
     // 出现异常的处理
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        System.err.println("server 读取数据出现异常");
+//        System.err.println("server 读取数据出现异常");
+        LOG.error("{} 读取客户端数据出现异常", commAdapter.getName());
         ctx.close();
     }
 

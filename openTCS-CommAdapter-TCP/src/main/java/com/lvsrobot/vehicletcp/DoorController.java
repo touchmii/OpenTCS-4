@@ -83,7 +83,7 @@ public class DoorController {
         List<Route.Step> doorStepList = checkPassDoor(driveOrder);
         List<Route.Step> stepList = driveOrder.getRoute().getSteps();
         List<DriveOrder> driveOrderList = new ArrayList<>();
-        if ( stepList.indexOf(doorStepList.get(0)) == 0) {
+        if ( doorStepList.size() > 0 && stepList.indexOf(doorStepList.get(0)) == 0) {
             //开门点在第一步需要去除，否则一要影响路径分割
             doorStepList.remove(0);
         }
@@ -126,7 +126,11 @@ public class DoorController {
                 }
 //            }
         } else {
-            driveOrderList.add(driveOrder);
+            if (driveOrder.getRoute().getSteps().size() > 49) {
+                driveOrderList = halfOrder(driveOrder);
+            } else {
+                driveOrderList.add(driveOrder);
+            }
         }
         //把举升充电分解成单独的路径,只包含动作的订单不处理
 //        if (driveOrder.getRoute().getSteps().size() > 1 && !driveOrder.getDestination().getOperation().equals("MOVE")) {
@@ -137,6 +141,31 @@ public class DoorController {
 //            driveOrderList.add( new DriveOrder(new DriveOrder.Destination(point.getReference()).withOperation(driveOrder.getDestination().getOperation())).withRoute(route));
 //
 //        }
+        return driveOrderList;
+    }
+
+    public static List<DriveOrder> halfOrder(DriveOrder driveOrder) {
+        List<DriveOrder> driveOrderList = new ArrayList<>();
+        if (driveOrder.getRoute().getSteps().size() > 49) {
+            List<Route.Step> stepListx = driveOrder.getRoute().getSteps();
+            Route.Step splitStep = stepListx.get(49);
+            List<Route.Step> steps1 = new ArrayList<>();
+            List<Route.Step> steps2 = new ArrayList<>();
+            boolean flag = false;
+            for (Route.Step step : stepListx) {
+                if (!step.equals(splitStep) && !flag) {
+                    steps1.add(step);
+                } else {
+                    flag = true;
+                    steps2.add(step);
+                }
+            }
+            Route route1 =  new Route(steps1, steps1.size());
+            Route route2 =  new Route(steps2, steps2.size());
+            driveOrderList.add(new DriveOrder(new DriveOrder.Destination(steps1.get(steps1.size()-1).getDestinationPoint().getReference())).withRoute(route1));
+            driveOrderList.add(new DriveOrder(new DriveOrder.Destination(steps2.get(steps2.size()-1).getDestinationPoint().getReference())).withRoute(route2));
+
+        }
         return driveOrderList;
     }
 }

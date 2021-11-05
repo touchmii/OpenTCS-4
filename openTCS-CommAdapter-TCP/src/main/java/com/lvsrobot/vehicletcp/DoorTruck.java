@@ -69,7 +69,7 @@ public class DoorTruck extends CyclicTask {
     }
 
     public DoorTruck(TCPProcessModel processModel, String name) {
-        super(200);
+        super(1000);
         this.processModel = processModel;
         this.name = name;
         timer = new Timer();
@@ -112,7 +112,7 @@ public class DoorTruck extends CyclicTask {
         ObjectMapper mapper = new ObjectMapper();
         try {
             doorStatus = mapper.readValue(status, DoorStatus.class);//readValue到一个实体类中.
-            if (doorStatus.getAction().equals("open") && !doorStatus.getStatus().equals("open")) {
+            if (doorStatus.getAction().equals("open") && !doorStatus.getStatus().equals("opened")) {
                 //不能在回调函数里面调用时钟
 //                open_timer.schedule(new CheckOpen(name), open_check_time);
                 addRecheckDoor(name);
@@ -125,6 +125,17 @@ public class DoorTruck extends CyclicTask {
                 recheckOpenQueue.add(name);
             }*/
             doorStatus = new DoorStatus();
+            /*if (status.contains("error")) {
+                doorStatus.setError(0);
+                if (status.contains("Door is already open") || status.contains("\"status\":\"open\"")) {
+                    doorStatus.setStatus("opened");
+                } else {
+                    doorStatus.setStatus("closed");
+                }
+                if (status.contains("\"action\":\"open\"") && !status.contains("Door is already open")) {
+                    addRecheckDoor(name);
+                }
+            }*/
         }
         doorStatusMap.put(name, doorStatus);
     }
