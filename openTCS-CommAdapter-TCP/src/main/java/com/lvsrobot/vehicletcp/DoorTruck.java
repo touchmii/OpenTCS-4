@@ -77,6 +77,10 @@ public class DoorTruck extends CyclicTask {
         timer.schedule(new CheckDoor(), delay_check_time, cycle_check_time);
     }
 
+    public Point peekDoor() { return pointQueue.peek(); }
+
+    public void pollDoor() { pointQueue.poll(); }
+
     public void cleanDoor() {
         pointQueue.clear();
     }
@@ -89,9 +93,14 @@ public class DoorTruck extends CyclicTask {
         pointQueue.add(point.withProperty("door", name).withProperty("action", "close"));
     }
 
-    public void addRecheckDoor(String name) {
+    public void addRecheckOpenDoor(String name) {
         if (recheckOpenQueue.size() == 0) {
             recheckOpenQueue.add(name);
+        }
+    }
+    public void addRecheckCloseDoor(String name) {
+        if (recheckCloseQueue.size() == 0) {
+            recheckCloseQueue.add(name);
         }
     }
 
@@ -115,11 +124,13 @@ public class DoorTruck extends CyclicTask {
             if (doorStatus.getAction().equals("open") && !doorStatus.getStatus().equals("opened")) {
                 //不能在回调函数里面调用时钟
 //                open_timer.schedule(new CheckOpen(name), open_check_time);
-                addRecheckDoor(name);
+                addRecheckOpenDoor(name);
 //                recheckOpenQueue.add(name);
             }
         } catch (Exception e) {
-            LOG.debug("{} door: {} action: {} error", this.name, name, action);
+            if (!action.equals("status")) {
+                LOG.debug("{} door: {} action: {} error", this.name, name, action);
+            }
 //            System.out.println(e.getMessage());
             /*if (action.equals("open")) {
                 recheckOpenQueue.add(name);
@@ -165,6 +176,21 @@ public class DoorTruck extends CyclicTask {
         }
     }
 
+    public class CheckClose extends TimerTask {
+        private String doorName;
+
+        public CheckClose(String doorName) {
+            this.doorName = doorName;
+        }
+
+        @Override
+        public void run() {
+            String door = recheckCloseQueue.poll();
+            doorAction(doorName, "close");
+            LOG.debug("recheck close door: {} queue: {}" ,doorName, door);
+        }
+    }
+
     @Override
     public void terminate() {
         httpClient = null;
@@ -189,6 +215,10 @@ public class DoorTruck extends CyclicTask {
 //                    doorAction(doorName, "open");
 //                LOG.info("recheck open door: {}", doorName);
                 open_timer.schedule(new CheckOpen(doorName), 500);
+            }
+            if (recheckCloseQueue.size() > 0) {
+                String doorName = recheckCloseQueue.peek();
+                open_timer.schedule(new CheckClose(doorName), 1000);
             }
 
         } catch (Exception e) {

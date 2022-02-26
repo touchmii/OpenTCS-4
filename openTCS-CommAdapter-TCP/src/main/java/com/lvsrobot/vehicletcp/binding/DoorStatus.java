@@ -93,4 +93,22 @@ public class DoorStatus {
     public String getUtcTime() {
         return utcTime;
     }
+
+    @Override
+    public String toString() {
+        return "DoorStatus{" +
+                "error=" + error +
+                ", doorID=" + doorID +
+                ", controlPin=" + controlPin +
+                ", statusPin=" + statusPin +
+                ", action='" + action + '\'' +
+                ", message='" + message + '\'' +
+                ", status='" + status + '\'' +
+                ", relayID='" + relayID + '\'' +
+                ", hold_time='" + hold_time + '\'' +
+                ", deviceID='" + deviceID + '\'' +
+                ", firmwareVersion='" + firmwareVersion + '\'' +
+                ", utcTime='" + utcTime + '\'' +
+                '}';
+    }
 }

@@ -37,12 +37,18 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
     private final AgvTelegramNew agvTelegramNew;
     public long startTime = -1;
     private ChannelHandlerContext lctx = null;
+    private double batteryFix = 1.0;
 
     private int reconnectTime = 0;
 
     public UptimeClientHandler(TCPCommAdapter tcpCommAdapter_, AgvTelegramNew agvTelegramNew_) {
         tcpCommAdapter = tcpCommAdapter_;
         agvTelegramNew = agvTelegramNew_;
+        String batt = tcpCommAdapter.getProcessModel().getVehicle().getProperty("battFix");
+        if (batt != null) {
+            batteryFix = Double.parseDouble(batt);
+        }
+
     }
 
     private static Integer byteToUnsignedInt(byte data) {
@@ -71,9 +77,17 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
         byte[] retBytes = (byte[]) msg;
         agvInfo.setPosition(byteToUnsignedInt(retBytes[6]) << 8 | byteToUnsignedInt(retBytes[7]));
         agvInfo.setSpeed(byteToUnsignedInt(retBytes[8]));
-        agvInfo.setAngle(byteToUnsignedInt(retBytes[9]));
+        int angle = byteToUnsignedInt(retBytes[9]);
+        int p = agvInfo.getPosition();
+        String pp = String.valueOf(p);
+        if (tcpCommAdapter.getFixupPoints().containsKey(pp)) {
+            agvInfo.setAngle(angle, tcpCommAdapter.getFixupPoints().get(pp));
+//            LOG.debug("point: {}, fixupangle: {}", p, agvInfo.getAngle());
+        } else {
+            agvInfo.setAngle(angle);
+        }
         agvInfo.setTuopan(byteToUnsignedInt(retBytes[10]));
-        agvInfo.setBattery(byteToUnsignedInt(retBytes[11]));
+        agvInfo.setBattery((int) (batteryFix * byteToUnsignedInt(retBytes[11])));
 //        agvInfo.setException(byteToUnsignedInt(retBytes[5]));
         agvInfo.setStatus(byteToUnsignedInt(retBytes[12]));
         //避障距离cm

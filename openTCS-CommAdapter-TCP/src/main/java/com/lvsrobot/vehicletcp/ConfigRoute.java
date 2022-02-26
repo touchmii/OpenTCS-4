@@ -30,6 +30,7 @@ public class ConfigRoute {
     private Map<String , Integer> actionMap = new HashMap<String, Integer>(){{
         put("LL" , 4);
         put("RR" , 0x10);
+        put("RU" , 0x11);
         put("LD" , 7);
         put("BK" , 0x17);
         put("BB" , 0x20);
@@ -258,6 +259,22 @@ public class ConfigRoute {
             }
         }
 
+        if (driveorder.getRoute().getFinalDestinationPoint().getProperty("turn") != null) {
+            switch (driveorder.getRoute().getFinalDestinationPoint().getProperty("turn")) {
+                case "RR":
+                    path[11 + steps.size() * 4] = actionMap.get("RR").byteValue();
+                    debug_path += "RR";
+                    break;
+                case "LL":
+                    path[11 + steps.size() * 4] = actionMap.get("LL").byteValue();
+                    debug_path += "LL";
+                    break;
+                default:
+                    break;
+
+            }
+        }
+
         path[9+steps.size()*4] = (byte)(point2_id/256);
         path[10+steps.size()*4] = (byte)(point2_id%256);
         switch (driveorder.getDestination().getOperation()) {
@@ -265,11 +282,20 @@ public class ConfigRoute {
 //                path[1] = 0;
                 break;
             case "LOAD":
-//                path[11+steps.size()*4] = 2;;
-//                path[path.length-5] = path[path.length-1];
+                if (path[11 + steps.size() * 4] > 0) {
+                    path[11 + steps.size() * 4] = (byte)(path[11 + steps.size() * 4] + 1);
+                } else {
+                    path[11 + steps.size() * 4] = (byte)2;
+                }
+                debug_path += "UU";
                 break;
             case "UNLOAD":
-//                path[11+steps.size()*4] = 3;;
+                if (path[11 + steps.size() * 4] > 0) {
+                    path[11 + steps.size() * 4] = (byte)(path[11 + steps.size() * 4] + 2);
+                } else {
+                    path[11 + steps.size() * 4] = (byte)3;
+                }
+                debug_path += "DD";
                 break;
             case "CHARGING":
 //                path[1] = 3;

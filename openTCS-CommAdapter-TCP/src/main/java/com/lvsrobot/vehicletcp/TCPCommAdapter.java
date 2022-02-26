@@ -97,10 +97,20 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
     private String curPoint;
     private String prePoint;
 
+    private double preAngle = 0.0;
+    private double curAngle = 0.0;
+
     private Queue<String> updatePointQueue = new LinkedBlockingQueue<>();
+    private Queue<Double> updateAngleQueue = new LinkedBlockingQueue<>();
 
     private List<String> obstacleOffPoint;
     private List<String> obstacleErrorPoint;
+
+    public Map<String, Integer> getFixupPoints() {
+        return fixupPoints;
+    }
+
+    private Map<String, Integer> fixupPoints = new HashMap<>();
 
     public Map<String, String> getDoorMap() {
         return doorMap;
@@ -118,6 +128,7 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
      *                          父类BasicVehicleCommAdapter引用了ExampleProcessModel的父类
      *                          ProcessModel，此处将自己实现的类关联在以前，可以让内核调用到。
      */
+    @SuppressWarnings("deprecation")
     @Inject
     public TCPCommAdapter(@Assisted Vehicle vehicle, TCPAdapterComponentsFactory componentsFactory, @KernelExecutor ExecutorService kernelExecutor, TransportOrderService orderService, @Nonnull TCSObjectService objectService) {
         //父类BasicVehicleCommAdapter实例需要的参数
@@ -148,10 +159,12 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
         }
         obstacleOffPoint = objectService.fetchObjects(Point.class).stream().filter(p -> p.getProperty("obstacle") != null).map(p -> p.getName()).collect(Collectors.toList());
         obstacleErrorPoint = objectService.fetchObjects(Point.class).stream().filter(p -> p.getProperty("offradar") != null).map(p -> p.getName()).collect(Collectors.toList());
+        objectService.fetchObjects(Point.class).stream().filter(p -> p.getProperty("fixangle") != null).forEach(p -> fixupPoints.put(p.getName(), Integer.parseInt(p.getProperty("fixangle"))));
         objectService.fetchObjects(Point.class).stream().filter(p -> p.getProperty("door") != null).forEach(p -> doorMap.put(p.getProperty("door"), p.getProperty("ip")));
         LOG.info("{} obstacle off point: {}", getName(), obstacleOffPoint.toString());
         LOG.info("{} obstacle error point: {}", getName(), obstacleErrorPoint.toString());
         LOG.info("{} doorMap : {}", getName(), doorMap.toString());
+        LOG.info("{} fixupPoint : {}", getName(), fixupPoints.toString());
 
         pathTruck = new PathTruck(getProcessModel(), this);
         Thread threadPathTruck = new Thread(pathTruck, getName() + "-PathTruck");
@@ -375,9 +388,45 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
 
     public void addObstaclePath() {
         if (obstacleErrorPoint.contains(curPoint)) {
-            LOG.debug("{} 雷达误报警 点:  {}", getName(), curPoint);
-            pathTruck.addPath(radarDis(0, 35, 10));
-            pathTruck.addPath(radarDis(0, 35, 10));
+            double ob = getProcessModel().getObstacle();
+            Point p = objectService.fetchObject(Point.class, curPoint);
+            int obstacle = Integer.valueOf(p.getProperty("obstacle"));
+            String obstacleAngle = p.getProperty("obstacleAngle");
+            LOG.info("point: {}, config obstacle: {}, configAngle: {}", curPoint, obstacle, obstacleAngle);
+            if (obstacleAngle == null && ob > obstacle) {
+                if (obstacle == 1) {
+                    obstacle = 0;
+                }
+                LOG.debug("{} 误报警位置无角度: {},  当前避障距离: {}, 设置距离: {}", getName(), curPoint, ob, obstacle);
+                pathTruck.addPath(radarDis(obstacle, 35, 10));
+                pathTruck.addPath(radarDis(obstacle, 35, 10));
+//                pathTruck.addPath(radarDis(obstacle, 35, 10));
+            } else {
+                boolean flag = false;
+                if (obstacleAngle.equals("0") && preAngle == 0) {
+                    flag = true;
+                } else if (obstacleAngle.equals("90") && preAngle == 90) {
+                    flag = true;
+                } else if (obstacleAngle.equals("180") && preAngle == 180) {
+                    flag = true;
+                } else if (obstacleAngle.equals("270") && preAngle == 270) {
+                    flag = true;
+                } else if (obstacleAngle.equals("1800") && (preAngle == 180 || preAngle == 0)) {
+                    flag = true;
+                } else if (obstacleAngle.equals("2700") && (preAngle == 90 || preAngle == 270)) {
+                    flag = true;
+                }
+                if (flag) {
+                    if (obstacle == 1) {
+                        obstacle = 0;
+                    }
+                    LOG.debug("{} 误报警位置带角度: {}, 角度: {},  当前避障距离: {}, 设置距离: {}", getName(), curPoint, preAngle, ob, obstacle);
+                    pathTruck.addPath(radarDis(obstacle, 35, 10));
+                    pathTruck.addPath(radarDis(obstacle, 35, 10));
+//                    pathTruck.addPath(radarDis(obstacle, 35, 10));
+                }
+            }
+
         }
     }
 
@@ -403,12 +452,21 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
                     prePoint = curPoint;
                 }
             }
+            curAngle = agvInfo.getAngle();
+            if (curAngle != preAngle) {
+                preAngle = curAngle;
+                updateAngleQueue.add(curAngle);
+                LOG.info("{} 车辆方向发生改变: {}", getName(), curAngle);
+            }
             getProcessModel().setVehiclePathState(agvInfo.getStatus());
             getProcessModel().setCurChargeState(agvInfo.getCharge());
 
-            getProcessModel().setVehiclePosition(curPoint);
+            double angle = agvInfo.getAngle();
+            if (angle >= 0) {
+                getProcessModel().setVehicleOrientationAngle(agvInfo.getAngle());
+                getProcessModel().setVehiclePosition(curPoint);
+            }
             getProcessModel().setObstacle(agvInfo.getObstacle());
-            getProcessModel().setVehicleOrientationAngle(agvInfo.getAngle());
             getProcessModel().setVehicleEnergyLevel(agvInfo.getBattery());
 
         }
@@ -416,11 +474,45 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
 
     public void checkObstacle() {
         //TODO 初始化一次性获取
+        int ob = getProcessModel().getObstacle();
         if (!obstacleOffPoint.contains(curPoint)) {
-            if (getProcessModel().getObstacle() < 59) {
-                LOG.debug("{} 开避障位置: {}", getName(), curPoint);
+            if (ob < 59) {
+                LOG.debug("{} 开避障位置: {}, 距离: {}", getName(), curPoint, getProcessModel().getObstacle());
                 pathTruck.addPath(radarDis(60, 35, 10));
                 pathTruck.addPath(radarDis(60, 35, 10));
+            }
+        }
+        else {
+            Point p = objectService.fetchObject(Point.class, curPoint);
+            int obstacle = Integer.valueOf(p.getProperty("obstacle"));
+            String obstacleAngle = p.getProperty("obstacleAngle");
+            LOG.info("point: {}, config obstacle: {}, configAngle: {}", curPoint, obstacle, obstacleAngle);
+            if (obstacleAngle == null && ob > obstacle) {
+                LOG.debug("{} 关避障位置无角度: {},  当前避障距离: {}, 设置距离: {}", getName(), curPoint, ob, obstacle);
+                pathTruck.addPath(radarDis(obstacle, 35, 10));
+                pathTruck.addPath(radarDis(obstacle, 35, 10));
+//                pathTruck.addPath(radarDis(obstacle, 35, 10));
+            } else {
+                boolean flag = false;
+                if (obstacleAngle.equals("0") && preAngle == 0) {
+                    flag = true;
+                } else if (obstacleAngle.equals("90") && preAngle == 90) {
+                    flag = true;
+                } else if (obstacleAngle.equals("180") && preAngle == 180) {
+                    flag = true;
+                } else if (obstacleAngle.equals("270") && preAngle == 270) {
+                    flag = true;
+                } else if (obstacleAngle.equals("1800") && (preAngle == 180 || preAngle == 0)) {
+                    flag = true;
+                } else if (obstacleAngle.equals("2700") && (preAngle == 90 || preAngle == 27)) {
+                    flag = true;
+                }
+                if (flag) {
+                    LOG.debug("{} 关避障位置带角度: {}, 角度: {},  当前避障距离: {}, 设置距离: {}", getName(), curPoint, preAngle, ob, obstacle);
+                    pathTruck.addPath(radarDis(obstacle, 35, 10));
+                    pathTruck.addPath(radarDis(obstacle, 35, 10));
+//                    pathTruck.addPath(radarDis(obstacle, 35, 10));
+                }
             }
         }
 
@@ -441,12 +533,23 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
         List<String> remainCommand = getSentQueue().stream().map(movementCommand -> movementCommand.getStep().getDestinationPoint().getName()).collect(Collectors.toList());
         if (remainCommand.contains(point)) {
             while (!command.getStep().getDestinationPoint().getName().equals(point)) {
+                Point p = pathTruck.getDoorTruck().peekDoor();
+                //判断p 非空，否则导致无法执行下面的代码
+                if (p != null && command.getStep().getDestinationPoint().getName().equals(p.getName())) {
+                    pathTruck.getDoorTruck().pollDoor();
+                    if (p.getProperty("action").equals("close")) {
+                        LOG.info("{} add close door: {} point: {}", getName(), p.getProperty("door"), p.getName());
+                        pathTruck.getDoorTruck().addRecheckCloseDoor(p.getProperty("door"));
+                    }
+                }
+
                 getSentQueue().poll();
                 getProcessModel().commandExecuted(command);
                 LOG.info("{} miss point: {}, current  point: {}", getName(), command.getStep().getDestinationPoint().getName(), point);
                 getProcessModel().publishUserNotification(new UserNotification(MessageFormatter.format("miss to point: {}", command.getStep().getDestinationPoint().getName()).getMessage(), UserNotification.Level.INFORMATIONAL));
                 command = getSentQueue().peek();
-                //TODO miss to point后不发送任务
+                //TODO miss to point后不发送任务,开关门受影响
+
             }
             getSentQueue().poll();
             getProcessModel().commandExecuted(command);
@@ -480,8 +583,14 @@ public class TCPCommAdapter extends BasicVehicleCommAdapter {
         @Override
         protected void runActualTask() {
             try {
+                //TODO 需要定时检查路径完成状态，有时因为网络原因导致位置很久没有更新
                 if (updatePointQueue.peek() != null && getSentQueue().peek() != null) {
                     checkMovement(updatePointQueue.poll());
+                    checkObstacle();
+                }
+
+                if (updateAngleQueue.peek() != null) {
+                    updateAngleQueue.poll();
                     checkObstacle();
                 }
 

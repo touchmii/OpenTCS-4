@@ -98,9 +98,24 @@ public class DoorController {
                         Steps_.add(step);
                         if (step.equals(stepList.get(stepList.size()-1))) {
                             Route route =  new Route(Steps_, Steps_.size());
-                            driveOrderList.add(
-                                    new DriveOrder(new DriveOrder.Destination(Steps_.get(Steps_.size()-1).getDestinationPoint().getReference())).withRoute(route)
-                            );
+                            DriveOrder.Destination dest = new DriveOrder.Destination(Steps_.get(Steps_.size()-1).getDestinationPoint().getReference());
+                            //必须通过两步才能设置动作
+                            dest = dest.withOperation(driveOrder.getDestination().getOperation());
+                            LOG.debug("Dest op : {}, dest: {}", driveOrder.getDestination().getOperation(), dest);
+                            DriveOrder order = new DriveOrder(dest).withRoute(route);
+//                            DriveOrder order = new DriveOrder(new DriveOrder.Destination(Steps_.get(Steps_.size()-1).getDestinationPoint().getReference()).withOperation(driveOrder.getDestination().getOperation())).withRoute(route);
+                            if (route.getSteps().size() > 51) {
+                                List<DriveOrder> orderList = halfOrder(order);
+                                if (orderList.size() > 1) {
+                                    driveOrderList.add(orderList.get(0));
+                                    driveOrderList.add(orderList.get(1));
+                                } else {
+                                    LOG.error("分割已分割的路径失败");
+                                }
+
+                            } else {
+                                driveOrderList.add(order);
+                            }
                         }
                     } else {
 //                        Route.Step removeStep = Steps_.get(Steps_.size()-1);
@@ -113,7 +128,22 @@ public class DoorController {
 //                                LOG.error("set path open door error: {}", e.getMessage());
 //                            }
                             Route route =  new Route(Steps_, Steps_.size());
-                            driveOrderList.add(new DriveOrder(new DriveOrder.Destination(Steps_.get(Steps_.size()-1).getDestinationPoint().getReference())).withRoute(route));
+                            DriveOrder.Destination dest = new DriveOrder.Destination(Steps_.get(Steps_.size()-1).getDestinationPoint().getReference());
+//                            dest = dest.withOperation(driveOrder.getDestination().getOperation());
+                            DriveOrder order = new DriveOrder(dest).withRoute(route);
+                            if (route.getSteps().size() > 51) {
+                                List<DriveOrder> orderList = halfOrder(order);
+                                if (orderList.size() > 1) {
+                                    driveOrderList.add(orderList.get(0));
+                                    driveOrderList.add(orderList.get(1));
+                                } else {
+                                    LOG.error("分割已分割的路径失败");
+                                }
+
+                            } else {
+                                driveOrderList.add(order);
+                            }
+//                            driveOrderList.add(new DriveOrder(new DriveOrder.Destination(Steps_.get(Steps_.size()-1).getDestinationPoint().getReference())).withRoute(route));
                             Steps_ = new ArrayList<>();
     //                        Steps_.add(removeStep);
                             Steps_.add(step);
@@ -126,7 +156,8 @@ public class DoorController {
                 }
 //            }
         } else {
-            if (driveOrder.getRoute().getSteps().size() > 49) {
+            //TODO 经过自动门的路径超过长度也需要分割
+            if (driveOrder.getRoute().getSteps().size() > 51) {
                 driveOrderList = halfOrder(driveOrder);
             } else {
                 driveOrderList.add(driveOrder);
@@ -146,9 +177,9 @@ public class DoorController {
 
     public static List<DriveOrder> halfOrder(DriveOrder driveOrder) {
         List<DriveOrder> driveOrderList = new ArrayList<>();
-        if (driveOrder.getRoute().getSteps().size() > 49) {
+        if (driveOrder.getRoute().getSteps().size() > 51) {
             List<Route.Step> stepListx = driveOrder.getRoute().getSteps();
-            Route.Step splitStep = stepListx.get(49);
+            Route.Step splitStep = stepListx.get(51);
             List<Route.Step> steps1 = new ArrayList<>();
             List<Route.Step> steps2 = new ArrayList<>();
             boolean flag = false;
@@ -163,7 +194,7 @@ public class DoorController {
             Route route1 =  new Route(steps1, steps1.size());
             Route route2 =  new Route(steps2, steps2.size());
             driveOrderList.add(new DriveOrder(new DriveOrder.Destination(steps1.get(steps1.size()-1).getDestinationPoint().getReference())).withRoute(route1));
-            driveOrderList.add(new DriveOrder(new DriveOrder.Destination(steps2.get(steps2.size()-1).getDestinationPoint().getReference())).withRoute(route2));
+            driveOrderList.add(new DriveOrder(new DriveOrder.Destination(steps2.get(steps2.size()-1).getDestinationPoint().getReference()).withOperation(driveOrder.getDestination().getOperation())).withRoute(route2));
 
         }
         return driveOrderList;

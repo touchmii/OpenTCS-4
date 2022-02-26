@@ -48,19 +48,20 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
         //BiZhang_Flag = 1
-        if (msg.toString().contains("Not Find 2DCord") || msg.toString().contains("Robot PianLi LuXian")) {
+        String m = msg.toString();
+        if (m.contains("Not Find 2DCord") || msg.toString().contains("Robot PianLi LuXian")) {
             LOG.error("{} Device Not Find Code", commAdapter.getName());
             if (commAdapter.getProcessModel().getVehicleState().equals(Vehicle.State.EXECUTING)) {
                 commAdapter.getProcessModel().setVehicleProperty("runError", "ERROR");
                 commAdapter.getProcessModel().setVehicleState(Vehicle.State.ERROR);
             }
-        } else if (msg.toString().contains("BiZhang_Flag = 1")) {
+        } else if (m.contains("BiZhang_Flag = 1")) {
             LOG.debug("{} Device BiZhang On", commAdapter.getName());
             pre_obstacle_time = System.currentTimeMillis();
             commAdapter.getProcessModel().setVehicleProperty("BiZhang", "On");
             commAdapter.getProcessModel().setObstacleFlag(true);
             commAdapter.addObstaclePath();
-        } else if (msg.toString().contains("BiZhang_Flag = 0")) {
+        } else if (m.contains("BiZhang_Flag = 0")) {
             LOG.debug("{} Device BiZhang Off", commAdapter.getName());
             commAdapter.getProcessModel().setVehicleProperty("BiZhang", "Off");
             commAdapter.getProcessModel().setObstacleFlag(false);
@@ -70,16 +71,20 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
                 pre_obstacle_time = System.currentTimeMillis();
                 LOG.debug("{} 雷达误报警", commAdapter.getName());
             }
-        } else if (msg.toString().contains("robot zanting 2")) {
+        } else if (m.contains("robot zanting 2")) {
             commAdapter.getProcessModel().setAbortPathFlag(true);
             commAdapter.getProcessModel().setVehicleProperty("AbortPath", "On");
             LOG.error("{} Device zangting 2", commAdapter.getName());
-        } else if (msg.toString().contains("robot setpathflag 0")
+        } else if (m.contains("robot setpathflag 0")
                 && commAdapter.getProcessModel().getVehicleState().equals(Vehicle.State.EXECUTING)) {
             commAdapter.getProcessModel().setVehicleProperty("AbortPath", "");
             commAdapter.getProcessModel().setVehicleProperty("runError", "");
+            commAdapter.getProcessModel().setVehicleProperty("pathFlag", "1");
             LOG.error("{} Device setpathflag 0", commAdapter.getName());
             commAdapter.getProcessModel().setVehicleState(Vehicle.State.ERROR);
+        } else if (m.contains("Lifter Move OK")) {
+            LOG.info("{} Device Lift OK", commAdapter.getName());
+            commAdapter.getProcessModel().setVehicleProperty("LiftFinish", "1");
         }
     }
 

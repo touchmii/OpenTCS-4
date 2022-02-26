@@ -7,6 +7,7 @@
  */
 package org.opentcs.kernel.extensions.servicewebapi.v1.order;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.opentcs.access.KernelRuntimeException;
 import org.opentcs.access.to.order.DestinationCreationTO;
 import org.opentcs.access.to.order.TransportOrderCreationTO;
@@ -24,6 +25,7 @@ import org.opentcs.data.model.Vehicle;
 import org.opentcs.data.order.TransportOrder;
 import org.opentcs.drivers.vehicle.VehicleCommAdapterEvent;
 import org.opentcs.drivers.vehicle.commands.PublishEventCommand;
+import org.opentcs.kernel.extensions.servicewebapi.ServiceWebApiConfiguration;
 import org.opentcs.kernel.extensions.servicewebapi.v1.order.binding.Command;
 import org.opentcs.kernel.extensions.servicewebapi.v1.order.binding.Destination;
 import org.opentcs.kernel.extensions.servicewebapi.v1.order.binding.Property;
@@ -72,6 +74,11 @@ public class OrderHandler {
   private final TCSObjectService objectService;
 
   /**
+   * The interface configuration.
+   */
+  private final ServiceWebApiConfiguration configuration;
+
+  /**
    * Creates a new instance.
    *
    * @param orderService Used to create transport orders.
@@ -79,13 +86,17 @@ public class OrderHandler {
    * @param dispatcherService Used to withdraw transport orders.
    * @param kernelExecutor Executes tasks modifying kernel data.
    */
+  @SuppressWarnings("deprecation")
   @Inject
-  public OrderHandler(TransportOrderService orderService,
+  public OrderHandler(ServiceWebApiConfiguration configuration,
+                      TransportOrderService orderService,
                       VehicleService vehicleService,
                       DispatcherService dispatcherService,
                       @KernelExecutor ExecutorService kernelExecutor,
+
 //                      @ServiceCallWrapper CallWrapper callWrapper,
                       @Nonnull TCSObjectService objectService) {
+    this.configuration = requireNonNull(configuration, "configuration");
     this.orderService = requireNonNull(orderService, "orderService");
     this.vehicleService = requireNonNull(vehicleService, "vehicleService");
     this.dispatcherService = requireNonNull(dispatcherService, "dispatcherService");
@@ -93,7 +104,7 @@ public class OrderHandler {
 //    this.callWrapper = requireNonNull(callWrapper, "callWrapper");
     this.objectService = requireNonNull(objectService, "objectService");
   }
-
+  
   public String replacePoint(String name, String X, String Y) {
     try {
       Point point = objectService.fetchObject(Point.class,name);
@@ -149,9 +160,14 @@ public class OrderHandler {
     requireNonNull(order, "order");
     TransportOrderCreationTO to;
     if (name.equals("Shortcuts")) {
+      String name_ = "";
+      for(Destination dest :order.getDestinations()) {
+        name_ += dest.getLocationName();
+        name_ += "-";
+      }
 
       to
-          = new TransportOrderCreationTO(String.format("TOrder-%s", UUID.randomUUID()), destinations(order))
+          = new TransportOrderCreationTO(String.format("Short-%s%s", name_, RandomStringUtils.randomAlphanumeric(8)), destinations(order))
               .withIntendedVehicleName(order.getIntendedVehicle())
               .withDependencyNames(new HashSet<>(order.getDependencies()))
               .withDeadline(deadline(order))
@@ -251,26 +267,26 @@ public class OrderHandler {
 //    return vehicleService.fetchObject(Vehicle.class, vehicleName).getReference();
 //  }
 
-  /**
+/*   *//**
    * Send Command to Adapter
    * AdapterComomand 适配器命令
    * @param command
-   */
-//  private void sendCommAdapterCommand(AdapterCommand command) {
-//    try {
-//      TCSObjectReference<Vehicle> vehicleRef = getVehicleReference();
-//      callWrapper.call(() -> vehicleService.sendCommAdapterCommand(vehicleRef, command));
-//    } catch (Exception ex) {
-//      LOG.warn("Error sending comm adapter command '{}'", command, ex);
-//    }
-//  }
+   *//*
+  private void sendCommAdapterCommand(AdapterCommand command) {
+    try {
+      TCSObjectReference<Vehicle> vehicleRef = getVehicleReference();
+      callWrapper.call(() -> vehicleService.sendCommAdapterCommand(vehicleRef, command));
+    } catch (Exception ex) {
+      LOG.warn("Error sending comm adapter command '{}'", command, ex);
+    }
+  }*/
 
 
   private Instant deadline(Transport order) {
 //    return order.getDeadline() == null ? Instant.MAX : order.getDeadline();
     if (order.getDeadline() == null) {
-//      return Instant.MAX;
-      return Instant.now().minus(60, ChronoUnit.MINUTES);
+      //截止时间为下单时间后的15分钟
+      return Instant.now().plus(configuration.defaultDeadline(), ChronoUnit.MINUTES);
     } else {
       return order.getDeadline() == Instant.MIN ? Instant.now().minus(10, ChronoUnit.MINUTES) : order.getDeadline();
     }

@@ -12,11 +12,18 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 
+@SuppressWarnings("unchecked")
 public class PathTruck extends CyclicTask {
     private static final Logger LOG = LoggerFactory.getLogger(PathTruck.class);
     private TCPProcessModel processModel;
     private AgvTelegramNew agv;
+
+    public DoorTruck getDoorTruck() {
+        return doorTruck;
+    }
+
     private DoorTruck doorTruck;
     private Thread doorTruckThread;
     private Queue<byte[]> pathQueue = new LinkedBlockingQueue<>();
@@ -46,6 +53,7 @@ public class PathTruck extends CyclicTask {
     List<Point> waitPoint;
 
     private Timer delay_timer;
+    private Timer recheck_close_door_timer;
 
     private static long sleep_time = 200;
     private static long idle_check_time = 3000;
@@ -77,6 +85,7 @@ public class PathTruck extends CyclicTask {
         doorTruckThread.start();
 
         delay_timer = new Timer();
+        recheck_close_door_timer = new Timer();
 
     }
 
@@ -173,6 +182,16 @@ public class PathTruck extends CyclicTask {
         return flag;
     }
 
+    public Point getWaitPoint(String point) {
+        Point pointX = null;
+        for (Point p : waitPoint) {
+            if (p.getName().equals(point)) {
+                pointX = p;
+            }
+        }
+        return pointX;
+    }
+
     public String getRoom(String point) {
         String flag = null;
         for (Point p : waitPoint) {
@@ -184,8 +203,8 @@ public class PathTruck extends CyclicTask {
     }
 
     public void resumePath(boolean force) throws Exception {
-        if (!processModel.getVehicleState().equals(Vehicle.State.ERROR) ||
-                processModel.isAbortPathFlag()
+        String flag = processModel.getVehicle().getProperty("setFlag");
+        if (flag != null && flag.equals("1")
         ) {
             throw new Exception(("车辆未发生错误"));
         }
@@ -193,6 +212,10 @@ public class PathTruck extends CyclicTask {
         if (processModel.getVehiclePathState() != path_state_idle) {
             throw new Exception(("车辆未处于待命状态"));
         }
+        if (commAdapter.getcurrentDriveOrder() == null) {
+            throw new Exception(("车辆所有任务都执行完毕"));
+        }
+
 //        driveOrder.getRoute().getSteps().stream().map(step -> step.getSourcePoint().getName().equals())
         //TODO 检测当前位置是否在路径上
         LOG.info("resume Driver order: {}", sendSplitDriveOrder.toString());
@@ -214,24 +237,28 @@ public class PathTruck extends CyclicTask {
             Route route = new Route(newStepList, newStepList.size());
             DriveOrder newDriverOrder;
             try {
+                //创建带动作的订单必须分两步
                 String opration = sendSplitDriveOrder.getDestination().getOperation();
+                DriveOrder.Destination dest = new DriveOrder.Destination(stepList.get(stepList.size() - 1).getDestinationPoint().getReference());
+                dest = dest.withOperation(opration);
+                newDriverOrder = new DriveOrder(dest).withRoute(route);
+                configRoute.setRoute(newDriverOrder);
+                configRoute.setAngle(processModel.getVehicleOrientationAngle());
+                byte[] path = configRoute.getPath();
 
-                newDriverOrder = new DriveOrder(new DriveOrder.Destination(stepList.get(stepList.size() - 1).getDestinationPoint().getReference()).withOperation(opration)).withRoute(route);
+                addPath(path);
+                pathExecQueue.add(path);
+                LOG.info("{}, send resume path to vehicle: {}", name, configRoute.getDebugPath());
+                processModel.setVehicleState(Vehicle.State.EXECUTING);
+                processModel.getVehicle().setProperty("setFlag", "0");
             } catch (Exception e) {
+                LOG.error("{} 创建恢复路径失败: {}", name, e.getMessage());
 
-            } finally {
-                newDriverOrder = new DriveOrder(new DriveOrder.Destination(stepList.get(stepList.size() - 1).getDestinationPoint().getReference())).withRoute(route);
-
+//            } finally {
+//                newDriverOrder = new DriveOrder(new DriveOrder.Destination(stepList.get(stepList.size() - 1).getDestinationPoint().getReference())).withRoute(route);
+//
             }
 
-            configRoute.setRoute(newDriverOrder);
-            configRoute.setAngle(processModel.getVehicleOrientationAngle());
-            byte[] path = configRoute.getPath();
-
-            addPath(path);
-            pathExecQueue.add(path);
-            LOG.info("{}, send resume path to vehicle: {}", name, configRoute.getDebugPath());
-            processModel.setVehicleState(Vehicle.State.EXECUTING);
         } else {
             LOG.error("车辆不在失败的路径上: {}", curPoint);
             throw new Exception(("车辆不在失败的路径上"));
@@ -254,6 +281,42 @@ public class PathTruck extends CyclicTask {
             sendSplitDriveOrder = null;
         }
     }
+
+    public class ReCheckClose extends TimerTask {
+
+        private Point door;
+        private String point;
+        private String doorName;
+        private List<String> pointList;
+
+        public ReCheckClose(Point p) {
+            this.door = p;
+            this.doorName = p.getProperty("door");
+            this.point = p.getName();
+            //获取整条运行中的路径
+            pointList = processDriverOrder.getRoute().getSteps().stream().map(s -> s.getDestinationPoint().getName()).collect(Collectors.toList());
+        }
+
+        @Override
+        public void run() {
+//            DoorStatus doorStatus = checkDoor(curPoint);
+            while (doorTruck.getDoorStatus(doorName).getStatus().equals("opened")) {
+                LOG.debug("自动门状态: {}, waitPoint: {}, curPoint: {}", doorTruck.getDoorStatus(doorName).getStatus(), this.point, curPoint);
+                try {
+                    LOG.debug("curPoint index: {}, waitPoint index: {}", pointList.indexOf(curPoint), pointList.indexOf(this.point));
+                    if (pointList.indexOf(curPoint) - pointList.indexOf(this.point) > 3) {
+                        LOG.info("{} 重复检测关门点: {} 门: {}", name, curPoint, doorName);
+                        doorTruck.addRecheckCloseDoor(doorName);
+                    }
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    LOG.error("{} ReCheckDoor Error: {}", name, e.getMessage());
+                }
+            }
+            LOG.debug("自动门关闭定时任务结束");
+        }
+    }
+
 
 
     @Override
@@ -289,6 +352,8 @@ public class PathTruck extends CyclicTask {
                 pathExecCheckQueue.clear();
                 LOG.info("{} 添加重发路径", name);
             }
+            //TODO检查升降状态
+//            if (pathExecQueue.peek().)
             //检测车辆在一个位置停止超过2分钟
             if (processModel.getVehiclePathState() == path_state_exec && processModel.getVehicleState() == Vehicle.State.EXECUTING) {
                 if (pathFailCheckQueue.peek() !=null && pathFailCheckQueue.peek().equals(curPoint)) {
@@ -300,7 +365,7 @@ public class PathTruck extends CyclicTask {
             if (pathFailCheckQueue.size() > path_fail_check_time / sleep_time) {
                 pathFailCheckQueue.clear();
                 processModel.setVehicleState(Vehicle.State.ERROR);
-                processModel.setVehicleProperty("UnkonwError", "On");
+                processModel.setVehicleProperty("UnknowError", "On");
                 commAdapter.publishNotify(String.format("未知错误，原地停止超时未行走: %s", curPoint));
                 LOG.error("{} 未知错误，原地停止超时未行走", name);
             }
@@ -345,11 +410,12 @@ public class PathTruck extends CyclicTask {
                 List<DriveOrder> driveOrderList = DoorController.splitDriverOrder(processDriverOrder);
                 driveOrderQueue.clear();
                 driveOrderQueue = new LinkedBlockingQueue<>(driveOrderList);
-
+                LOG.info("{} get new driverOrder: {}", name, processDriverOrder.getDestination());
                 if (DoorController.checkPassDoor(processDriverOrder).size() > 0) {
                     List<Point> open;
                     List<Point> close;
                     List<List> list = checkNewOrder(processDriverOrder);
+                    //TODO 目标点在自动门处，获取关门点会报错
                     open = list.get(0);
                     close = list.get(1);
                     waitPoint = list.get(2);
@@ -357,7 +423,7 @@ public class PathTruck extends CyclicTask {
                     // 添加开门关门点
                     doorTruck.cleanDoor();
                     doorTruck.addDoorList(open, close);
-                    LOG.info("{} new order door point open: {} close: {}", open, close);
+                    LOG.info("{} new order door point open: {}， wait point: {}, close: {}",name, open, waitPoint, close);
                 }
                 processModel.setVehicleState(Vehicle.State.EXECUTING);
 
@@ -373,6 +439,21 @@ public class PathTruck extends CyclicTask {
                     LOG.info("原地升降");
                     driveOrderQueue.poll();
                     processModel.commandExecuted(commAdapter.getSentQueue().poll());
+
+                    String opration = processDriverOrder.getDestination().getOperation();
+                    byte[] path = configRoute.getliftAction(curPoint, opration);
+                    addPath(path);
+                    pathExecQueue.add(path);
+                    //取出升降指令执行
+                    //TODO 多执行一个指令会导致车辆状态无法从执行变为闲置，可能是系统BUG
+//                        processModel.commandExecuted(commAdapter.getSentQueue().poll());
+//                        if (opration.equals("LOAD")) {
+//                            processModel.sendMsg("robot lifterat 50\n");
+//                        } else if (opration.equals("UNLOAD")) {
+//                            processModel.sendMsg("robot lifterat 0\n");
+//                        }
+                    // 延时置空分片订单
+                    delay_timer.schedule(new DelayLift(), 5 * 1000);
                 }
                 //检查车辆当前位置是否符合路径起点
                 else if (sendSplitDriveOrder.getRoute().getSteps().get(0)
@@ -380,38 +461,57 @@ public class PathTruck extends CyclicTask {
                     boolean sendFlag = false;
                     //TODO 检查开门状态
                     if (waitPoint != null && isWaitPoint(curPoint) != null) {
-//                        LOG.debug("此点位需要开门");
+                        LOG.debug("此点位需要开门: {}", curPoint);
                         //TODO
+                        String doorName = isWaitPoint(curPoint);
                         DoorStatus doorStatus = checkDoor(curPoint);
                         if (doorStatus == null) {
                             sendSplitDriveOrder = null;
                             //无需开门
                         } else if (doorStatus.getError() < -10) {
                             //自动门离线
-                            String doorName = isWaitPoint(curPoint);
+
                             String roomName = getRoom(curPoint);
                             sendSplitDriveOrder = null;
                             processModel.setVehicleProperty("error", String.format("自动门故障: %s", roomName));
-                            doorTruck.addRecheckDoor(doorName);
+                            doorTruck.addRecheckOpenDoor(doorName);
 //                            processModel.setVehicleState(Vehicle.State.ERROR);
-                        } else if (doorStatus.getStatus().equals("open") || doorStatus.getStatus().equals("opened")) {
+                        } else if (doorStatus.getStatus().equals("opened")) {
 //                            LOG.debug("门已经打开");
                             processModel.setVehicleProperty("error", "");
+                            try {
+                                //只执行一次，没有循环
+                                recheck_close_door_timer.schedule(new ReCheckClose(getWaitPoint(curPoint)), 5000);
+                                LOG.debug("添加定时检测关门任务,当前地点: {}, 自动门: {}", curPoint, doorName);
+                            } catch (Exception e) {
+                                LOG.error("{} 设置关门定时检查任务失败: {}", name, e.getMessage());
+                            }
                             sendFlag = true;
                         } else if (doorStatus.getStatus().equals("opening")) {
                             sendSplitDriveOrder = null;
 //                            LOG.debug("正在开门");
 //                           sendFlag = true;
+                        } else if (doorStatus.getStatus().equals("closed")) {
+                            sendSplitDriveOrder = null;
+                            //删除提前开门点，因为此时门处于关闭状态就表示小车过了提前开门的点位，不删除会影响关闭动作。
+                            if (doorTruck.peekDoor().getProperty("door").equals(doorName) && doorTruck.peekDoor().getProperty("action").equals("open")) {
+                                LOG.error("delete open door: {} point: {}", doorName, doorTruck.peekDoor());
+                                doorTruck.pollDoor();
+                            }
+                            doorTruck.addRecheckOpenDoor(doorName);
                         } else {
                             sendSplitDriveOrder = null;
 //                           processModel.setVehicleProperty("error", "door can't open");
                         }
+                        LOG.debug("当前自动门状态: {}", doorStatus.toString());
                     } else {
                         sendFlag = true;
                     }
 
                     if (sendFlag) {
+                        LOG.debug("准备发送路径");
                         byte[] path = configRoute.getPath(sendSplitDriveOrder, processModel.getVehicleOrientationAngle());
+                        LOG.debug("获取路径成功");
                         addPath(path);
                         pathExecQueue.add(path);
                         driveOrderQueue.poll();
@@ -434,8 +534,8 @@ public class PathTruck extends CyclicTask {
                 //完成所有路径
                 if (processDriverOrder != null && driveOrderQueue.peek() == null) {
                     waitPoint = null;
-                    String opration = processDriverOrder.getDestination().getOperation();
-                    if (opration.equals("LOAD") || opration.equals("UNLOAD") || opration.equals("CHARGE")) {
+//                    String opration = processDriverOrder.getDestination().getOperation();
+                    /*if (opration.equals("LOAD") || opration.equals("UNLOAD") || opration.equals("CHARGE")) {
                         //无升降动作的话为 MOVE
                         byte[] path = configRoute.getliftAction(curPoint, opration);
                         addPath(path);
@@ -453,7 +553,8 @@ public class PathTruck extends CyclicTask {
 
                     } else {
                         sendSplitDriveOrder = null;
-                    }
+                    }*/
+                    sendSplitDriveOrder = null;
                     //TODO 升降指令也作为一条路径;
                     if (commAdapter.getcurrentDriveOrder().equals(processDriverOrder)) {
                         commAdapter.setcurrentDriveOrder(null);
@@ -466,7 +567,7 @@ public class PathTruck extends CyclicTask {
 
 
         } catch (Exception e) {
-            LOG.debug("ERROR: {}", e.getMessage());
+            LOG.error("ERROR: {}", e.getStackTrace());
         }
 
     }
