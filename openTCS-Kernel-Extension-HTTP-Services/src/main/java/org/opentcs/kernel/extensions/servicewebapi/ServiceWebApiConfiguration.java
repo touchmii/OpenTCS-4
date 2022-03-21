@@ -55,4 +55,10 @@ public interface ServiceWebApiConfiguration {
       description = "Whether to use SSL to encrypt connections.",
       orderKey = "5")
   boolean useSsl();
+
+  @ConfigurationEntry(
+          type = "Integer",
+          description = "Default Deadline Time Minutes.",
+          orderKey = "6")
+  int defaultDeadline();
 }
