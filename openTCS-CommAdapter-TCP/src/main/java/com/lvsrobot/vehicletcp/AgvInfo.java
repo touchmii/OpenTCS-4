@@ -45,7 +45,7 @@ public class AgvInfo {
     }
 
     public void setBattery(int battery_) {
-        this.battery = (int)(battery_*1.66);
+        this.battery = battery_;
     }
 
     public int getException() {
@@ -91,7 +91,13 @@ public class AgvInfo {
         }
     }
 
+    public void setAngle(int p, Integer integer) {
+        //大于4取余，如果有二维码方向不一致，按照按统一方向的二维码逆时针旋转几次跟此二维码重合，则设置fixangle=1～3即可。
+        int pp = p > 2 ? (p+integer)%4 : p+integer;
+        setAngle(pp);
+    }
     public double getAngle() {
         return angle;
     }
+
 }
